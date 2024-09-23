@@ -1,0 +1,31 @@
+# Etude Blokus
+
+- **Entraînement des agents RL à jouer de manière fluide et efficace :**
+    - **Blokus** est un jeu de stratégie où chaque décision peut impacter l'issue finale, ce qui en fait un terrain parfait pour l'apprentissage par renforcement. Les agents RL peuvent apprendre à optimiser l'utilisation de leurs pièces tout en bloquant leurs adversaires de manière progressive.
+    - **Apprentissage par exploration** : Les agents RL peuvent explorer différentes manières de placer les pièces, chercher à occuper les coins du plateau ou maximiser l'espace au centre. Ils apprendront quelles stratégies offrent les meilleures chances de victoire en fonction des positions des autres joueurs.
+    - **Récompenses** : Les fonctions de récompense pour l'apprentissage peuvent être configurées en fonction des actions, comme l'ajout de points pour chaque pièce correctement placée ou la réduction des options des adversaires.
+- **Tester et optimiser les stratégies de jeu :**
+    - **Variété de stratégies** : Dans Blokus, les agents peuvent tester des stratégies agressives (bloquer rapidement les adversaires) ou défensives (conserver de l’espace pour soi). Cela permet d'identifier les meilleures approches et d'ajuster l'algorithme pour équilibrer les comportements.
+    - **Ajustement dynamique** : Les agents pourront ajuster leurs stratégies en fonction de la configuration du plateau et des mouvements de leurs adversaires, permettant ainsi de tester si certaines stratégies sont trop dominantes ou, au contraire, peu efficaces dans certains contextes.
+    - **Simulation massive** : Les agents RL peuvent jouer des milliers de parties en simulation, offrant une opportunité unique de tester un grand nombre de stratégies et de configurations différentes du plateau. Cela permet d'optimiser l'équilibrage du jeu et d'explorer les meilleures pratiques stratégiques.
+- **Adapter les agents aux changements de règles :**
+    - **Flexibilité des règles** : Blokus permet d'introduire des variantes facilement, telles que l'ajout de zones interdites ou des restrictions sur certains mouvements. Les agents peuvent être entraînés à s'adapter à ces changements en ajustant leurs décisions en conséquence.
+    - **Adaptation rapide** : Par exemple, si une nouvelle règle interdit de placer des pièces dans les coins au début de la partie, les agents peuvent rapidement s'adapter à cette contrainte et apprendre à réévaluer leurs priorités de placement.
+    - **Impact des modifications** : Les simulations permettront de tester l'impact des nouvelles règles sur l'équilibrage général du jeu, et de vérifier si les agents s’adaptent à des conditions nouvelles sans perte de performance.
+- **Entraînement en mode compétitif ou collaboratif :**
+    - **Mode compétitif** : Les agents peuvent être programmés pour être compétitifs, en cherchant à bloquer les autres joueurs dès que possible, ou au contraire, en maximisant leurs propres placements tout en restant flexibles pour s’adapter à l’évolution du plateau.
+    - **Mode collaboratif (variante)** : Même si Blokus est un jeu compétitif, il est possible d'explorer un mode où les agents doivent collaborer pour atteindre un objectif commun. Par exemple, dans une version coopérative, deux agents pourraient travailler ensemble pour occuper des zones stratégiques du plateau sans se gêner mutuellement.
+    - **Analyse des interactions** : Ce mode permet de tester les interactions entre plusieurs agents avec des objectifs communs ou opposés, offrant une base pour analyser comment différents types de personnalités d’agents (agressif, défensif, collaboratif) influencent les résultats.
+- **Personnalisation des agents (niveaux de difficulté, styles de jeu) :**
+    - **Niveaux de difficulté** : Les agents peuvent être programmés pour différents niveaux de compétence, permettant de personnaliser leur comportement. Un agent de niveau facile pourrait prendre des décisions moins optimisées (ex. : ne pas bloquer les adversaires de manière systématique), tandis qu'un agent de niveau difficile chercherait à maximiser l'utilisation de l’espace tout en bloquant stratégiquement les autres joueurs.
+    - **Différents styles de jeu** : Vous pouvez configurer les agents pour adopter des styles différents selon les préférences. Par exemple :
+        - **Agressif** : Un agent qui cherche à bloquer rapidement les autres joueurs, en plaçant ses pièces de manière à réduire leurs options.
+        - **Défensif** : Un agent qui favorise la préservation de son propre espace en se concentrant sur ses coins ou sur des zones inaccessibles aux autres.
+        - **Équilibré** : Un agent qui tente de maintenir un juste équilibre entre expansion et blocage, en maximisant ses chances tout en observant les mouvements des autres joueurs.
+    - **Évolution des agents** : Au fur et à mesure de l'entraînement, les agents peuvent adapter leurs stratégies en fonction du niveau de difficulté choisi, permettant d’offrir des défis variés aux joueurs humains ou de tester différentes configurations.
+- **Test et optimisation des règles via les agents RL :**
+    - **Ajout de nouvelles règles** : L'une des forces de Blokus est la possibilité d’ajouter des variantes de règles et de les tester à travers les simulations. Par exemple, on peut introduire des restrictions de placement ou de nouvelles conditions de victoire, et observer comment les agents réagissent à ces changements.
+    - **Analyse de l’équilibrage** : En simulant des parties avec des agents RL sous différentes variantes de règles, on peut repérer les éventuels déséquilibres du jeu. Par exemple, si une stratégie devient trop dominante, ou si certaines règles favorisent un joueur de manière disproportionnée.
+    - **Optimisation continue** : Les agents RL permettront de tester et ajuster en continu les nouvelles règles, en fournissant un retour d'expérience automatisé basé sur des simulations massives. Cela nous permettra d'affiner les mécaniques de jeu pour garantir une expérience équilibrée et satisfaisante.
+- Solutions prets
+    - Environements existants (Gym)
