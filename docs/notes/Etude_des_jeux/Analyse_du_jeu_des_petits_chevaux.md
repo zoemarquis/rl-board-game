@@ -6,7 +6,7 @@ L'objectif du jeu des petits chevaux est d'être le premier joueur à emmener se
 
 # Règles du jeu original
 
-Nombre de joueurs : 1 à 4
+Nombre de joueurs : 2 à 4
 
 ## Début de partie
 
