@@ -1,7 +1,6 @@
 from eztext import *
 import time
 from labyrintheModeGraphiqueOO import *
-from snake import *
 
 class Menu(object):
 	""" Classe gérant le menu du jeu """
