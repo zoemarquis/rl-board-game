@@ -285,12 +285,15 @@ class Menu(object):
 				elif ev.key == K_UP:
 					if self.select == 2:
 						self.monteOptionInd()
-				elif ev.key == K_s:
-					js = JeuSnake()
-					js.demarrer()
 				else:
 					if self.select == 2:
-						self.parametre[self.iOpt].update(ev)
+						# Check si Shift est appuyé
+						keys = pygame.key.get_pressed()
+						if keys[K_LSHIFT] or keys[K_RSHIFT]:
+							if K_0 <= ev.key <= K_9:
+								self.parametre[self.iOpt].value += str(ev.key - K_0)
+						else:
+							self.parametre[self.iOpt].update(ev)
 
 			if ev.type==pygame.VIDEORESIZE:
 				fenetre=pygame.display.set_mode(ev.size,pygame.RESIZABLE|pygame.DOUBLEBUF)
