@@ -49,3 +49,5 @@ Pour la satisfaction : prendre en compte le temps d’attente entre 2 tours d’
 - bonus / malus: rejouer tout de suite sous certaines conditions, par exemple si le dernier trésor a été trouvé il y a plus de 5 tours, à l’inverse, devoir passer son tour si on trouve en 1 coup le prochain trésor
 - si un joueur rencontre ou s’arrete sur une case où il y a un autre joueur : celui qui était déjà là est expulsé et retourne à son coin de départ
 - si un joueur rencontre ou s’arrete sur une case où il y a un autre joueur : il est coincé il ne peut pas passer et doit rester sur la tuile précédente
+
+NB : On pourrait aussi essayer de faire varier le nombre de personnages et les compositions : ainsi le temps d’attente serait différent et les agents pourraient être plus ou moins satisfait de joueur contre certain type de joueur. On pourrait étudier les statistiques des différentes combinaisons ainsi créées.
