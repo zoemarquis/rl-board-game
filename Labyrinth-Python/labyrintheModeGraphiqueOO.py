@@ -39,8 +39,8 @@ class LabyrintheGraphique(object):
     def getImages(self,prefixImage="./images"):
         self.imagesCartes=[]
         for i in range(16):
-            if os.path.isfile(os.path.join(prefixImage,'Carte'+str(i)+'.jpeg')):
-                s=pygame.image.load(os.path.join(prefixImage,'Carte'+str(i)+'.jpeg'))
+            if os.path.isfile(os.path.join(prefixImage,'Carte'+str(i)+'.png')):
+                s=pygame.image.load(os.path.join(prefixImage,'Carte'+str(i)+'.png'))
             else:
                 s=None
             self.imagesCartes.append(s)
@@ -50,7 +50,7 @@ class LabyrintheGraphique(object):
             self.imagesPions.append(s)
         self.imagesTresors=[]
         for i in range(38):
-            s=pygame.image.load(os.path.join(prefixImage,'tresor'+str(i)+'.jpeg'))
+            s=pygame.image.load(os.path.join(prefixImage,'tresor'+str(i)+'.png'))
             self.imagesTresors.append(s)
         random.shuffle(self.imagesTresors)
         self.icone=pygame.image.load(os.path.join(prefixImage,'logo.jpeg'))
