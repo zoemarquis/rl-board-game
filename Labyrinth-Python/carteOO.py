@@ -54,7 +54,7 @@ class Carte(object):
 
     # retourne le nombre de pions se trouvant sur la carte
     def getNbPions(self):
-        return len(slef.pions)
+        return len(self.pions)
 
     # retourne un booléen indiquant si la carte possède le pion passé en paramètre
     def possedePion(self,pion):
