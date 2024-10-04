@@ -1,36 +1,62 @@
 from random import randint
+from matriceOO import NB_LIGNES
 
 # la liste des caractère semi-graphiques correspondants aux différentes cartes
 # l'indice du caractère dans la liste correspond au codage des murs sur la carte
 # le caractère 'Ø' indique que l'indice ne correspond pas à une carte
-listeCartes=['Ø','╦','╣','╗','╩','═','╝','Ø','╠','╔','║','Ø','╚','Ø','Ø','Ø']
-            # 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
+listeCartes = [
+    "Ø",
+    "╦",
+    "╣",
+    "╗",
+    "╩",
+    "═",
+    "╝",
+    "Ø",
+    "╠",
+    "╔",
+    "║",
+    "Ø",
+    "╚",
+    "Ø",
+    "Ø",
+    "Ø",
+]
+
+
+# 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  15
 # permet de créer une carte: True = Pas de mur nord/est/sud/ouest
 # les quatre premiers paramètres sont des booléens indiquant s'il y a un mur ou non dans chaque direction
 # tresor est le numéro du trésor qui se trouve sur la carte (0 s'il n'y a pas de trésor)
 # pions donne la liste des pions qui seront posés sur la carte (un pion est un entier entre 1 et 4)
 class Carte(object):
 
-    def __init__(self, nord, est, sud, ouest, tresor=0, pions=[]):
+    def __init__(self, nord, est, sud, ouest, tresor=0, pions=[], is_base=0):
         self.nord = nord
         self.est = est
         self.sud = sud
         self.ouest = ouest
         self.tresor = tresor
         self.pions = set(pions)
+        self.is_base = (
+            is_base  # 0 : pas une base, sinon numéro du joueur correspondant à la base
+        )
+
+    def est_coin(self):
+        return self.nord and self.est and self.sud and self.ouest
 
     # retourne un booléen indiquant si la carte est valide ou non c'est à dire qu'elle a un ou deux murs
     def estValide(self):
         cpt = 0
         if self.nord:
-            cpt+=1
+            cpt += 1
         if self.est:
-            cpt+=1
+            cpt += 1
         if self.sud:
-            cpt+=1
+            cpt += 1
         if self.ouest:
-            cpt+=1
-        return cpt == 2 or cpt ==3
+            cpt += 1
+        return cpt == 2 or cpt == 3
 
     # retourne un booléen indiquant si la carte possède un mur au nord
     def murNord(self):
@@ -57,7 +83,7 @@ class Carte(object):
         return len(self.pions)
 
     # retourne un booléen indiquant si la carte possède le pion passé en paramètre
-    def possedePion(self,pion):
+    def possedePion(self, pion):
         return pion in self.pions
 
     # retourne le codage de la liste des pions
@@ -65,7 +91,7 @@ class Carte(object):
         return type(self.pions)
 
     # affecte les pions de la cartes en utilisant directement le codage de la liste des pions
-    def setPions(self,pions):
+    def setPions(self, pions):
         self.pions = self.pions.union(pions)
 
     # retourne la valeur du trésor qui se trouve sur la carte (0 si pas de trésor)
@@ -79,14 +105,14 @@ class Carte(object):
         return tresor
 
     # met le trésor passé en paramètre sur la carte et retourne la valeur de l'ancien trésor
-    def mettreTresor(self,tresor):
+    def mettreTresor(self, tresor):
         tresorAncien = self.getTresor()
         self.tresor = tresor
         return tresorAncien
 
     # enlève le pion passé en paramètre de la carte. Si le pion n'y était pas ne fait rien
     def prendrePion(self, pion):
-        self.pions=self.pions.difference({pion})
+        self.pions = self.pions.difference({pion})
 
     # pose le pion passé en paramètre sur la carte. Si le pion y était déjà ne fait rien
     def poserPion(self, pion):
@@ -94,28 +120,27 @@ class Carte(object):
 
     # fait tourner la carte dans le sens horaire
     def tournerHoraire(self):
-        nord=self.nord
-        self.nord=self.ouest
-        self.ouest=self.sud
-        self.sud=self.est
-        self.est=nord
+        nord = self.nord
+        self.nord = self.ouest
+        self.ouest = self.sud
+        self.sud = self.est
+        self.est = nord
 
     # fait tourner la carte dans le sens anti horaire
     def tournerAntiHoraire(self):
-        nord=self.nord
-        self.nord=self.est
-        self.est=self.sud
-        self.sud=self.ouest
-        self.ouest=nord
+        nord = self.nord
+        self.nord = self.est
+        self.est = self.sud
+        self.sud = self.ouest
+        self.ouest = nord
 
     # faire tourner la carte dans nombre de tour aléatoire
     def tourneAleatoire(self):
-        for i in range(randint(0,4)):
+        for i in range(randint(0, 4)):
             self.tournerHoraire()
 
-
-    # code les murs sous la forme d'un entier dont le codage binaire 
-    # est de la forme bNbEbSbO où bN, bE, bS et bO valent 
+    # code les murs sous la forme d'un entier dont le codage binaire
+    # est de la forme bNbEbSbO où bN, bE, bS et bO valent
     #      soit 0 s'il n'y a pas de mur dans dans la direction correspondante
     #      soit 1 s'il y a un mur dans la direction correspondante
     # bN est le chiffre des unité, BE des dizaine, etc...
@@ -134,23 +159,23 @@ class Carte(object):
         return code
 
     # positionne les mur d'une carte en fonction du code décrit précédemment
-    def decoderMurs(self,code):
-        if code >=8:
+    def decoderMurs(self, code):
+        if code >= 8:
             self.nord = False
-            code-=8
+            code -= 8
         else:
             self.nord = True
         if code >= 4:
             self.est = False
-            code-=4
+            code -= 4
         else:
             self.est = True
-        if code >=2:
+        if code >= 2:
             self.sud = False
-            code-=2
+            code -= 2
         else:
             self.sud = True
-        if code >=1:
+        if code >= 1:
             self.ouest = False
         else:
             self.ouest = True
@@ -161,23 +186,25 @@ class Carte(object):
 
     # suppose que la carte2 est placée au nord de la carte1 et indique
     # s'il y a un passage entre ces deux cartes en passant par le nord
-    def passageNord(self,carte):
+    def passageNord(self, carte):
         return self.murNord() and carte.murSud()
+
     # suppose que la carte2 est placée au sud de la carte1 et indique
     # s'il y a un passage entre ces deux cartes en passant par le sud
-    def passageSud(self,carte):
+    def passageSud(self, carte):
         return self.murSud() and carte.murNord()
 
     # suppose que la carte2 est placée à l'ouest de la carte1 et indique
     # s'il y a un passage entre ces deux cartes en passant par l'ouest
-    def passageOuest(self,carte):
+    def passageOuest(self, carte):
         return self.murOuest() and carte.murEst()
 
     # suppose que la carte2 est placée à l'est de la carte1 et indique
     # s'il y a un passage entre ces deux cartes en passant par l'est
-    def passageEst(self,carte):
+    def passageEst(self, carte):
         return self.murEst() and carte.murOuest()
-        
+
+
 ################
 # Zone de Test #
 ################
