@@ -42,7 +42,7 @@ class LabyrintheGraphique(object):
         fenetre = pygame.display.set_mode(size, pygame.RESIZABLE | pygame.DOUBLEBUF)
         pygame.display.set_caption(titre)
         self.surface = pygame.display.get_surface()
-        self.surface.fill((0, 0, 130))
+        self.surface.fill((0, 0, 139))
         self.miseAjourParametres()
         self.afficheJeu()
 
@@ -58,16 +58,22 @@ class LabyrintheGraphique(object):
             self.imagesCartes.append(s)
         # load images
         self.imagesPions = []
+        self.imagesTextePions = []
         self.imagesBases = []
         for i in range(1, NB_JOUEUR + 1):
             s = pygame.image.load(os.path.join(prefixImage, "pion" + str(i) + ".png"))
             self.imagesPions.append(s)
+            s = pygame.image.load(os.path.join(prefixImage, "texte_pion" + str(i) + ".png"))
+            self.imagesTextePions.append(s)
             s = pygame.image.load(os.path.join(prefixImage, "base" + str(i) + ".png"))
             self.imagesBases.append(s)
         self.imagesTresors = []
+        self.imagesTexteTresors = []
         for i in range(1, NB_TRESOR + 1):
             s = pygame.image.load(os.path.join(prefixImage, "tresor" + str(i) + ".png"))
             self.imagesTresors.append(s)
+            s = pygame.image.load(os.path.join(prefixImage, "carte_tresor" + str(i) + ".png"))
+            self.imagesTexteTresors.append(s)
         # no random on all images
         # random.shuffle(self.imagesTresors)
         self.icone = pygame.image.load(os.path.join(prefixImage, "logo.png"))
@@ -79,7 +85,7 @@ class LabyrintheGraphique(object):
         self.delta = self.dimension // (self.nbLigne + 2)
         self.finh = self.delta * (self.nbLigne + 2)
         self.finl = self.delta * (self.nbColonne + 2)
-        self.tailleFont = min(self.delta, self.delta) * 1 // 3
+        self.tailleFont = min(self.delta, self.delta) * 1 // 4
 
     def surfaceCarte(self, carte):
         tresor = carte.getTresor()
@@ -122,7 +128,7 @@ class LabyrintheGraphique(object):
             surfCarte.blit(surfPion, coord.pop(0))
         return surfCarte
 
-    def surfaceFleche(self, direction="O", couleur=(209, 238, 238)):
+    def surfaceFleche(self, direction="O", couleur=(255, 0, 0)):
         res = pygame.Surface((self.delta, self.delta))
         pygame.draw.polygon(
             res,
@@ -149,6 +155,14 @@ class LabyrintheGraphique(object):
         )
         res.blit(surfPion, (self.delta // 4, self.delta // 4))
         return res
+    
+    def surfaceTextePion(self, pion):
+        res = pygame.Surface((self.delta, self.delta))
+        surfPion = pygame.transform.smoothscale(
+            self.imagesTextePions[pion - 1], (self.delta , self.delta)
+        )
+        res.blit(surfPion, (0,0))
+        return res
 
     def surfaceTresor(self, tresor):
         res = pygame.Surface((self.delta, self.delta))
@@ -156,6 +170,14 @@ class LabyrintheGraphique(object):
             self.imagesTresors[tresor - 1], (self.delta // 2, self.delta // 2)
         )
         res.blit(surfTresor, (self.delta // 4, self.delta // 4))
+        return res
+
+    def surfaceTexteTresor(self, tresor):
+        res = pygame.Surface((self.delta, self.delta))
+        surfTresor = pygame.transform.smoothscale(
+            self.imagesTexteTresors[tresor - 1], (self.delta, self.delta)
+        )
+        res.blit(surfTresor, (0,0))
         return res
 
     def afficheMessage(self, ligne, texte, images=[], couleur=None):
@@ -211,14 +233,26 @@ class LabyrintheGraphique(object):
             (self.finl + self.delta // 2, self.finh // 2),
         )  # Ici, carte == carteAjouer
 
-    def dessineGrille(self, couleur=(255, 255, 0)):
+    def dessineFleches(self, couleur=(255, 255, 0)):
+        self.surface.fill((0, 0, 139)) # pour gérer les effets de transparence
+        # TODO : changer la couleur de la fleche dont on a pas le droit
         for i in range(1, self.nbLigne, 2):
-            self.surface.blit(self.surfaceFleche("O", couleur), (0, (i + 1) * self.delta))
-            self.surface.blit(self.surfaceFleche("E", couleur), (self.delta * (self.nbColonne + 1), (i + 1) * self.delta))
+            flecheO = self.surfaceFleche("O", couleur)
+            flecheO.set_colorkey((0, 0, 0))  # Set transparency color key
+            self.surface.blit(flecheO, (0, (i + 1) * self.delta))
+
+            flecheE = self.surfaceFleche("E", couleur)
+            flecheE.set_colorkey((0, 0, 0))  # Set transparency color key
+            self.surface.blit(flecheE, (self.delta * (self.nbColonne + 1), (i + 1) * self.delta))
 
         for i in range(1, self.nbColonne, 2):
-            self.surface.blit(self.surfaceFleche("N", couleur), ((i + 1) * self.delta, 0))
-            self.surface.blit(self.surfaceFleche("S", couleur), ((i + 1) * self.delta, self.delta * (self.nbLigne + 1)))
+            flecheN = self.surfaceFleche("N", couleur)
+            flecheN.set_colorkey((0, 0, 0))  # Set transparency color key
+            self.surface.blit(flecheN, ((i + 1) * self.delta, 0))
+
+            flecheS = self.surfaceFleche("S", couleur)
+            flecheS.set_colorkey((0, 0, 0))  # Set transparency color key
+            self.surface.blit(flecheS, ((i + 1) * self.delta, self.delta * (self.nbLigne + 1)))
 
     def afficheGrille(self):
         font = pygame.font.Font(None, self.tailleFont)
@@ -229,7 +263,7 @@ class LabyrintheGraphique(object):
                     s = self.surfaceCarte(carte)
                     if s == None:
                         self.surface.fill(
-                            (0, 0, 0),
+                            (0, 255, 0),
                             (
                                 (j + 1) * self.delta,
                                 (i + 1) * self.delta,
@@ -296,7 +330,7 @@ class LabyrintheGraphique(object):
         return (x - 1, y - 1)
 
     def afficheJeu(self):
-        self.dessineGrille()
+        self.dessineFleches()
         self.afficheGrille()
         if not self.fini:
             if self.labyrinthe.joueurCourantIsIA():
@@ -307,19 +341,19 @@ class LabyrintheGraphique(object):
                 )
                 self.afficheMessage(
                     3,
-                    "Trésor à trouver :@img@",
-                    [self.surfaceTresor(self.labyrinthe.getTresorCourant())],
+                    "Trésor à trouver @img@",
+                    [self.surfaceTexteTresor(self.labyrinthe.getTresorCourant())],
                 )
             else:
                 self.afficheMessage(
                     2,
-                    "C'est au tour du joueur@img@",
-                    [self.surfacePion(self.labyrinthe.getJoueurCourant())],
+                    "C'est au tour du joueur @img@",
+                    [self.surfaceTextePion(self.labyrinthe.getJoueurCourant())],
                 )
                 self.afficheMessage(
                     3,
-                    "Trésor à trouver :@img@",
-                    [self.surfaceTresor(self.labyrinthe.getTresorCourant())],
+                    "Trésor à trouver @img@",
+                    [self.surfaceTexteTresor(self.labyrinthe.getTresorCourant())],
                 )
         self.afficheScore(4)
         self.afficheMessageInfo(5)
@@ -435,7 +469,7 @@ class LabyrintheGraphique(object):
                                             self.messageInfo = "Le joueur @img@ a trouvé le trésor @img@."
                                             self.imgInfo = [
                                                 self.surfacePion(jc),
-                                                self.surfaceTresor(t),
+                                                self.surfaceTexteTresor(t),
                                             ]
 
                                     self.labyrinthe.changerJoueurCourant()
@@ -460,7 +494,7 @@ class LabyrintheGraphique(object):
                         self.fini = True
                     else:
                         self.messageInfo = "L'IA @img@ a trouvé le trésor @img@"
-                        self.imgInfo = [self.surfacePion(jc), self.surfaceTresor(t)]
+                        self.imgInfo = [self.surfacePion(jc), self.surfaceTexteTresor(t)]
 
                 self.labyrinthe.changerJoueurCourant()
                 self.afficheJeu()
