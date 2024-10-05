@@ -42,8 +42,8 @@ class Carte(object):
             is_base  # 0 : pas une base, sinon numéro du joueur correspondant à la base
         )
 
-    def est_coin(self):
-        return self.nord and self.est and self.sud and self.ouest
+    def isBase(self):
+        return self.is_base
 
     # retourne un booléen indiquant si la carte est valide ou non c'est à dire qu'elle a un ou deux murs
     def estValide(self):

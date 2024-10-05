@@ -32,8 +32,8 @@ class LabyrintheGraphique(object):
         self.fini = False
         self.couleurTexte = couleur
         self.laMatrice = labyrinthe.plateau
-        self.nbCol = self.laMatrice.getNbColonnes()
-        self.nbLig = self.laMatrice.getNbLignes()
+        self.nbColonne = self.laMatrice.getNbColonnes()
+        self.nbLigne = self.laMatrice.getNbLignes()
         self.titre = titre
         self.cheat = False
         self.getImages(prefixeImage)
@@ -42,6 +42,7 @@ class LabyrintheGraphique(object):
         fenetre = pygame.display.set_mode(size, pygame.RESIZABLE | pygame.DOUBLEBUF)
         pygame.display.set_caption(titre)
         self.surface = pygame.display.get_surface()
+        self.surface.fill((0, 0, 130))
         self.miseAjourParametres()
         self.afficheJeu()
 
@@ -57,67 +58,79 @@ class LabyrintheGraphique(object):
             self.imagesCartes.append(s)
         # load images
         self.imagesPions = []
+        self.imagesBases = []
         for i in range(1, NB_JOUEUR + 1):
             s = pygame.image.load(os.path.join(prefixImage, "pion" + str(i) + ".png"))
             self.imagesPions.append(s)
+            s = pygame.image.load(os.path.join(prefixImage, "base" + str(i) + ".png"))
+            self.imagesBases.append(s)
         self.imagesTresors = []
         for i in range(1, NB_TRESOR + 1):
             s = pygame.image.load(os.path.join(prefixImage, "tresor" + str(i) + ".png"))
             self.imagesTresors.append(s)
         # no random on all images
-        random.shuffle(self.imagesTresors)
+        # random.shuffle(self.imagesTresors)
         self.icone = pygame.image.load(os.path.join(prefixImage, "logo.png"))
         self.bousole = pygame.image.load(os.path.join(prefixImage, "boussole.png"))
 
     def miseAjourParametres(self):
         self.surface = pygame.display.get_surface()
-        self.hauteur = self.surface.get_height()  # *2//3
-        self.largeur = self.hauteur
-        self.deltah = self.hauteur // (self.nbLig + 2)
-        self.deltal = self.largeur // (self.nbCol + 3)
-        self.finh = self.deltah * (self.nbLig + 2)
-        self.finl = self.deltal * (self.nbCol + 2)
-        self.tailleFont = min(self.deltah, self.deltal) * 1 // 3
+        self.dimension = self.surface.get_height()  # *2//3
+        self.delta = self.dimension // (self.nbLigne + 2)
+        self.finh = self.delta * (self.nbLigne + 2)
+        self.finl = self.delta * (self.nbColonne + 2)
+        self.tailleFont = min(self.delta, self.delta) * 1 // 3
 
     def surfaceCarte(self, carte):
-        t = carte.getTresor()
-        p = carte.getListePions()
+        tresor = carte.getTresor()
+        base = carte.isBase()
+        pions = carte.getListePions()
         img = self.imagesCartes[carte.coderMurs()]
         if img == None:
             return None
 
-        surfCarte = pygame.transform.smoothscale(img, (self.deltal, self.deltah))
-        if t != 0:
-            surfTresor = pygame.transform.smoothscale(
-                self.imagesTresors[t - 1], (self.deltal // 2, self.deltah // 2)
+        surfCarte = pygame.transform.smoothscale(img, (self.delta, self.delta))
+        if base != 0:
+            surfBase = pygame.transform.smoothscale(
+                self.imagesBases[base - 1], (self.delta // 2, self.delta // 2)
             )
-            surfCarte.blit(surfTresor, (self.deltal // 4, self.deltah // 4))
+            base_x = (self.delta - surfBase.get_width()) // 2
+            base_y = (self.delta - surfBase.get_height()) // 2
+            surfCarte.blit(surfBase, (base_x, base_y))
+        if tresor != 0:
+            surfTresor = pygame.transform.smoothscale(
+                self.imagesTresors[tresor - 1], (self.delta // 2, self.delta // 2)
+            )
+            base_x = (self.delta - surfTresor.get_width()) // 2
+            base_y = (self.delta - surfTresor.get_height()) // 2
+            surfCarte.blit(surfTresor, (base_x, base_y))
+
         dist = 10
         coord = [
             (dist, dist),
-            (dist, self.deltah - (self.deltah // 4 + dist)),
+            (dist, self.delta - (self.delta // 4 + dist)),
             (
-                self.deltal - (self.deltal // 4 + dist),
-                self.deltah - (self.deltah // 4 + dist),
+                self.delta - (self.delta // 4 + dist),
+                self.delta - (self.delta // 4 + dist),
             ),
-            (self.deltal - (self.deltal // 4 + dist), dist),
+            (self.delta - (self.delta // 4 + dist), dist),
         ]
-        for pion in p:
+        for pions in pions:
             surfPion = pygame.transform.smoothscale(
-                self.imagesPions[pion - 1], (self.deltal // 4, self.deltah // 4)
+                self.imagesPions[pions - 1], (self.delta // 4, self.delta // 4)
             )
             surfCarte.blit(surfPion, coord.pop(0))
         return surfCarte
 
     def surfaceFleche(self, direction="O", couleur=(209, 238, 238)):
-        res = pygame.Surface((self.deltal, self.deltah))
+        res = pygame.Surface((self.delta, self.delta))
         pygame.draw.polygon(
             res,
             couleur,
             [
-                (self.deltal // 2, self.deltah // 3),
-                (self.deltal - self.deltal // 8, self.deltah // 2),
-                (self.deltal // 2, self.deltah * 2 // 3),
+                (self.delta // 2, self.delta // 3),
+                (self.delta - self.delta // 8, self.delta // 2),
+                (self.delta // 2, self.delta * 2 // 3),
             ],
             0,
         )
@@ -130,19 +143,19 @@ class LabyrintheGraphique(object):
         return res
 
     def surfacePion(self, pion):
-        res = pygame.Surface((self.deltal, self.deltah))
+        res = pygame.Surface((self.delta, self.delta))
         surfPion = pygame.transform.smoothscale(
-            self.imagesPions[pion - 1], (self.deltal // 2, self.deltah // 2)
+            self.imagesPions[pion - 1], (self.delta // 2, self.delta // 2)
         )
-        res.blit(surfPion, (self.deltal // 4, self.deltah // 4))
+        res.blit(surfPion, (self.delta // 4, self.delta // 4))
         return res
 
     def surfaceTresor(self, tresor):
-        res = pygame.Surface((self.deltal, self.deltah))
+        res = pygame.Surface((self.delta, self.delta))
         surfTresor = pygame.transform.smoothscale(
-            self.imagesTresors[tresor - 1], (self.deltal // 2, self.deltah // 2)
+            self.imagesTresors[tresor - 1], (self.delta // 2, self.delta // 2)
         )
-        res.blit(surfTresor, (self.deltal // 4, self.deltah // 4))
+        res.blit(surfTresor, (self.delta // 4, self.delta // 4))
         return res
 
     def afficheMessage(self, ligne, texte, images=[], couleur=None):
@@ -152,11 +165,11 @@ class LabyrintheGraphique(object):
 
         # posy=self.finh+self.deltah*(ligne-1)
         # posx=self.deltal//3
-        posy = self.deltah * (
+        posy = self.delta * (
             ligne - 1
         )  # Garde la même hauteur pour chaque ligne de texte
         posx = (
-            self.finl + self.deltal
+            self.finl + self.delta
         )  # Déplace à droite du plateau en utilisant la largeur du plateau
 
         # self.surface.fill((0,0,0),(0,posy,self.surface.get_width(),posy+self.deltah))
@@ -172,7 +185,7 @@ class LabyrintheGraphique(object):
                 posx += textpos.width  # +(self.deltal//3)
             if images != []:
                 surface = images.pop(0)
-                debuty = posy - (self.deltah // 3)
+                debuty = posy - (self.delta // 3)
                 self.surface.blit(surface, (posx, debuty))
                 posx += surface.get_width()  # +(self.deltal//3)
 
@@ -195,32 +208,22 @@ class LabyrintheGraphique(object):
     def afficheCarteAJouer(self):
         self.surface.blit(
             self.surfaceCarte(self.labyrinthe.carteAjouer),
-            (self.finl + self.deltal // 2, self.finh // 2),
+            (self.finl + self.delta // 2, self.finh // 2),
         )  # Ici, carte == carteAjouer
 
-    def dessineGrille(self, couleur=(255, 0, 0)):
-        self.surface.fill((0, 0, 0))
-        font = pygame.font.Font(None, self.tailleFont)
-        flecheO = self.surfaceFleche("O")
-        flecheE = self.surfaceFleche("E")
-        flecheN = self.surfaceFleche("N")
-        flecheS = self.surfaceFleche("S")
-        for i in range(1, self.nbLig, 2):
-            self.surface.blit(flecheO, (0, (i + 1) * self.deltah))
-            self.surface.blit(
-                flecheE, (self.deltal * (self.nbCol + 1), (i + 1) * self.deltah)
-            )
+    def dessineGrille(self, couleur=(255, 255, 0)):
+        for i in range(1, self.nbLigne, 2):
+            self.surface.blit(self.surfaceFleche("O", couleur), (0, (i + 1) * self.delta))
+            self.surface.blit(self.surfaceFleche("E", couleur), (self.delta * (self.nbColonne + 1), (i + 1) * self.delta))
 
-        for i in range(1, self.nbCol, 2):
-            self.surface.blit(flecheN, ((i + 1) * self.deltal, 0))
-            self.surface.blit(
-                flecheS, ((i + 1) * self.deltah, self.deltah * (self.nbLig + 1))
-            )
+        for i in range(1, self.nbColonne, 2):
+            self.surface.blit(self.surfaceFleche("N", couleur), ((i + 1) * self.delta, 0))
+            self.surface.blit(self.surfaceFleche("S", couleur), ((i + 1) * self.delta, self.delta * (self.nbLigne + 1)))
 
     def afficheGrille(self):
         font = pygame.font.Font(None, self.tailleFont)
-        for i in range(self.nbLig):
-            for j in range(self.nbCol):
+        for i in range(self.nbLigne):
+            for j in range(self.nbColonne):
                 try:
                     carte = self.laMatrice.getVal(i, j)
                     s = self.surfaceCarte(carte)
@@ -228,15 +231,15 @@ class LabyrintheGraphique(object):
                         self.surface.fill(
                             (0, 0, 0),
                             (
-                                (j + 1) * self.deltal,
-                                (i + 1) * self.deltah,
-                                self.deltal,
-                                self.deltah,
+                                (j + 1) * self.delta,
+                                (i + 1) * self.delta,
+                                self.delta,
+                                self.delta,
                             ),
                         )
                     else:
                         self.surface.blit(
-                            s, ((j + 1) * self.deltal, (i + 1) * self.deltah)
+                            s, ((j + 1) * self.delta, (i + 1) * self.delta)
                         )
                 except:
                     pass
@@ -269,26 +272,26 @@ class LabyrintheGraphique(object):
 
     def getCase(self, pos):
         if (
-            self.finl + self.deltal // 2
+            self.finl + self.delta // 2
             <= pos[0]
-            <= self.finl + self.deltal // 2 + self.deltal
-            and self.finh // 2 <= pos[1] <= self.finh // 2 + self.deltah
+            <= self.finl + self.delta // 2 + self.delta
+            and self.finh // 2 <= pos[1] <= self.finh // 2 + self.delta
         ):
             return ("T", "T")
         if pos[0] < 0 or pos[0] > self.finl or pos[1] < 0 or pos[1] > self.finh:
             return (-1, -1)
 
-        x = pos[1] // self.deltah
-        y = pos[0] // self.deltal
+        x = pos[1] // self.delta
+        y = pos[0] // self.delta
         if x == 0 and y in [2, 4, 6]:
             return ("N", y - 1)
-        if x == self.nbCol + 1 and y in [2, 4, 6]:
+        if x == self.nbColonne + 1 and y in [2, 4, 6]:
             return ("S", y - 1)
         if y == 0 and x in [2, 4, 6]:
             return ("O", x - 1)
-        if y == self.nbLig + 1 and x in [2, 4, 6]:
+        if y == self.nbLigne + 1 and x in [2, 4, 6]:
             return ("E", x - 1)
-        if x == 0 or x == self.nbCol + 1 or y == 0 or y == self.nbLig + 1:
+        if x == 0 or x == self.nbColonne + 1 or y == 0 or y == self.nbLigne + 1:
             return (-1, -1)
         return (x - 1, y - 1)
 

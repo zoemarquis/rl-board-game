@@ -5,8 +5,9 @@ import random
 import os
 import copy
 
-
 NB_LIGNES = 7
+
+TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 
 
 # permet de créer un labyrinthe avec nbJoueurs joueurs, nbTresors trésors
@@ -32,55 +33,30 @@ class Labyrinthe(object):
         # Initialisation du plateau
         plateau = Matrice(7, 7)
         # Cartes fixe
-        plateau.setVal(
-            0, 2, Carte(False, True, True, True, 5)
-        )  # grimoire
-        plateau.setVal(
-            0, 4, Carte(False, True, True, True, 13)
-        )  # bourse
+        plateau.setVal(0, 2, Carte(False, True, True, True, 5))  # grimoire
+        plateau.setVal(0, 4, Carte(False, True, True, True, 13))  # bourse
 
-        plateau.setVal(
-            2, 0, Carte(True, True, True, False, 1)
-        )  # fiole
-        plateau.setVal(
-            2, 2, Carte(True, True, True, False, 7)
-        )  # couronne
-        plateau.setVal(
-            2, 4, Carte(False, True, True, True, 14)
-        )  # clef
-        plateau.setVal(
-            2, 6, Carte(True, False, True, True, 22)
-        )  # calice
+        plateau.setVal(2, 0, Carte(True, True, True, False, 1))  # fiole
+        plateau.setVal(2, 2, Carte(True, True, True, False, 7))  # couronne
+        plateau.setVal(2, 4, Carte(False, True, True, True, 14))  # clef
+        plateau.setVal(2, 6, Carte(True, False, True, True, 22))  # calice
 
-        plateau.setVal(
-            4, 0, Carte(True, True, True, False, 2)
-        )  # bague
-        plateau.setVal(
-            4, 2, Carte(True, True, False, True, 8)
-        )  # trésor
-        plateau.setVal(
-            4, 4, Carte(True, False, True, True, 15)
-        )  # pierre précieuse
-        plateau.setVal(
-            4, 6, Carte(True, False, True, True, 23)
-        )  # épée
+        plateau.setVal(4, 0, Carte(True, True, True, False, 2))  # bague
+        plateau.setVal(4, 2, Carte(True, True, False, True, 8))  # trésor
+        plateau.setVal(4, 4, Carte(True, False, True, True, 15))  # pierre précieuse
+        plateau.setVal(4, 6, Carte(True, False, True, True, 23))  # épée
 
-        plateau.setVal(
-            6, 2, Carte(True, True, False, True, 9)
-        )  # chandelier
-        plateau.setVal(
-            6, 4, Carte(True, True, False, True, 16)
-        )  # casque
+        plateau.setVal(6, 2, Carte(True, True, False, True, 9))  # chandelier
+        plateau.setVal(6, 4, Carte(True, True, False, True, 16))  # casque
 
         # Carte des joueurs fixe : les 4 coins
         plateau.setVal(0, 0, Carte(False, True, True, False, is_base=1))  # A
-        plateau.setVal(0, 6, Carte(False, False, True, True, is_base=2) ) # B
-        plateau.setVal(6, 6, Carte(True, False, False, True, is_base=3)  )# C
-        plateau.setVal(6, 0, Carte(True, True, False, False, is_base=4)  )# D
+        plateau.setVal(0, 6, Carte(False, False, True, True, is_base=2))  # B
+        plateau.setVal(6, 0, Carte(True, True, False, False, is_base=3))  # C
+        plateau.setVal(6, 6, Carte(True, False, False, True, is_base=4))  # D
 
         # Placement des joueurs
         self.nbJoueurs = nbHumains + nbIA
-        print(self.nbJoueurs)
         if self.nbJoueurs >= 1:
             plateau.getVal(0, 0).poserPion(1)  # A
         if self.nbJoueurs >= 2:
@@ -91,7 +67,7 @@ class Labyrinthe(object):
             plateau.getVal(6, 6).poserPion(4)  # D
 
         # Trésors et cartes amovible
-        listeCarte = creerCartesAmovibles(13, nbTresors + 1)
+        listeCarte = creerCartesAmovibles(nbTresors)
         for i in range(7):
             for j in range(7):
                 if (
@@ -600,23 +576,25 @@ class Labyrinthe(object):
 #############################################################
 # fonction qui permet de créer les cartes amovibles du jeu en y positionnant aléatoirement nbTresor Trésors
 # la fonction retourne la liste, mélangée aléatoirement, des cartes ainsi créées
-def creerCartesAmovibles(tresorDebut, nbTresors):
+def creerCartesAmovibles(nbTresors):
     listeCarte = []
-    for i in range(16):  # 16 carte 'coin' ( 20 - 4 presente dans le plateau)
+    for i in range(16):  # 16 carte coude
         carte = Carte(True, True, False, False)
         carte.tourneAleatoire()
         listeCarte.append(carte)
-    for i in range(12):  # 12 carte 'tout-droit'
+    for i in range(12):  # 12 carte tout-droit
         carte = Carte(True, False, True, False)
         carte.tourneAleatoire()
         listeCarte.append(carte)
-    for i in range(6):
+    for i in range(6):  # 6 carte T
         carte = Carte(True, True, True, False)
         carte.tourneAleatoire()
         listeCarte.append(carte)
     random.shuffle(listeCarte)
-    for tresor in range(tresorDebut, nbTresors):
-        listeCarte[tresor].mettreTresor(tresor)
+    # Placer les trésors sur les cartes (attention à ne pas mettre les trésors déjà sur cartes fixes
+    for tresor in range(1, nbTresors + 1):
+        if not tresor in TRESORS_FIXES:
+            listeCarte[tresor].mettreTresor(tresor)
     return listeCarte
 
 
