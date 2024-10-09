@@ -349,6 +349,7 @@ class Menu(object):
                     self.afficherQuestion()
 
             if ev.type == pygame.QUIT:
+                print("quit here")
                 continuer = False
 
             if ev.type == pygame.MOUSEBUTTONDOWN:
@@ -385,6 +386,7 @@ class Menu(object):
 
             elif self.select == 3:
                 continuer = False
+                print("here")
 
             pygame.display.flip()
         pygame.quit()
