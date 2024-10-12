@@ -43,7 +43,7 @@ class LabyrinthEnv(gym.Env):
     # Retourne l'état du jeu
     def reset(self):
         # Paramètres du jeu
-        self.game = Labyrinthe(nbHumains=1, nbTresors=2, nbTresorMax=0, nbIA=0)
+        self.game = Labyrinthe(nbHumains=1, nbTresors=2, nbTresorParPersonne=0, nbIA=0)
 
         self.termine = False
         self.derniere_insertion = None

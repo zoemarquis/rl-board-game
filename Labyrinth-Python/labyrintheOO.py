@@ -1,5 +1,5 @@
 from carteOO import *
-from matriceOO import DIMENSION, Matrix
+from matrix import DIMENSION, Matrix
 from joueurOO import *
 import random
 import os
@@ -7,6 +7,8 @@ import copy
 
 TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 
+NUM_TREASURES = 24
+NUM_TREASURES_PER_PLAYER = 6
 
 # permet de créer un labyrinthe avec nbJoueurs joueurs, nbTresors trésors
 # chacun des joueurs aura au plus nbTresorMax à trouver
@@ -14,8 +16,8 @@ TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 # à chaque joueur en restant équitable
 # un joueur courant est choisi et la phase est initialisée
 class Labyrinthe(object):
-    def __init__(self, nbHumains=2, nbTresors=24, nbTresorMax=0, nbIA=0):
-        self.joueurs = Joueurs(nbHumains + nbIA, nbTresors, nbTresorMax)
+    def __init__(self, nbHumains=2, nbIA=0, nbTresors=NUM_TREASURES, nbTresorParPersonne=NUM_TREASURES_PER_PLAYER ):
+        self.joueurs = Joueurs(nbHumains + nbIA, nbTresors, nbTresorParPersonne)
         self.joueurCourant = 1
         self.phase = 1
         self.nbTresors = nbTresors

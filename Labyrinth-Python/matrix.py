@@ -144,6 +144,7 @@ class Matrix(object):
 
     # TODO tester utilité de la fonction : seulement à affichage ?
     def print_divider_line(self, cell_size=4):
+        """Print a line to divide the matrix"""
         print()
         for i in range(DIMENSION + 1):
             print("-" * cell_size + "+", end="")
@@ -151,6 +152,7 @@ class Matrix(object):
 
     # TODO tester utilité de la fonction
     def print_matrix(self, cell_size=4):
+        """Print the matrix"""
         print(" " * cell_size + "|", end="")
         for i in range(DIMENSION):  # cols
             print(str(i).center(cell_size) + "|", end="")

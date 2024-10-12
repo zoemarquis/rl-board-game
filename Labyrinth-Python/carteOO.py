@@ -1,5 +1,5 @@
 from random import randint
-from matriceOO import DIMENSION
+from matrix import DIMENSION
 
 # la liste des caractère semi-graphiques correspondants aux différentes cartes
 # l'indice du caractère dans la liste correspond au codage des murs sur la carte
