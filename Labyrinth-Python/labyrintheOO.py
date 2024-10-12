@@ -16,7 +16,13 @@ NUM_TREASURES_PER_PLAYER = 6
 # à chaque joueur en restant équitable
 # un joueur courant est choisi et la phase est initialisée
 class Labyrinthe(object):
-    def __init__(self, nbHumains=2, nbIA=0, nbTresors=NUM_TREASURES, nbTresorParPersonne=NUM_TREASURES_PER_PLAYER ):
+    def __init__(
+        self,
+        nbHumains=2,
+        nbIA=0,
+        nbTresors=NUM_TREASURES,
+        nbTresorParPersonne=NUM_TREASURES_PER_PLAYER,
+    ):
         self.joueurs = Joueurs(nbHumains + nbIA, nbTresors, nbTresorParPersonne)
         self.joueurCourant = 1
         self.phase = 1

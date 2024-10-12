@@ -1,14 +1,15 @@
 from eztext import *
 from labyrintheModeGraphiqueOO import *
 
-class Game(object):
-    """ Main class of the game, managing the game parameters and the events of the menu window """
-    
-    def __init__(self, human_players, ia_number):
-        """ Initialization of the Game class """
 
-        self.space = 50 # inutile ?
-        self.iOpt = 0 # inutile ?
+class Game(object):
+    """Main class of the game, managing the game parameters and the events of the menu window"""
+
+    def __init__(self, human_players, ia_number):
+        """Initialization of the Game class"""
+
+        self.space = 50  # inutile ?
+        self.iOpt = 0  # inutile ?
 
         pygame.init()
 
@@ -26,16 +27,16 @@ class Game(object):
         self.background_color = (0, 255, 0)
 
         self.fontsize = 25
-        self.iFont = 1 # inutile ?
-        self.allFont = pygame.font.get_fonts() # inutile ?
+        self.iFont = 1  # inutile ?
+        self.allFont = pygame.font.get_fonts()  # inutile ?
         self.styleFont = "texgyrechorus"
         self.font = pygame.font.SysFont(self.styleFont, self.fontsize)
-        
+
         self.human_players = human_players
         self.ia_number = ia_number
 
     def display_font(self):
-        """ Display the font on the screen """
+        """Display the font on the screen"""
         text = self.font.render(self.styleFont, 1, (255, 255, 255))
         text_position = text.get_rect()
         text_position.x = self.space
@@ -45,7 +46,7 @@ class Game(object):
         pygame.display.flip()
 
     def update_window(self):
-        """ Update the window """
+        """Update the window"""
         self.surface = pygame.display.get_surface()
         self.window_height = self.surface.get_height()
         self.window_width = self.surface.get_width()
@@ -54,21 +55,24 @@ class Game(object):
         self.font = pygame.font.SysFont(self.styleFont, self.fontsize)
 
     def text_initialization(self, text, hauteur=0):
-        """ Initialize text zones """
+        """Initialize text zones"""
         text = self.font.render(text, 1, self.background_color)
         text_position = text.get_rect()
         text_position.x = (self.window_width - text_position.width) // 2
         text_position.y = hauteur
         return (text, text_position)
-    
 
     def launch(self):
-        ''' Launch the game '''
+        """Launch the game"""
 
-        assert 0 <= self.human_players <= 4, "Nombre de joueurs humains doit être entre 0 et 4"
+        assert (
+            0 <= self.human_players <= 4
+        ), "Nombre de joueurs humains doit être entre 0 et 4"
         assert 0 <= self.ia_number <= 4, "Nombre de IA doit être entre 0 et 4"
-        assert 2 <= self.human_players + self.ia_number <= 4 , "La somme de joueurs humains et IA doit être entre 2 et 4"
-        
+        assert (
+            2 <= self.human_players + self.ia_number <= 4
+        ), "La somme de joueurs humains et IA doit être entre 2 et 4"
+
         g = LabyrintheGraphique(
             Labyrinthe(
                 nbHumains=self.human_players,
