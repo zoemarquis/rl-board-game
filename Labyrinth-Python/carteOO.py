@@ -30,7 +30,6 @@ listeCartes = [
 # tresor est le numéro du trésor qui se trouve sur la carte (0 s'il n'y a pas de trésor)
 # pions donne la liste des pions qui seront posés sur la carte (un pion est un entier entre 1 et 4)
 class Carte(object):
-
     def __init__(self, nord, est, sud, ouest, tresor=0, pions=[], is_base=0):
         self.nord = nord
         self.est = est

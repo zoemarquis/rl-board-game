@@ -10,7 +10,7 @@ num_tours = 1000
 for tour in range(num_tours):
     print(f"Tour {tour + 1}/{num_tours}")
 
-    action = env.action_space.sample() # Au hasard pour le test
+    action = env.action_space.sample()  # Au hasard pour le test
 
     observation, recompense, termine, info = env.step(action)
 
@@ -24,4 +24,4 @@ for tour in range(num_tours):
         print("Game over !")
         break
 
-env.close() # Fait rien pour l'instant
+env.close()  # Fait rien pour l'instant

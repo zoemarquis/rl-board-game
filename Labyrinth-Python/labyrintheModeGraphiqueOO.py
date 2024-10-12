@@ -63,7 +63,9 @@ class LabyrintheGraphique(object):
         for i in range(1, NB_JOUEUR + 1):
             s = pygame.image.load(os.path.join(prefixImage, "pion" + str(i) + ".png"))
             self.imagesPions.append(s)
-            s = pygame.image.load(os.path.join(prefixImage, "texte_pion" + str(i) + ".png"))
+            s = pygame.image.load(
+                os.path.join(prefixImage, "texte_pion" + str(i) + ".png")
+            )
             self.imagesTextePions.append(s)
             s = pygame.image.load(os.path.join(prefixImage, "base" + str(i) + ".png"))
             self.imagesBases.append(s)
@@ -72,7 +74,9 @@ class LabyrintheGraphique(object):
         for i in range(1, NB_TRESOR + 1):
             s = pygame.image.load(os.path.join(prefixImage, "tresor" + str(i) + ".png"))
             self.imagesTresors.append(s)
-            s = pygame.image.load(os.path.join(prefixImage, "carte_tresor" + str(i) + ".png"))
+            s = pygame.image.load(
+                os.path.join(prefixImage, "carte_tresor" + str(i) + ".png")
+            )
             self.imagesTexteTresors.append(s)
         # no random on all images
         # random.shuffle(self.imagesTresors)
@@ -155,13 +159,13 @@ class LabyrintheGraphique(object):
         )
         res.blit(surfPion, (self.delta // 4, self.delta // 4))
         return res
-    
+
     def surfaceTextePion(self, pion):
         res = pygame.Surface((self.delta, self.delta))
         surfPion = pygame.transform.smoothscale(
-            self.imagesTextePions[pion - 1], (self.delta , self.delta)
+            self.imagesTextePions[pion - 1], (self.delta, self.delta)
         )
-        res.blit(surfPion, (0,0))
+        res.blit(surfPion, (0, 0))
         return res
 
     def surfaceTresor(self, tresor):
@@ -177,7 +181,7 @@ class LabyrintheGraphique(object):
         surfTresor = pygame.transform.smoothscale(
             self.imagesTexteTresors[tresor - 1], (self.delta, self.delta)
         )
-        res.blit(surfTresor, (0,0))
+        res.blit(surfTresor, (0, 0))
         return res
 
     def afficheMessage(self, ligne, texte, images=[], couleur=None):
@@ -234,7 +238,7 @@ class LabyrintheGraphique(object):
         )  # Ici, carte == carteAjouer
 
     def dessineFleches(self, couleur=(255, 255, 0)):
-        self.surface.fill((0, 0, 139)) # pour gérer les effets de transparence
+        self.surface.fill((0, 0, 139))  # pour gérer les effets de transparence
         # TODO : changer la couleur de la fleche dont on a pas le droit
         for i in range(1, self.nbLigne, 2):
             flecheO = self.surfaceFleche("O", couleur)
@@ -243,7 +247,9 @@ class LabyrintheGraphique(object):
 
             flecheE = self.surfaceFleche("E", couleur)
             flecheE.set_colorkey((0, 0, 0))  # Set transparency color key
-            self.surface.blit(flecheE, (self.delta * (self.nbColonne + 1), (i + 1) * self.delta))
+            self.surface.blit(
+                flecheE, (self.delta * (self.nbColonne + 1), (i + 1) * self.delta)
+            )
 
         for i in range(1, self.nbColonne, 2):
             flecheN = self.surfaceFleche("N", couleur)
@@ -252,7 +258,9 @@ class LabyrintheGraphique(object):
 
             flecheS = self.surfaceFleche("S", couleur)
             flecheS.set_colorkey((0, 0, 0))  # Set transparency color key
-            self.surface.blit(flecheS, ((i + 1) * self.delta, self.delta * (self.nbLigne + 1)))
+            self.surface.blit(
+                flecheS, ((i + 1) * self.delta, self.delta * (self.nbLigne + 1))
+            )
 
     def afficheGrille(self):
         font = pygame.font.Font(None, self.tailleFont)
@@ -494,7 +502,10 @@ class LabyrintheGraphique(object):
                         self.fini = True
                     else:
                         self.messageInfo = "L'IA @img@ a trouvé le trésor @img@"
-                        self.imgInfo = [self.surfacePion(jc), self.surfaceTexteTresor(t)]
+                        self.imgInfo = [
+                            self.surfacePion(jc),
+                            self.surfaceTexteTresor(t),
+                        ]
 
                 self.labyrinthe.changerJoueurCourant()
                 self.afficheJeu()

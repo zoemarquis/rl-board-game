@@ -1,5 +1,5 @@
 from carteOO import *
-from matriceOO import  DIMENSION, Matrix
+from matriceOO import DIMENSION, Matrix
 from joueurOO import *
 import random
 import os
@@ -14,7 +14,6 @@ TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 # à chaque joueur en restant équitable
 # un joueur courant est choisi et la phase est initialisée
 class Labyrinthe(object):
-
     def __init__(self, nbHumains=2, nbTresors=24, nbTresorMax=0, nbIA=0):
         self.joueurs = Joueurs(nbHumains + nbIA, nbTresors, nbTresorMax)
         self.joueurCourant = 1
@@ -207,24 +206,16 @@ class Labyrinthe(object):
     #      - met à jour la nouvelle direction interdite
     def jouerCarte(self, direction, rangee):
         if direction == "N":
-            self.carteAjouer = self.plateau.decalageColonneEnBas(
-                rangee, self.carteAjouer
-            )
+            self.carteAjouer = self.plateau.shift_column_down(rangee, self.carteAjouer)
             self.coupInter = ("S", rangee)
         if direction == "E":
-            self.carteAjouer = self.plateau.decalageLigneAGauche(
-                rangee, self.carteAjouer
-            )
+            self.carteAjouer = self.plateau.shift_row_left(rangee, self.carteAjouer)
             self.coupInter = ("O", rangee)
         if direction == "S":
-            self.carteAjouer = self.plateau.decalageColonneEnHaut(
-                rangee, self.carteAjouer
-            )
+            self.carteAjouer = self.plateau.shift_column_up(rangee, self.carteAjouer)
             self.coupInter = ("N", rangee)
         if direction == "O":
-            self.carteAjouer = self.plateau.decalageLigneADroite(
-                rangee, self.carteAjouer
-            )
+            self.carteAjouer = self.plateau.shift_row_right(rangee, self.carteAjouer)
             self.coupInter = ("E", rangee)
         pions = self.carteAjouer.getListePions()
         for pion in pions:
@@ -318,30 +309,38 @@ class Labyrinthe(object):
             val = matTest.get_value(x, y)
             while x != ligD or y != colD:
                 if x > 0:
-                    if 0 < matTest.get_value(x - 1, y) == val - 1 and self.plateau.get_value(
-                        x, y
-                    ).passageNord(self.plateau.get_value(x - 1, y)):
+                    if 0 < matTest.get_value(
+                        x - 1, y
+                    ) == val - 1 and self.plateau.get_value(x, y).passageNord(
+                        self.plateau.get_value(x - 1, y)
+                    ):
                         x -= 1
                         chemin.append((x, y))
                         val = matTest.get_value(x, y)
                 if y > 0:
-                    if 0 < matTest.get_value(x, y - 1) == val - 1 and self.plateau.get_value(
-                        x, y
-                    ).passageOuest(self.plateau.get_value(x, y - 1)):
+                    if 0 < matTest.get_value(
+                        x, y - 1
+                    ) == val - 1 and self.plateau.get_value(x, y).passageOuest(
+                        self.plateau.get_value(x, y - 1)
+                    ):
                         y -= 1
                         chemin.append((x, y))
                         val = matTest.get_value(x, y)
                 if x < DIMENSION - 1:
-                    if 0 < matTest.get_value(x + 1, y) == val - 1 and self.plateau.get_value(
-                        x, y
-                    ).passageSud(self.plateau.get_value(x + 1, y)):
+                    if 0 < matTest.get_value(
+                        x + 1, y
+                    ) == val - 1 and self.plateau.get_value(x, y).passageSud(
+                        self.plateau.get_value(x + 1, y)
+                    ):
                         x += 1
                         chemin.append((x, y))
                         val = matTest.get_value(x, y)
                 if y < DIMENSION - 1:
-                    if 0 < matTest.get_value(x, y + 1) == val - 1 and self.plateau.get_value(
-                        x, y
-                    ).passageEst(self.plateau.get_value(x, y + 1)):
+                    if 0 < matTest.get_value(
+                        x, y + 1
+                    ) == val - 1 and self.plateau.get_value(x, y).passageEst(
+                        self.plateau.get_value(x, y + 1)
+                    ):
                         y += 1
                         chemin.append((x, y))
                         val = matTest.get_value(x, y)
