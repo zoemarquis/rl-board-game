@@ -5,7 +5,7 @@ from labyrintheModeGraphiqueOO import *
 class Game(object):
     """Main class of the game, managing the game parameters and the events of the menu window"""
 
-    def __init__(self, human_players, ia_number):
+    def __init__(self, human_players, ia_number, directory):
         """Initialization of the Game class"""
 
         self.space = 50  # inutile ?
@@ -18,9 +18,10 @@ class Game(object):
         self.window = pygame.display.set_mode(
             (self.window_width, self.window_height), pygame.RESIZABLE
         )
+        self.directory = directory
         pygame.display.set_caption("Labyrinthe")
         pygame.display.set_icon(
-            pygame.image.load(os.path.join("./original_images", "logo.png"))
+            pygame.image.load(os.path.join(self.directory, "logo.png"))
         )
         self.surface = pygame.display.get_surface()
 
@@ -77,7 +78,8 @@ class Game(object):
             Labyrinthe(
                 nbHumains=self.human_players,
                 nbIA=self.ia_number,
-            )
+            ),
+            prefixeImage=self.directory
         )
         g.demarrer()
 
