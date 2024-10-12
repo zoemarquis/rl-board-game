@@ -32,8 +32,8 @@ class LabyrintheGraphique(object):
         self.fini = False
         self.couleurTexte = couleur
         self.laMatrice = labyrinthe.plateau
-        self.nbColonne = self.laMatrice.getNbColonnes()
-        self.nbLigne = self.laMatrice.getNbLignes()
+        self.nbColonne = DIMENSION
+        self.nbLigne = DIMENSION
         self.titre = titre
         self.cheat = False
         self.getImages(prefixeImage)
@@ -259,7 +259,7 @@ class LabyrintheGraphique(object):
         for i in range(self.nbLigne):
             for j in range(self.nbColonne):
                 try:
-                    carte = self.laMatrice.getVal(i, j)
+                    carte = self.laMatrice.get_value(i, j)
                     s = self.surfaceCarte(carte)
                     if s == None:
                         self.surface.fill(
@@ -293,10 +293,10 @@ class LabyrintheGraphique(object):
         if chemin == None or chemin == []:
             return
         pos = chemin.pop(0)
-        val = self.laMatrice.getVal(pos[0], pos[1])
+        val = self.laMatrice.get_value(pos[0], pos[1])
         for elem in chemin:
-            self.laMatrice.setVal(pos[0], pos[1], 0)
-            self.laMatrice.setVal(elem[0], elem[1], val)
+            self.laMatrice.set_value(pos[0], pos[1], 0)
+            self.laMatrice.set_value(elem[0], elem[1], val)
             self.afficheGrille()
             pygame.display.flip()
             pos = elem
@@ -443,7 +443,7 @@ class LabyrintheGraphique(object):
                             self.imgInfo = []
                         else:
                             if self.cheat:
-                                self.labyrinthe.plateau.getVal(x, y).tournerHoraire()
+                                self.labyrinthe.plateau.get_value(x, y).tournerHoraire()
                             else:
                                 jc = self.labyrinthe.getJoueurCourant()
                                 xD, yD = self.labyrinthe.coordonneesJoueurCourant
@@ -454,7 +454,7 @@ class LabyrintheGraphique(object):
                                     self.imgInfo = [self.surfacePion(jc)]
                                 else:
                                     self.animationChemin(chemin, jc)
-                                    c = self.labyrinthe.plateau.getVal(x, y)
+                                    c = self.labyrinthe.plateau.get_value(x, y)
                                     t = self.labyrinthe.getTresorCourant()
                                     if c.getTresor() == t:
                                         c.prendreTresor()
@@ -484,7 +484,7 @@ class LabyrintheGraphique(object):
                 jc = self.labyrinthe.getJoueurCourant()
                 self.animationChemin(chemin, jc)
                 x, y = self.labyrinthe.getCoordonneesJoueurCourant()
-                c = self.labyrinthe.plateau.getVal(x, y)
+                c = self.labyrinthe.plateau.get_value(x, y)
                 t = self.labyrinthe.getTresorCourant()
                 if c.getTresor() == t:
                     c.prendreTresor()

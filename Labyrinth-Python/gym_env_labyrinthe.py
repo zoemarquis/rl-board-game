@@ -141,7 +141,7 @@ class LabyrinthEnv(gym.Env):
         # Récupération des infos sur le plateau
         for i in range(7):
             for j in range(7):
-                carte = plateau.getVal(i, j)
+                carte = plateau.get_value(i, j)
                 # Infos murs
                 infos_labyrinthe[i, j, 0] = carte.murNord()
                 infos_labyrinthe[i, j, 1] = carte.murSud()

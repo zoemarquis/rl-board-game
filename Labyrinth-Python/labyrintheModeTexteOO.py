@@ -63,15 +63,15 @@ class LabyrintheModeTexte(object):
         for i in range(1, 7, 2):
             print(" " + str(i), sep="", end="")
         print()
-        for i in range(plateau.getNbLignes()):
+        for i in range(DIMENSION):
             print(remplissage, end="")
             if i % 2 == 0:
                 print(" ", sep="", end="")
             else:
                 print(str(i), sep="", end="")
-            for j in range(plateau.getNbColonnes()):
+            for j in range(DIMENSION):
                 self.afficheCarte(
-                    plateau.getVal(i, j), self.labyrinthe.getJoueurCourant(), tresor
+                    plateau.get_value(i, j), self.labyrinthe.getJoueurCourant(), tresor
                 )
             if i % 2 == 0:
                 print(" ", sep="", end="")
@@ -188,7 +188,7 @@ class LabyrintheModeTexte(object):
             chemin = self.saisirDeplacement()
             jc = self.labyrinthe.getJoueurCourant()
             xA, yA = self.animationChemin(chemin, jc)
-            c = self.labyrinthe.plateau.getVal(xA, yA)
+            c = self.labyrinthe.plateau.get_value(xA, yA)
             t = self.labyrinthe.getTresorCourant()
             message = ""
 

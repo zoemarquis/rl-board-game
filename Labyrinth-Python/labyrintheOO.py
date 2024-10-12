@@ -1,11 +1,9 @@
 from carteOO import *
-from matriceOO import *
+from matriceOO import  DIMENSION, Matrix
 from joueurOO import *
 import random
 import os
 import copy
-
-NB_LIGNES = 7
 
 TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 
@@ -31,40 +29,40 @@ class Labyrinthe(object):
         else:
             self.joueursIADef = []
         # Initialisation du plateau
-        plateau = Matrice(7, 7)
+        plateau = Matrix()
         # Cartes fixe
-        plateau.setVal(0, 2, Carte(False, True, True, True, 5))  # grimoire
-        plateau.setVal(0, 4, Carte(False, True, True, True, 13))  # bourse
+        plateau.set_value(0, 2, Carte(False, True, True, True, 5))  # grimoire
+        plateau.set_value(0, 4, Carte(False, True, True, True, 13))  # bourse
 
-        plateau.setVal(2, 0, Carte(True, True, True, False, 1))  # fiole
-        plateau.setVal(2, 2, Carte(True, True, True, False, 7))  # couronne
-        plateau.setVal(2, 4, Carte(False, True, True, True, 14))  # clef
-        plateau.setVal(2, 6, Carte(True, False, True, True, 22))  # calice
+        plateau.set_value(2, 0, Carte(True, True, True, False, 1))  # fiole
+        plateau.set_value(2, 2, Carte(True, True, True, False, 7))  # couronne
+        plateau.set_value(2, 4, Carte(False, True, True, True, 14))  # clef
+        plateau.set_value(2, 6, Carte(True, False, True, True, 22))  # calice
 
-        plateau.setVal(4, 0, Carte(True, True, True, False, 2))  # bague
-        plateau.setVal(4, 2, Carte(True, True, False, True, 8))  # trésor
-        plateau.setVal(4, 4, Carte(True, False, True, True, 15))  # pierre précieuse
-        plateau.setVal(4, 6, Carte(True, False, True, True, 23))  # épée
+        plateau.set_value(4, 0, Carte(True, True, True, False, 2))  # bague
+        plateau.set_value(4, 2, Carte(True, True, False, True, 8))  # trésor
+        plateau.set_value(4, 4, Carte(True, False, True, True, 15))  # pierre précieuse
+        plateau.set_value(4, 6, Carte(True, False, True, True, 23))  # épée
 
-        plateau.setVal(6, 2, Carte(True, True, False, True, 9))  # chandelier
-        plateau.setVal(6, 4, Carte(True, True, False, True, 16))  # casque
+        plateau.set_value(6, 2, Carte(True, True, False, True, 9))  # chandelier
+        plateau.set_value(6, 4, Carte(True, True, False, True, 16))  # casque
 
         # Carte des joueurs fixe : les 4 coins
-        plateau.setVal(0, 0, Carte(False, True, True, False, is_base=1))  # A
-        plateau.setVal(0, 6, Carte(False, False, True, True, is_base=2))  # B
-        plateau.setVal(6, 0, Carte(True, True, False, False, is_base=3))  # C
-        plateau.setVal(6, 6, Carte(True, False, False, True, is_base=4))  # D
+        plateau.set_value(0, 0, Carte(False, True, True, False, is_base=1))  # A
+        plateau.set_value(0, 6, Carte(False, False, True, True, is_base=2))  # B
+        plateau.set_value(6, 0, Carte(True, True, False, False, is_base=3))  # C
+        plateau.set_value(6, 6, Carte(True, False, False, True, is_base=4))  # D
 
         # Placement des joueurs
         self.nbJoueurs = nbHumains + nbIA
         if self.nbJoueurs >= 1:
-            plateau.getVal(0, 0).poserPion(1)  # A
+            plateau.get_value(0, 0).poserPion(1)  # A
         if self.nbJoueurs >= 2:
-            plateau.getVal(0, 6).poserPion(2)  # B
+            plateau.get_value(0, 6).poserPion(2)  # B
         if self.nbJoueurs >= 3:
-            plateau.getVal(6, 0).poserPion(3)  # C
+            plateau.get_value(6, 0).poserPion(3)  # C
         if self.nbJoueurs == 4:
-            plateau.getVal(6, 6).poserPion(4)  # D
+            plateau.get_value(6, 6).poserPion(4)  # D
 
         # Trésors et cartes amovible
         listeCarte = creerCartesAmovibles(nbTresors)
@@ -73,7 +71,7 @@ class Labyrinthe(object):
                 if (
                     i % 2 == 1 or j % 2 == 1
                 ):  # Cela correspond aux emplacements non fixe
-                    plateau.setVal(
+                    plateau.set_value(
                         i, j, listeCarte.pop(randint(0, len(listeCarte) - 1))
                     )
         self.carteAjouer = listeCarte[0]
@@ -115,13 +113,13 @@ class Labyrinthe(object):
     def getCoordonneesTresorCourant(self):
         coord = None
         tresor = self.getTresorCourant()
-        finL = self.plateau.getNbLignes()
-        finC = self.plateau.getNbColonnes()
+        finL = DIMENSION
+        finC = DIMENSION
         i = 0
         while i < finL and coord == None:
             j = 0
             while j < finC and coord == None:
-                if self.plateau.getVal(i, j).getTresor() == tresor:
+                if self.plateau.get_value(i, j).getTresor() == tresor:
                     coord = (i, j)
                 else:
                     j += 1
@@ -131,13 +129,13 @@ class Labyrinthe(object):
     # retourne sous la forme d'un couple (lin,col) la position du joueur courant sur le plateau
     def getCoordonneesJoueurCourant(self):
         coord = None
-        finL = self.plateau.getNbLignes()
-        finC = self.plateau.getNbColonnes()
+        finL = DIMENSION
+        finC = DIMENSION
         i = 0
         while i < finL and coord == None:
             j = 0
             while j < finC and coord == None:
-                if self.plateau.getVal(i, j).possedePion(self.getJoueurCourant()):
+                if self.plateau.get_value(i, j).possedePion(self.getJoueurCourant()):
                     coord = (i, j)
                 else:
                     j += 1
@@ -183,18 +181,18 @@ class Labyrinthe(object):
     # enlève le trésor numTresor sur la carte qui se trouve sur la case lin,col du plateau
     # si le trésor ne s'y trouve pas la fonction ne fait rien
     def prendreTresorL(self, lin, col, numTresor):
-        if self.plateau.getVal(lin, col).getTresor() == numTresor:
-            self.plateau.getVal(lin, col).prendreTresor()
+        if self.plateau.get_value(lin, col).getTresor() == numTresor:
+            self.plateau.get_value(lin, col).prendreTresor()
 
     # enlève le joueur courant de la carte qui se trouve sur la case lin,col du plateau
     # si le joueur ne s'y trouve pas la fonction ne fait rien
     def prendreJoueurCourant(self, lin, col):
-        self.plateau.getVal(lin, col).prendrePion(self.getJoueurCourant())
+        self.plateau.get_value(lin, col).prendrePion(self.getJoueurCourant())
 
     # pose le joueur courant de la carte qui se trouve sur la case lin,col du plateau
     # si le joueur s'y trouve déjà la fonction ne fait rien
     def poserJoueurCourant(self, lin, col):
-        self.plateau.getVal(lin, col).poserPion(self.getJoueurCourant())
+        self.plateau.get_value(lin, col).poserPion(self.getJoueurCourant())
 
     # fonction qui retourne True si le coup proposé correspond au coup interdit
     # elle retourne False sinon
@@ -251,56 +249,56 @@ class Labyrinthe(object):
 
     # prend le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
     def prendrePionL(self, lin, col, numJoueur):
-        self.plateau.getVal(lin, col).prendrePion(numJoueur)
+        self.plateau.get_value(lin, col).prendrePion(numJoueur)
 
     # pose le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
     def poserPionL(self, lin, col, joueur):
-        self.plateau.getVal(lin, col).poserPion(joueur)
+        self.plateau.get_value(lin, col).poserPion(joueur)
 
     # indique si il y a un chemin entre la case ligD,colD et la case ligA,colA du labyrinthe
     # Fonction marquant les case autour d'une case dont la valeur est val et qui est accessible
     def marquer(self, mat, val, marque):
         changer = False
-        for i in range(mat.getNbLignes()):
-            for j in range(mat.getNbColonnes()):
-                if mat.getVal(i, j) == val:
+        for i in range(DIMENSION):
+            for j in range(DIMENSION):
+                if mat.get_value(i, j) == val:
                     if i > 0:
-                        if self.plateau.getVal(i, j).passageNord(
-                            self.plateau.getVal(i - 1, j)
+                        if self.plateau.get_value(i, j).passageNord(
+                            self.plateau.get_value(i - 1, j)
                         ):
-                            if mat.getVal(i - 1, j) == 0:
-                                mat.setVal(i - 1, j, marque)
+                            if mat.get_value(i - 1, j) == 0:
+                                mat.set_value(i - 1, j, marque)
                                 changer = True
-                    if i < mat.getNbLignes() - 1:
-                        if self.plateau.getVal(i, j).passageSud(
-                            self.plateau.getVal(i + 1, j)
+                    if i < DIMENSION - 1:
+                        if self.plateau.get_value(i, j).passageSud(
+                            self.plateau.get_value(i + 1, j)
                         ):
-                            if mat.getVal(i + 1, j) == 0:
-                                mat.setVal(i + 1, j, marque)
+                            if mat.get_value(i + 1, j) == 0:
+                                mat.set_value(i + 1, j, marque)
                                 changer = True
                     if j > 0:
-                        if self.plateau.getVal(i, j).passageOuest(
-                            self.plateau.getVal(i, j - 1)
+                        if self.plateau.get_value(i, j).passageOuest(
+                            self.plateau.get_value(i, j - 1)
                         ):
-                            if mat.getVal(i, j - 1) == 0:
-                                mat.setVal(i, j - 1, marque)
+                            if mat.get_value(i, j - 1) == 0:
+                                mat.set_value(i, j - 1, marque)
                                 changer = True
-                    if j < mat.getNbColonnes() - 1:
-                        if self.plateau.getVal(i, j).passageEst(
-                            self.plateau.getVal(i, j + 1)
+                    if j < DIMENSION - 1:
+                        if self.plateau.get_value(i, j).passageEst(
+                            self.plateau.get_value(i, j + 1)
                         ):
-                            if mat.getVal(i, j + 1) == 0:
-                                mat.setVal(i, j + 1, marque)
+                            if mat.get_value(i, j + 1) == 0:
+                                mat.set_value(i, j + 1, marque)
                                 changer = True
         return changer
 
     def accessible(self, ligD, colD, ligA, colA):
-        matTest = Matrice(self.plateau.getNbLignes(), self.plateau.getNbColonnes())
-        matTest.setVal(ligD, colD, 1)
+        matTest = Matrix()
+        matTest.set_value(ligD, colD, 1)
         changer = True
-        while changer and matTest.getVal(ligA, colA) == 0:
+        while changer and matTest.get_value(ligA, colA) == 0:
             changer = self.marquer(matTest, 1, 1)
-        return matTest.getVal(ligA, colA) == 1
+        return matTest.get_value(ligA, colA) == 1
 
     # indique si il y a un chemin entre la case ligD,colD et la case ligA,colA du labyrinthe
     # mais la valeur de retour est None s'il n'y a pas de chemin, sinon c'est un chemin possible entre ces deux cases
@@ -308,45 +306,45 @@ class Labyrinthe(object):
         if not self.accessible(ligD, colD, ligA, colA):
             return []
         else:
-            matTest = Matrice(7, 7)
-            matTest.setVal(ligD, colD, 1)
+            matTest = Matrix()
+            matTest.set_value(ligD, colD, 1)
             changer = True
             i = 1
-            while changer and matTest.getVal(ligA, colA) == 0:
+            while changer and matTest.get_value(ligA, colA) == 0:
                 changer = self.marquer(matTest, i, i + 1)
                 i += 1
             x, y = ligA, colA
             chemin = [(x, y)]
-            val = matTest.getVal(x, y)
+            val = matTest.get_value(x, y)
             while x != ligD or y != colD:
                 if x > 0:
-                    if 0 < matTest.getVal(x - 1, y) == val - 1 and self.plateau.getVal(
+                    if 0 < matTest.get_value(x - 1, y) == val - 1 and self.plateau.get_value(
                         x, y
-                    ).passageNord(self.plateau.getVal(x - 1, y)):
+                    ).passageNord(self.plateau.get_value(x - 1, y)):
                         x -= 1
                         chemin.append((x, y))
-                        val = matTest.getVal(x, y)
+                        val = matTest.get_value(x, y)
                 if y > 0:
-                    if 0 < matTest.getVal(x, y - 1) == val - 1 and self.plateau.getVal(
+                    if 0 < matTest.get_value(x, y - 1) == val - 1 and self.plateau.get_value(
                         x, y
-                    ).passageOuest(self.plateau.getVal(x, y - 1)):
+                    ).passageOuest(self.plateau.get_value(x, y - 1)):
                         y -= 1
                         chemin.append((x, y))
-                        val = matTest.getVal(x, y)
-                if x < matTest.getNbLignes() - 1:
-                    if 0 < matTest.getVal(x + 1, y) == val - 1 and self.plateau.getVal(
+                        val = matTest.get_value(x, y)
+                if x < DIMENSION - 1:
+                    if 0 < matTest.get_value(x + 1, y) == val - 1 and self.plateau.get_value(
                         x, y
-                    ).passageSud(self.plateau.getVal(x + 1, y)):
+                    ).passageSud(self.plateau.get_value(x + 1, y)):
                         x += 1
                         chemin.append((x, y))
-                        val = matTest.getVal(x, y)
-                if y < matTest.getNbColonnes() - 1:
-                    if 0 < matTest.getVal(x, y + 1) == val - 1 and self.plateau.getVal(
+                        val = matTest.get_value(x, y)
+                if y < DIMENSION - 1:
+                    if 0 < matTest.get_value(x, y + 1) == val - 1 and self.plateau.get_value(
                         x, y
-                    ).passageEst(self.plateau.getVal(x, y + 1)):
+                    ).passageEst(self.plateau.get_value(x, y + 1)):
                         y += 1
                         chemin.append((x, y))
-                        val = matTest.getVal(x, y)
+                        val = matTest.get_value(x, y)
             chemin.reverse()
             return chemin
 
@@ -388,7 +386,7 @@ class Labyrinthe(object):
                             return ((xN, y), d)
                         else:
                             listeNewPos.add((xN, y))
-                if self.plateau.getNbLignes() - 1 > x:
+                if DIMENSION - 1 > x:
                     xN = x + 1
                     yN = y
                     d = distance((xN, y), posCible)
@@ -410,7 +408,7 @@ class Labyrinthe(object):
                             return ((x, yN), d)
                         else:
                             listeNewPos.add((x, yN))
-                if self.plateau.getNbColonnes() - 1 > y:
+                if DIMENSION - 1 > y:
                     yN = y + 1
                     xN = x
                     d = distance((x, yN), posCible)
@@ -612,9 +610,9 @@ def distance(pos1, pos2):
 # matP=Matrice(7,7)
 # for i in range(7):
 #     for j in range(7):
-#          matC.setVal(i,j,laby.plateau.getVal(i,j).toChar())
-#          matT.setVal(i,j,laby.plateau.getVal(i,j).getTresor())
-#          matP.setVal(i,j,laby.plateau.getVal(i,j).getListePions())
+#          matC.set_value(i,j,laby.plateau.get_value(i,j).toChar())
+#          matT.set_value(i,j,laby.plateau.get_value(i,j).getTresor())
+#          matP.set_value(i,j,laby.plateau.get_value(i,j).getListePions())
 # print('Matrice des cartes :\n')
 # matC.afficheMatrice()
 # print('matrice des tresors :')
@@ -641,7 +639,7 @@ def distance(pos1, pos2):
 # print('Test fonction getMeilleurAction',laby.getMeilleurAction())
 # for i in range(7):
 #     for j in range(7):
-#          matC.setVal(i,j,laby.plateau.getVal(i,j).toChar())
+#          matC.set_value(i,j,laby.plateau.get_value(i,j).toChar())
 
 # print('Matrice des cartes :\n')
 # matC.afficheMatrice()
