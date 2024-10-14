@@ -1,3 +1,5 @@
+from tile import Tile
+
 DIMENSION = 7
 
 
@@ -11,17 +13,17 @@ class Matrix(object):
                 matrix[(i, j)] = default_value
         self.matrix = matrix
 
-    def get_value(self, row, col):
+    def get_value(self, row, col) -> Tile:
         """Return the value in the matrix at the line and column passed as parameters"""
         assert row >= 0 and row < DIMENSION, "Row out of bounds"
         assert col >= 0 and col < DIMENSION, "Column out of bounds"
         return self.matrix[row, col]
 
-    def set_value(self, row, col, value):
+    def set_value(self, row, col, value) -> None:
         """Set the value in the matrix at the line and column passed as parameters"""
         self.matrix[row, col] = value
 
-    def shift_row_left(self, row_index, updated_value=0):
+    def shift_row_left(self, row_index, updated_value=0) -> int:
         """Shifts the row at the index passed as parameter to the left by one cell
         and inserts the updated value in the cell that was ejected by the shift
         Returns the value of the cell that was ejected by the shift"""
@@ -36,7 +38,7 @@ class Matrix(object):
         self.set_value(row_index, DIMENSION - 1, updated_value)
         return ejected_value
 
-    def shift_row_right(self, row_index, updated_value=0):
+    def shift_row_right(self, row_index, updated_value=0) -> int:
         """Shifts the row at the index passed as parameter to the right by one cell
         and inserts the updated value in the cell that was ejected by the shift
         Returns the value of the cell that was ejected by the shift"""
@@ -51,7 +53,7 @@ class Matrix(object):
         self.set_value(row_index, 0, updated_value)
         return ejected_value
 
-    def shift_column_up(self, col_index, updated_value=0):
+    def shift_column_up(self, col_index, updated_value=0) -> int:
         """Shifts the column at the index passed as parameter up by one cell
         and inserts the updated value in the cell that was ejected by the shift
         Returns the value of the cell that was ejected by the shift"""
@@ -80,86 +82,3 @@ class Matrix(object):
             self.set_value(i, col_index, self.get_value(i - 1, col_index))
         self.set_value(0, col_index, updated_value)
         return ejected_value
-
-    # -----------------------------------------
-    # INPUT / OUTPUT
-    # -----------------------------------------
-
-    # TODO tester utilité de la fonction
-    def save_matrix(self, file_name):
-        """Save the matrix in a text file"""
-        file = open(file_name, "w")
-        line = str(DIMENSION) + "," + str(DIMENSION) + "\n"
-        file.write(line)
-        for i in range(DIMENSION):
-            line = ""
-            for j in range(DIMENSION - 1):
-                val = self.get_value(i, j)
-                if val == None:
-                    line += ","
-                else:
-                    line += str(val) + ","
-            val = self.get_value(i, j + 1)
-            if val == None:
-                line += "\n"
-            else:
-                line += str(val) + "\n"
-            file.write(line)
-        file.close()
-
-    # TODO tester utilité de la fonction
-    def load_matrix(self, file_name, value_type="int"):
-        """Load the matrix from a text file"""
-        file = open(file_name, "r")
-        line = file.readline()
-        line = line.split(",")
-        nb_rows = int(line[0])
-        nb_cols = int(line[1])
-        # Check if the matrix in the file has the same dimension as the matrix, nothing else is allowed
-        assert (
-            nb_rows == DIMENSION
-        ), "Dimension of the matrix in the file is different from the dimension of the matrix"
-        assert (
-            nb_cols == DIMENSION
-        ), "Dimension of the matrix in the file is different from the dimension of the matrix"
-        matrix = Matrix()
-        i = 0
-        for row in file:
-            values = row.split(",")
-            j = 0
-            for item in values:
-                if item == "" or item == "\n":
-                    self.set_value(i, j, None)
-                elif value_type == "int":
-                    self.set_value(i, j, int(item))
-                elif value_type == "float":
-                    self.set_value(i, j, float(item))
-                elif value_type == "bool":
-                    self.set_value(i, j, bool(item))
-                else:
-                    self.set_value(i, j, item)
-                j += 1
-            i += 1
-        return matrix
-
-    # TODO tester utilité de la fonction : seulement à affichage ?
-    def print_divider_line(self, cell_size=4):
-        """Print a line to divide the matrix"""
-        print()
-        for i in range(DIMENSION + 1):
-            print("-" * cell_size + "+", end="")
-        print()
-
-    # TODO tester utilité de la fonction
-    def print_matrix(self, cell_size=4):
-        """Print the matrix"""
-        print(" " * cell_size + "|", end="")
-        for i in range(DIMENSION):  # cols
-            print(str(i).center(cell_size) + "|", end="")
-        self.print_divider_line(cell_size)
-        for i in range(DIMENSION):  # rows
-            print(str(i).rjust(cell_size) + "|", end="")
-            for j in range(DIMENSION):  # cols
-                print(str(self.get_value(i, j)).rjust(cell_size) + "|", end="")
-            self.print_divider_line(cell_size)
-        print()

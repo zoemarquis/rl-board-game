@@ -1,6 +1,6 @@
 # Importation des librairies
-from labyrintheOO import Labyrinthe
-from labyrintheModeGraphiqueOO import LabyrintheGraphique
+from labyrinthe import NUM_TREASURES, NUM_TREASURES_PER_PLAYER, Labyrinthe
+from gui_manager import GUI_manager
 
 import gym
 from gym import spaces
@@ -43,7 +43,9 @@ class LabyrinthEnv(gym.Env):
     # Retourne l'état du jeu
     def reset(self):
         # Paramètres du jeu
-        self.game = Labyrinthe(nbHumains=1, nbTresors=2, nbTresorParPersonne=0, nbIA=0)
+        self.game = Labyrinthe(
+            num_human_players=1, nbTresors=2, nbTresorParPersonne=0, num_ia_players=0
+        )
 
         self.termine = False
         self.derniere_insertion = None
@@ -89,7 +91,7 @@ class LabyrinthEnv(gym.Env):
 
             # Vérification si le joueur a trouvé le trésor
             if self._is_tresor_trouve():
-                self.game.joueurCourantTrouveTresor()
+                self.game.current_player_find_treasure()
                 recompense = 10  # Récompense : 10 si trésor trouvé
             else:
                 recompense = -1  # Récompense : -1 si pas de trésor trouvé
@@ -100,7 +102,7 @@ class LabyrinthEnv(gym.Env):
         # Choisi forcément un mouvement valide
         self._deplacer_joueur(mouvements_ok[action_deplacement % len(mouvements_ok)])
         if self._is_tresor_trouve():
-            self.game.joueurCourantTrouveTresor()
+            self.game.current_player_find_treasure()
             recompense = 10  # Récompense : 10 si trésor trouvé
         else:
             recompense = -1  # Récompense : -1 si pas de trésor trouvé
@@ -113,7 +115,7 @@ class LabyrinthEnv(gym.Env):
     def render(self):
         if not hasattr(self, "graphique"):
             # Crée l'interface graphique si elle n'existe pas encore
-            self.graphique = LabyrintheGraphique(self.game)
+            self.graphique = GUI_manager(self.game)
         self.graphique.afficheJeu()
 
     # Fonction permettant de fermer l'environnement
@@ -143,26 +145,28 @@ class LabyrinthEnv(gym.Env):
 
     # Fonction permettant de vérifier si le joueur a atteint le trésor
     def _is_tresor_trouve(self):
-        joueur_pos = self.game.getCoordonneesJoueurCourant()
-        tresor_pos = self.game.getCoordonneesTresorCourant()
+        joueur_pos = self.game.get_coord_current_player()
+        tresor_pos = self.game.get_coord_current_treasure()
 
         return joueur_pos == tresor_pos
 
     # Fonction permettant de déplacer le joueur
     def _deplacer_joueur(self, new_position):
-        ligD, colD = self.game.getCoordonneesJoueurCourant()
+        ligD, colD = self.game.get_coord_current_player()
         ligA, colA = new_position
         self.game.prendreJoueurCourant(ligD, colD)
         self.game.poserJoueurCourant(ligA, colA)
 
     # Fonction permettant de vérifier si le jeu est terminé
-    # TODO : Ajouter le retour à la case de départ ??
+    # TODO : Ajouter le retour à la case de départ ?
     def _is_termine(self):
-        return self.game.getNbTresors() == 0  # Fin jeu : Plus de trésors
+        # TODO changer : fin de partie = un joueur a gagné
+        # return nb_treasures == 0  # Fin jeu : Plus de trésors
+        return False
 
     # Fonction permettant de récupérer les mouvements valides pour le joueur
     def _get_mouvements_ok(self):
-        ligD, colD = self.game.getCoordonneesJoueurCourant()
+        ligD, colD = self.game.get_coord_current_player()
         mouvements_ok = []
 
         for ligA in range(7):

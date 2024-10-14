@@ -1,8 +1,7 @@
-from carteOO import *
+from tile import *
 from matrix import DIMENSION, Matrix
 from joueurOO import *
 import random
-import os
 import copy
 
 TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
@@ -10,202 +9,201 @@ TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 NUM_TREASURES = 24
 NUM_TREASURES_PER_PLAYER = 6
 
-# permet de créer un labyrinthe avec nbJoueurs joueurs, nbTresors trésors
-# chacun des joueurs aura au plus nbTresorMax à trouver
-# si ce dernier paramètre est à 0, on distribuera le maximum de trésors possible
-# à chaque joueur en restant équitable
-# un joueur courant est choisi et la phase est initialisée
+
 class Labyrinthe(object):
+    """Class representing the labyrinth game
+    we have a board, players (humans, IA),
+    we manage the current player, the current phase of the game, the forbidden move, the tile to play
+    """
+
     def __init__(
         self,
-        nbHumains=2,
-        nbIA=0,
-        nbTresors=NUM_TREASURES,
-        nbTresorParPersonne=NUM_TREASURES_PER_PLAYER,
+        num_human_players: int,
+        num_ia_players: int,
     ):
-        self.joueurs = Joueurs(nbHumains + nbIA, nbTresors, nbTresorParPersonne)
-        self.joueurCourant = 1
-        self.phase = 1
-        self.nbTresors = nbTresors
-        self.coupInter = ("N", 0)
-        self.coordonneesJoueurCourant = (0, 0)
-        # Ajout des IAs
-        self.joueursIA = range(nbHumains + 1, nbHumains + nbIA + 1)
-        if nbIA > 1:
-            self.joueursIADef = range(nbHumains + nbIA, nbHumains + nbIA + 1)
+        # TODO : if board dimension is not 7x7, we need to change the fixed cards
+        board: Matrix = self.init_board_with_default_7x7_values()
+
+        self.players: Joueurs = Joueurs(
+            num_human_players + num_ia_players, NUM_TREASURES, NUM_TREASURES_PER_PLAYER
+        )
+        # TODO Ajout des IAs
+        self.joueursIA = range(
+            num_human_players + 1, num_human_players + num_ia_players + 1
+        )
+        if num_ia_players > 1:
+            self.joueursIADef = range(
+                num_human_players + num_ia_players,
+                num_human_players + num_ia_players + 1,
+            )
         else:
             self.joueursIADef = []
-        # Initialisation du plateau
-        plateau = Matrix()
-        # Cartes fixe
-        plateau.set_value(0, 2, Carte(False, True, True, True, 5))  # grimoire
-        plateau.set_value(0, 4, Carte(False, True, True, True, 13))  # bourse
 
-        plateau.set_value(2, 0, Carte(True, True, True, False, 1))  # fiole
-        plateau.set_value(2, 2, Carte(True, True, True, False, 7))  # couronne
-        plateau.set_value(2, 4, Carte(False, True, True, True, 14))  # clef
-        plateau.set_value(2, 6, Carte(True, False, True, True, 22))  # calice
+        self.current_player = 1
+        self.coordonneesJoueurCourant = (0, 0)
 
-        plateau.set_value(4, 0, Carte(True, True, True, False, 2))  # bague
-        plateau.set_value(4, 2, Carte(True, True, False, True, 8))  # trésor
-        plateau.set_value(4, 4, Carte(True, False, True, True, 15))  # pierre précieuse
-        plateau.set_value(4, 6, Carte(True, False, True, True, 23))  # épée
+        self.phase = 1  # inutile ??
 
-        plateau.set_value(6, 2, Carte(True, True, False, True, 9))  # chandelier
-        plateau.set_value(6, 4, Carte(True, True, False, True, 16))  # casque
-
-        # Carte des joueurs fixe : les 4 coins
-        plateau.set_value(0, 0, Carte(False, True, True, False, is_base=1))  # A
-        plateau.set_value(0, 6, Carte(False, False, True, True, is_base=2))  # B
-        plateau.set_value(6, 0, Carte(True, True, False, False, is_base=3))  # C
-        plateau.set_value(6, 6, Carte(True, False, False, True, is_base=4))  # D
+        self.forbidden_move: tuple = ("N", 0)
 
         # Placement des joueurs
-        self.nbJoueurs = nbHumains + nbIA
+        self.nbJoueurs = num_human_players + num_ia_players
         if self.nbJoueurs >= 1:
-            plateau.get_value(0, 0).poserPion(1)  # A
+            board.get_value(0, 0).put_pawn(1)  # A
         if self.nbJoueurs >= 2:
-            plateau.get_value(0, 6).poserPion(2)  # B
+            board.get_value(0, 6).put_pawn(2)  # B
         if self.nbJoueurs >= 3:
-            plateau.get_value(6, 0).poserPion(3)  # C
+            board.get_value(6, 0).put_pawn(3)  # C
         if self.nbJoueurs == 4:
-            plateau.get_value(6, 6).poserPion(4)  # D
+            board.get_value(6, 6).put_pawn(4)  # D
 
         # Trésors et cartes amovible
-        listeCarte = creerCartesAmovibles(nbTresors)
-        for i in range(7):
-            for j in range(7):
+        listeCarte = creerCartesAmovibles(NUM_TREASURES)
+        for i in range(DIMENSION):
+            for j in range(DIMENSION):
                 if (
                     i % 2 == 1 or j % 2 == 1
                 ):  # Cela correspond aux emplacements non fixe
-                    plateau.set_value(
+                    board.set_value(
                         i, j, listeCarte.pop(randint(0, len(listeCarte) - 1))
                     )
-        self.carteAjouer = listeCarte[0]
-        self.plateau = plateau
+        self.tile_to_play: Tile = listeCarte[0]
+        self.board = board
 
-    ################
-    # Les "getter" #
-    ################
+    def init_board_with_default_7x7_values(self):
+        board: Matrix = Matrix()
+        # fill the board with fixed cards
+        board.set_value(0, 2, Tile(False, True, True, True, 5))  # grimoire
+        board.set_value(0, 4, Tile(False, True, True, True, 13))  # bourse
 
-    def getPlateau(self):
-        return self.plateau
+        board.set_value(2, 0, Tile(True, True, True, False, 1))  # fiole
+        board.set_value(2, 2, Tile(True, True, True, False, 7))  # couronne
+        board.set_value(2, 4, Tile(False, True, True, True, 14))  # clef
+        board.set_value(2, 6, Tile(True, False, True, True, 22))  # calice
 
-    def getNbJoueurs(self):
-        return self.joueurs.nbJoueurs
+        board.set_value(4, 0, Tile(True, True, True, False, 2))  # bague
+        board.set_value(4, 2, Tile(True, True, False, True, 8))  # trésor
+        board.set_value(4, 4, Tile(True, False, True, True, 15))  # pierre précieuse
+        board.set_value(4, 6, Tile(True, False, True, True, 23))  # épée
 
-    def getJoueurCourant(self):
-        return self.joueurCourant
+        board.set_value(6, 2, Tile(True, True, False, True, 9))  # chandelier
+        board.set_value(6, 4, Tile(True, True, False, True, 16))  # casque
 
-    def getPhase(self):
-        return self.phase
+        # 4 corners
+        board.set_value(0, 0, Tile(False, True, True, False, base=1))  # A
+        board.set_value(0, 6, Tile(False, False, True, True, base=2))  # B
+        board.set_value(6, 0, Tile(True, True, False, False, base=3))  # C
+        board.set_value(6, 6, Tile(True, False, False, True, base=4))  # D
+        return board
 
-    def getCarteAJouer(self):
-        return self.carteAjouer
+    # getters
 
-    def getNbTresors(self):
-        return self.nbTresors
+    def get_board(self) -> Matrix:
+        return self.board
 
-    def getLesJoueurs(self):
-        return self.joueurs
+    def get_num_players(self) -> int:
+        return self.players.nbJoueurs
 
-    def getTresorCourant(self):
-        return self.joueurs.prochainTresor(self.getJoueurCourant())
+    def get_current_player(self) -> int:
+        return self.current_player
 
-    def getCoupInterdit(self):
-        return self.coupInter
+    def get_phase(self):  # ?
+        return self.phase  # ? 1 choisir sens carte, 2 choisir rangee, 3 avancer ???
 
-    # retourne sous la forme d'un couple (lin,col) la position du trésor à trouver
-    # pour le joueur courant sur le plateau
-    def getCoordonneesTresorCourant(self):
-        coord = None
-        tresor = self.getTresorCourant()
-        finL = DIMENSION
-        finC = DIMENSION
-        i = 0
-        while i < finL and coord == None:
-            j = 0
-            while j < finC and coord == None:
-                if self.plateau.get_value(i, j).getTresor() == tresor:
-                    coord = (i, j)
-                else:
-                    j += 1
-            i += 1
-        return coord
+    def get_tile_to_play(self):
+        return self.tile_to_play
 
-    # retourne sous la forme d'un couple (lin,col) la position du joueur courant sur le plateau
-    def getCoordonneesJoueurCourant(self):
-        coord = None
-        finL = DIMENSION
-        finC = DIMENSION
-        i = 0
-        while i < finL and coord == None:
-            j = 0
-            while j < finC and coord == None:
-                if self.plateau.get_value(i, j).possedePion(self.getJoueurCourant()):
-                    coord = (i, j)
-                else:
-                    j += 1
-            i += 1
-        return coord
+    def get_players(self) -> Joueurs:
+        return self.players
 
-    # change la phase de jeu
-    def changerPhase(self):
-        if self.getPhase() == 1:
+    def current_treasure(self) -> int:
+        return self.players.next_treasure(self.get_current_player())
+
+    def get_forbidden_move(self) -> tuple:
+        return self.forbidden_move  # c'est quoi la représentation de la direction ??
+
+    def get_coord_current_treasure(self) -> tuple:
+        """return the coordinates of the current treasure to find for the current player"""
+        treasure = self.current_treasure()
+        for i in range(DIMENSION):
+            for j in range(DIMENSION):
+                if self.board.get_value(i, j).get_treasure() == treasure:
+                    return (i, j)
+        return None
+
+    def get_coord_current_player(self) -> tuple:
+        """return the coordinates of the current player"""
+        for i in range(DIMENSION):
+            for j in range(DIMENSION):
+                if self.board.get_value(i, j).has_pawn(
+                    self.get_current_player()
+                ):  # TODO
+                    return (i, j)
+        return None
+
+    def next_phase(self):
+        """change the phase of the game"""
+        # TODO modifier pour 0 1 %2 et pas 1 2 ...
+        if self.get_phase() == 1:
             self.phase = 2
         else:
             self.phase = 1
 
-    # diminue le nombre de trésors de 1
-    def decTresor(self):
-        self.nbTresors -= 1
+    def next_player(self):
+        """change the current player"""
+        # TODO : modulo nb joueurs... améliorer
+        # current = self.get_current_player()
+        # current += 1
+        # 1 à 4 ou 0 à 3 ???
+        if self.get_current_player() == self.get_num_players():
+            self.current_player = 1
+        else:
+            self.current_player += 1
+        self.coordonneesJoueurCourant = self.get_coord_current_player()
 
+    def current_player_find_treasure(self):
+        """update the player structure when the current player find the treasure"""
+        return self.players.tresorTrouve(self.current_player)  # TODO : améliorer code
+
+    def get_remaining_treasures(self, num_player):
+        """return the number of remaining treasures for the player num_player"""
+        return self.players.nbTresorsRestants(num_player)  # TODO : améliorer code
+
+    def is_forbidden_move(self, direction, position):
+        return self.forbidden_move == (direction, position)
+
+    # TODO : remove this function
     # Test si le joueur courant est un IA attaquant
     def joueurCourantIsIA(self):
-        return self.joueurCourant in self.joueursIA
+        return self.current_player in self.joueursIA
 
+    # TODO : remove this function
     # Test si le joueur courant est un IA defensif
     def joueurCourantIsIADef(self):
-        return self.joueurCourant in self.joueursIADef
+        return self.current_player in self.joueursIADef
 
-    # change de joueur courant
-    def changerJoueurCourant(self):
-        if self.getJoueurCourant() == self.getNbJoueurs():
-            self.joueurCourant = 1
-        else:
-            self.joueurCourant += 1
-        self.coordonneesJoueurCourant = self.getCoordonneesJoueurCourant()
+    def is_current_player_human(self):
+        return self.current_player not in self.joueursIA
 
-    # met à jour la structure qui gère les joueurs en enlevant le trésor que le joueur
-    # courant vient de trouver
-    def joueurCourantTrouveTresor(self):
-        return self.joueurs.tresorTrouve(self.joueurCourant)
+    def is_current_player_IA(self):
+        return self.current_player in self.joueursIA
 
-    # retourne le nombre de trésors restant à trouver pour le joueur numJoueur
-    def nbTresorsRestantsJoueur(self, numJoueur):
-        return self.joueurs.nbTresorsRestants(numJoueur)
-
-    # enlève le trésor numTresor sur la carte qui se trouve sur la case lin,col du plateau
-    # si le trésor ne s'y trouve pas la fonction ne fait rien
-    def prendreTresorL(self, lin, col, numTresor):
-        if self.plateau.get_value(lin, col).getTresor() == numTresor:
-            self.plateau.get_value(lin, col).prendreTresor()
+    # inutile ..
+    ## # enlève le trésor numTresor sur la carte qui se trouve sur la case lin,col du plateau
+    ## # si le trésor ne s'y trouve pas la fonction ne fait rien
+    ## def prendreTresorL(self, lin, col, numTresor):
+    ##     if self.board.get_value(lin, col).get_treasure() == numTresor:
+    ##         self.board.get_value(lin, col).pop_treasure()
 
     # enlève le joueur courant de la carte qui se trouve sur la case lin,col du plateau
     # si le joueur ne s'y trouve pas la fonction ne fait rien
     def prendreJoueurCourant(self, lin, col):
-        self.plateau.get_value(lin, col).prendrePion(self.getJoueurCourant())
+        self.board.get_value(lin, col).remove_pawn(self.get_current_player())
 
     # pose le joueur courant de la carte qui se trouve sur la case lin,col du plateau
     # si le joueur s'y trouve déjà la fonction ne fait rien
     def poserJoueurCourant(self, lin, col):
-        self.plateau.get_value(lin, col).poserPion(self.getJoueurCourant())
-
-    # fonction qui retourne True si le coup proposé correspond au coup interdit
-    # elle retourne False sinon
-    def coupInterdit(self, direction, rangee):
-        d, r = self.getCoupInterdit()
-        return d == direction and r == rangee
+        self.board.get_value(lin, col).put_pawn(self.get_current_player())
 
     # fonction qui joue la carte amovible dans la direction et sur la rangée passées
     # en paramètres. Cette fonction
@@ -214,20 +212,20 @@ class Labyrinthe(object):
     #      - met à jour la nouvelle direction interdite
     def jouerCarte(self, direction, rangee):
         if direction == "N":
-            self.carteAjouer = self.plateau.shift_column_down(rangee, self.carteAjouer)
-            self.coupInter = ("S", rangee)
+            self.tile_to_play = self.board.shift_column_down(rangee, self.tile_to_play)
+            self.forbidden_move = ("S", rangee)
         if direction == "E":
-            self.carteAjouer = self.plateau.shift_row_left(rangee, self.carteAjouer)
-            self.coupInter = ("O", rangee)
+            self.tile_to_play = self.board.shift_row_left(rangee, self.tile_to_play)
+            self.forbidden_move = ("O", rangee)
         if direction == "S":
-            self.carteAjouer = self.plateau.shift_column_up(rangee, self.carteAjouer)
-            self.coupInter = ("N", rangee)
+            self.tile_to_play = self.board.shift_column_up(rangee, self.tile_to_play)
+            self.forbidden_move = ("N", rangee)
         if direction == "O":
-            self.carteAjouer = self.plateau.shift_row_right(rangee, self.carteAjouer)
-            self.coupInter = ("E", rangee)
-        pions = self.carteAjouer.getListePions()
+            self.tile_to_play = self.board.shift_row_right(rangee, self.tile_to_play)
+            self.forbidden_move = ("E", rangee)
+        pions = self.tile_to_play.get_pawns()
         for pion in pions:
-            self.carteAjouer.prendrePion(pion)
+            self.tile_to_play.remove_pawn(pion)
             if pion == 1:
                 self.poserPionL(6, 6, 1)
             if pion == 2:
@@ -236,55 +234,56 @@ class Labyrinthe(object):
                 self.poserPionL(6, 0, 3)
             if pion == 4:
                 self.poserPionL(0, 0, 4)
-        self.coordonneesJoueurCourant = self.getCoordonneesJoueurCourant()
+        self.coordonneesJoueurCourant = self.get_coord_current_player()
 
     # Cette fonction tourne la carte à jouer dans le sens indiqué
     # en paramètre (H horaire A antihoraire)
     def tournerCarte(self, sens="H"):
         if sens == "H":
-            self.carteAjouer.tournerHoraire()
+            self.tile_to_play.rotate_clockwise()
         else:
-            self.carteAjouer.tournerAntiHoraire()
+            self.tile_to_play.rotate_counter_clockwise()
 
-    # prend le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
-    def prendrePionL(self, lin, col, numJoueur):
-        self.plateau.get_value(lin, col).prendrePion(numJoueur)
+    # TODO inutile ??
+    # # prend le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
+    # def prendrePionL(self, lin, col, numJoueur):
+    #     self.board.get_value(lin, col).remove_pawn(numJoueur)
 
     # pose le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
     def poserPionL(self, lin, col, joueur):
-        self.plateau.get_value(lin, col).poserPion(joueur)
+        self.board.get_value(lin, col).put_pawn(joueur)
 
     # indique si il y a un chemin entre la case ligD,colD et la case ligA,colA du labyrinthe
     # Fonction marquant les case autour d'une case dont la valeur est val et qui est accessible
-    def marquer(self, mat, val, marque):
+    def marquer(self, mat: Matrix, val, marque):
         changer = False
         for i in range(DIMENSION):
             for j in range(DIMENSION):
                 if mat.get_value(i, j) == val:
                     if i > 0:
-                        if self.plateau.get_value(i, j).passageNord(
-                            self.plateau.get_value(i - 1, j)
+                        if self.board.get_value(i, j).can_go_north(
+                            self.board.get_value(i - 1, j)
                         ):
                             if mat.get_value(i - 1, j) == 0:
                                 mat.set_value(i - 1, j, marque)
                                 changer = True
                     if i < DIMENSION - 1:
-                        if self.plateau.get_value(i, j).passageSud(
-                            self.plateau.get_value(i + 1, j)
+                        if self.board.get_value(i, j).can_go_south(
+                            self.board.get_value(i + 1, j)
                         ):
                             if mat.get_value(i + 1, j) == 0:
                                 mat.set_value(i + 1, j, marque)
                                 changer = True
                     if j > 0:
-                        if self.plateau.get_value(i, j).passageOuest(
-                            self.plateau.get_value(i, j - 1)
+                        if self.board.get_value(i, j).can_go_west(
+                            self.board.get_value(i, j - 1)
                         ):
                             if mat.get_value(i, j - 1) == 0:
                                 mat.set_value(i, j - 1, marque)
                                 changer = True
                     if j < DIMENSION - 1:
-                        if self.plateau.get_value(i, j).passageEst(
-                            self.plateau.get_value(i, j + 1)
+                        if self.board.get_value(i, j).can_go_east(
+                            self.board.get_value(i, j + 1)
                         ):
                             if mat.get_value(i, j + 1) == 0:
                                 mat.set_value(i, j + 1, marque)
@@ -319,8 +318,8 @@ class Labyrinthe(object):
                 if x > 0:
                     if 0 < matTest.get_value(
                         x - 1, y
-                    ) == val - 1 and self.plateau.get_value(x, y).passageNord(
-                        self.plateau.get_value(x - 1, y)
+                    ) == val - 1 and self.board.get_value(x, y).can_go_north(
+                        self.board.get_value(x - 1, y)
                     ):
                         x -= 1
                         chemin.append((x, y))
@@ -328,8 +327,8 @@ class Labyrinthe(object):
                 if y > 0:
                     if 0 < matTest.get_value(
                         x, y - 1
-                    ) == val - 1 and self.plateau.get_value(x, y).passageOuest(
-                        self.plateau.get_value(x, y - 1)
+                    ) == val - 1 and self.board.get_value(x, y).can_go_west(
+                        self.board.get_value(x, y - 1)
                     ):
                         y -= 1
                         chemin.append((x, y))
@@ -337,8 +336,8 @@ class Labyrinthe(object):
                 if x < DIMENSION - 1:
                     if 0 < matTest.get_value(
                         x + 1, y
-                    ) == val - 1 and self.plateau.get_value(x, y).passageSud(
-                        self.plateau.get_value(x + 1, y)
+                    ) == val - 1 and self.board.get_value(x, y).can_go_south(
+                        self.board.get_value(x + 1, y)
                     ):
                         x += 1
                         chemin.append((x, y))
@@ -346,8 +345,8 @@ class Labyrinthe(object):
                 if y < DIMENSION - 1:
                     if 0 < matTest.get_value(
                         x, y + 1
-                    ) == val - 1 and self.plateau.get_value(x, y).passageEst(
-                        self.plateau.get_value(x, y + 1)
+                    ) == val - 1 and self.board.get_value(x, y).can_go_east(
+                        self.board.get_value(x, y + 1)
                     ):
                         y += 1
                         chemin.append((x, y))
@@ -359,7 +358,7 @@ class Labyrinthe(object):
     # si c'est le cas la fonction retourne une liste représentant un chemin possible
     # sinon ce n'est pas le cas, la fonction retourne None
     def accessibleDistJoueurCourant(self, ligA, colA):
-        (ligD, colD) = self.getCoordonneesJoueurCourant()
+        (ligD, colD) = self.get_coord_current_player()
         return self.accessibleDist(ligD, colD, ligA, colA)
 
     ###################
@@ -448,8 +447,8 @@ class Labyrinthe(object):
                     rangee = lRangee[k]
                     labyTest = copy.deepcopy(self)
                     labyTest.jouerCarte(direction, rangee)
-                    posT = labyTest.getCoordonneesTresorCourant()
-                    xJ, yJ = labyTest.getCoordonneesJoueurCourant()
+                    posT = labyTest.get_coord_current_treasure()
+                    xJ, yJ = labyTest.get_coord_current_player()
                     if posT != None:  # Cas ou le tresors sort du plateau
                         xT, yT = posT
                         if labyTest.accessible(xJ, yJ, xT, yT):
@@ -479,7 +478,7 @@ class Labyrinthe(object):
             for i in range(nbRotation):
                 self.tournerCarte()
             self.jouerCarte(direction, rangee)
-            xJ, yJ = self.getCoordonneesJoueurCourant()
+            xJ, yJ = self.get_coord_current_player()
             return self.accessibleDist(xJ, yJ, xC, yC)
         else:
             return self.accessibleDist(xJ, yJ, xT, yT)
@@ -503,18 +502,21 @@ class Labyrinthe(object):
                     for i in range(nbRotation):
                         labyTest.tournerCarte()
                     labyTest.jouerCarte(direction, rangee)
-                    labyTest.changerJoueurCourant()
+                    labyTest.next_player()
                     cptCoupGG = 0
                     for nbRotationT in range(4):
                         labyTest.tournerCarte()
                         for directionT in "NESO":
                             for rangeeT in [1, 3, 5]:
-                                if (directionT, rangeeT) != labyTest.getCoupInterdit():
+                                if (
+                                    directionT,
+                                    rangeeT,
+                                ) != labyTest.get_forbidden_move():
                                     # On crée une seconde copy pour tester les possibilités du joueur suivant
                                     labyTest2 = copy.deepcopy(labyTest)
                                     labyTest2.jouerCarte(directionT, rangeeT)
-                                    posT = labyTest2.getCoordonneesTresorCourant()
-                                    xJ, yJ = labyTest2.getCoordonneesJoueurCourant()
+                                    posT = labyTest2.get_coord_current_treasure()
+                                    xJ, yJ = labyTest2.get_coord_current_player()
                                     if posT != None:
                                         xT, yT = posT
                                         if labyTest2.accessible(xT, yT, xJ, yJ):
@@ -545,9 +547,9 @@ class Labyrinthe(object):
         for i in range(nbRotation):
             self.tournerCarte()
         self.jouerCarte(direction, rangee)
-        xJ, yJ = self.getCoordonneesJoueurCourant()
+        xJ, yJ = self.get_coord_current_player()
         ((xD, yD), _) = self.getPositionMinDistance(
-            self.getCoordonneesTresorCourant(), (xJ, yJ)
+            self.get_coord_current_treasure(), (xJ, yJ)
         )
         return self.accessibleDist(xJ, yJ, xD, yD)
 
@@ -557,19 +559,19 @@ class Labyrinthe(object):
 
     # Ajoute un caractere code dans le code du joueur courant
     def ajouterCode(self, code):
-        self.joueurs.ajouterCode(code, self.joueurCourant)
+        self.players.ajouterCode(code, self.current_player)
 
     # supprime un caractere code dans le code du joueur courant
     def supprimerCode(self):
-        self.joueurs.effacerCode(self.joueurCourant)
+        self.players.effacerCode(self.current_player)
 
     # Efface tout le code du joueur courant
     def effacerDernierCode(self):
-        self.joueurs.effacerDernierCode(self.joueurCourant)
+        self.players.effacerDernierCode(self.current_player)
 
     # Permet de recuperer le code du joueur courant
     def getCode(self):
-        return self.joueurs.getCode(self.joueurCourant)
+        return self.players.getCode(self.current_player)
 
     # Permet de verifier si le code du joueur courant est bon ( on peut ainsi changer le bon code ici )
     def estBonCode(self):
@@ -584,69 +586,24 @@ class Labyrinthe(object):
 def creerCartesAmovibles(nbTresors):
     listeCarte = []
     for i in range(16):  # 16 carte coude
-        carte = Carte(True, True, False, False)
-        carte.tourneAleatoire()
+        carte = Tile(True, True, False, False)
+        carte.rotate_random()
         listeCarte.append(carte)
     for i in range(12):  # 12 carte tout-droit
-        carte = Carte(True, False, True, False)
-        carte.tourneAleatoire()
+        carte = Tile(True, False, True, False)
+        carte.rotate_random()
         listeCarte.append(carte)
     for i in range(6):  # 6 carte T
-        carte = Carte(True, True, True, False)
-        carte.tourneAleatoire()
+        carte = Tile(True, True, True, False)
+        carte.rotate_random()
         listeCarte.append(carte)
     random.shuffle(listeCarte)
     # Placer les trésors sur les cartes (attention à ne pas mettre les trésors déjà sur cartes fixes
     for tresor in range(1, nbTresors + 1):
         if not tresor in TRESORS_FIXES:
-            listeCarte[tresor].mettreTresor(tresor)
+            listeCarte[tresor].put_treasure(tresor)
     return listeCarte
 
 
 def distance(pos1, pos2):
     return ((pos1[0] - pos2[0]) ** 2 + ((pos1[1] - pos2[1]) ** 2)) ** (0.5)
-
-
-################
-# Zone de Test #
-################
-# print('='*10+' Test sur le labyrinthe '+'='*10)
-# laby=Labyrinthe()
-# matC=Matrice(7,7)
-# matT=Matrice(7,7)
-# matP=Matrice(7,7)
-# for i in range(7):
-#     for j in range(7):
-#          matC.set_value(i,j,laby.plateau.get_value(i,j).toChar())
-#          matT.set_value(i,j,laby.plateau.get_value(i,j).getTresor())
-#          matP.set_value(i,j,laby.plateau.get_value(i,j).getListePions())
-# print('Matrice des cartes :\n')
-# matC.afficheMatrice()
-# print('matrice des tresors :')
-# matT.afficheMatrice()
-# print('matrice des pions :')
-# matP.afficheMatrice()
-# print('Nb joueurs:',laby.getNbJoueurs())
-# print('Joueur courant:',laby.getJoueurCourant())
-# laby.changerJoueurCourant()
-# print('Nouveau joueur courant:',laby.getJoueurCourant())
-# print('Phase de Jeu:',laby.getPhase())
-# laby.changerPhase()
-# print('Nouvelle phase de jeu:',laby.getPhase())
-# print('tresors restants dans le laby :',laby.getNbTresors())
-# laby.decTresor()
-# print('Tresors restants dans le laby :',laby.getNbTresors())
-# print('structure des joueurs:',laby.getLesJoueurs())
-# print('Nombre de tresors restant du j2:',laby.nbTresorsRestantsJoueur(2))
-# laby.joueurCourantTrouveTresor()
-# print('Nombre de tresors restant du j2:',laby.nbTresorsRestantsJoueur(2))
-# print(laby.accessibleDist(0,0,1,1))
-
-# print('Test fonction getPositionMinDistance :',laby.getPositionMinDistance((5,5),(0,0)))
-# print('Test fonction getMeilleurAction',laby.getMeilleurAction())
-# for i in range(7):
-#     for j in range(7):
-#          matC.set_value(i,j,laby.plateau.get_value(i,j).toChar())
-
-# print('Matrice des cartes :\n')
-# matC.afficheMatrice()

@@ -1,8 +1,7 @@
-from labyrintheOO import *
+from labyrinthe import *
 from eztext import *
 import pygame
 import time
-import sys
 import os
 
 
@@ -14,7 +13,7 @@ NB_JOUEUR = 4
 NB_TRESOR = 24
 
 
-class LabyrintheGraphique(object):
+class GUI_manager(object):
     """Classe simple d'affichage et d'interaction pour le labyrinthe."""
 
     def __init__(
@@ -28,10 +27,10 @@ class LabyrintheGraphique(object):
         """Method docstring."""
         self.messageInfo = None
         self.imgInfo = None
-        self.labyrinthe = labyrinthe
+        self.labyrinthe: Labyrinthe = labyrinthe
         self.fini = False
         self.couleurTexte = couleur
-        self.laMatrice = labyrinthe.plateau
+        self.laMatrice = labyrinthe.board
         self.nbColonne = DIMENSION
         self.nbLigne = DIMENSION
         self.titre = titre
@@ -92,9 +91,9 @@ class LabyrintheGraphique(object):
         self.tailleFont = min(self.delta, self.delta) * 1 // 4
 
     def surfaceCarte(self, carte):
-        tresor = carte.getTresor()
-        base = carte.isBase()
-        pions = carte.getListePions()
+        tresor = carte.get_treasure()
+        base = carte.is_base()
+        pions = carte.get_pawns()
         img = self.imagesCartes[carte.coderMurs()]
         if img == None:
             return None
@@ -218,10 +217,11 @@ class LabyrintheGraphique(object):
     def afficheScore(self, numLigne=3):
         texte = "Nb trésors restants:"
         img = []
-        for i in range(self.labyrinthe.getNbJoueurs()):
+        for i in range(self.labyrinthe.get_num_players()):
             texte += " @img@ " + str(
-                self.labyrinthe.nbTresorsRestantsJoueur(i + 1)
+                self.labyrinthe.get_remaining_treasures(i + 1)
             )  # ERREUR ici nbTresorsRestants au lieu de nbTresorsRestantsJoueur
+            # TODO ???
             img.append(self.surfacePion(i + 1))
         self.afficheMessage(numLigne, texte, img)
 
@@ -233,9 +233,9 @@ class LabyrintheGraphique(object):
 
     def afficheCarteAJouer(self):
         self.surface.blit(
-            self.surfaceCarte(self.labyrinthe.carteAjouer),
+            self.surfaceCarte(self.labyrinthe.get_tile_to_play()),
             (self.finl + self.delta // 2, self.finh // 2),
-        )  # Ici, carte == carteAjouer
+        )  # Ici, carte == get_tile_to_play ?? TODO
 
     def dessineFleches(self, couleur=(255, 255, 0)):
         self.surface.fill((0, 0, 139))  # pour gérer les effets de transparence
@@ -345,23 +345,23 @@ class LabyrintheGraphique(object):
                 self.afficheMessage(
                     2,
                     "C'est au tour de l'IA@img@",
-                    [self.surfacePion(self.labyrinthe.getJoueurCourant())],
+                    [self.surfacePion(self.labyrinthe.get_current_player())],
                 )
                 self.afficheMessage(
                     3,
                     "Trésor à trouver @img@",
-                    [self.surfaceTexteTresor(self.labyrinthe.getTresorCourant())],
+                    [self.surfaceTexteTresor(self.labyrinthe.current_treasure())],
                 )
             else:
                 self.afficheMessage(
                     2,
                     "C'est au tour du joueur @img@",
-                    [self.surfaceTextePion(self.labyrinthe.getJoueurCourant())],
+                    [self.surfaceTextePion(self.labyrinthe.get_current_player())],
                 )
                 self.afficheMessage(
                     3,
                     "Trésor à trouver @img@",
-                    [self.surfaceTexteTresor(self.labyrinthe.getTresorCourant())],
+                    [self.surfaceTexteTresor(self.labyrinthe.current_treasure())],
                 )
         self.afficheScore(4)
         self.afficheMessageInfo(5)
@@ -451,9 +451,9 @@ class LabyrintheGraphique(object):
                             self.imgInfo = []
                         else:
                             if self.cheat:
-                                self.labyrinthe.plateau.get_value(x, y).tournerHoraire()
+                                self.labyrinthe.board.get_value(x, y).rotate_clockwise()
                             else:
-                                jc = self.labyrinthe.getJoueurCourant()
+                                jc = self.labyrinthe.get_current_player()
                                 xD, yD = self.labyrinthe.coordonneesJoueurCourant
                                 chemin = self.labyrinthe.accessibleDist(xD, yD, x, y)
 
@@ -462,12 +462,12 @@ class LabyrintheGraphique(object):
                                     self.imgInfo = [self.surfacePion(jc)]
                                 else:
                                     self.animationChemin(chemin, jc)
-                                    c = self.labyrinthe.plateau.get_value(x, y)
-                                    t = self.labyrinthe.getTresorCourant()
-                                    if c.getTresor() == t:
-                                        c.prendreTresor()
+                                    c = self.labyrinthe.board.get_value(x, y)
+                                    t = self.labyrinthe.current_treasure()
+                                    if c.get_treasure() == t:
+                                        c.pop_treasure()
                                         if (
-                                            self.labyrinthe.joueurCourantTrouveTresor()
+                                            self.labyrinthe.current_player_find_treasure()
                                             == 0
                                         ):
                                             self.messageInfo = "Le joueur @img@ a gagné"
@@ -480,7 +480,7 @@ class LabyrintheGraphique(object):
                                                 self.surfaceTexteTresor(t),
                                             ]
 
-                                    self.labyrinthe.changerJoueurCourant()
+                                    self.labyrinthe.next_player()
                                     self.phase = 1
 
                     self.afficheJeu()
@@ -489,14 +489,14 @@ class LabyrintheGraphique(object):
                     chemin = self.labyrinthe.getCheminDefensif()
                 else:
                     chemin = self.labyrinthe.getMeilleurAction()
-                jc = self.labyrinthe.getJoueurCourant()
+                jc = self.labyrinthe.get_current_player()
                 self.animationChemin(chemin, jc)
-                x, y = self.labyrinthe.getCoordonneesJoueurCourant()
-                c = self.labyrinthe.plateau.get_value(x, y)
-                t = self.labyrinthe.getTresorCourant()
-                if c.getTresor() == t:
-                    c.prendreTresor()
-                    if self.labyrinthe.joueurCourantTrouveTresor() == 0:
+                x, y = self.labyrinthe.get_coord_current_treasure()
+                c: Tile = self.labyrinthe.board.get_value(x, y)
+                t: int = self.labyrinthe.current_treasure()  # nb of treasure to find
+                if c.get_treasure() == t:
+                    c.pop_treasure()
+                    if self.labyrinthe.current_player_find_treasure() == 0:
                         self.messageInfo = "L'IA @img@ a gagné !!!"
                         self.imgInfo = [self.surfacePion(jc)]
                         self.fini = True
@@ -507,6 +507,6 @@ class LabyrintheGraphique(object):
                             self.surfaceTexteTresor(t),
                         ]
 
-                self.labyrinthe.changerJoueurCourant()
+                self.labyrinthe.next_player()
                 self.afficheJeu()
             pygame.display.flip()

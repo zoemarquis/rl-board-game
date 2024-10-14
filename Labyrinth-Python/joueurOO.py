@@ -33,7 +33,7 @@ class Joueurs(object):
 
     # retourne le numéro du prochain trésor à trouver pour la joueur numJoueur
     # None s'il n'y a pas de prochain trésor
-    def prochainTresor(self, numJoueur):
+    def next_treasure(self, numJoueur):
         if self.joueurs[numJoueur] == []:
             return None
         else:

@@ -1,5 +1,5 @@
 from eztext import *
-from labyrintheModeGraphiqueOO import *
+from gui_manager import *
 
 
 class Game(object):
@@ -74,12 +74,12 @@ class Game(object):
             2 <= self.human_players + self.ia_number <= 4
         ), "La somme de joueurs humains et IA doit être entre 2 et 4"
 
-        g = LabyrintheGraphique(
+        g = GUI_manager(
             Labyrinthe(
-                nbHumains=self.human_players,
-                nbIA=self.ia_number,
+                num_human_players=self.human_players,
+                num_ia_players=self.ia_number,
             ),
-            prefixeImage=self.directory
+            prefixeImage=self.directory,
         )
         g.demarrer()
 
