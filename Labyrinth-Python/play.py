@@ -6,7 +6,9 @@ def main():
     """Main function to start the game"""
 
     # Arguments parser
-    parser = argparse.ArgumentParser(description="Jeu avec options pour joueurs et IA")
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(
+        description="Jeu avec options pour joueurs et IA"
+    )
     parser.add_argument(
         "-j",
         "--joueurs",
@@ -32,41 +34,41 @@ def main():
         help="Thème du jeu, choix entre original et kity (ocean)",
     )
 
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
 
     # Access the number of players and AI from the arguments
-    nb_joueurs = args.joueurs
-    nb_humains = args.humains
+    nb_players = args.joueurs
+    nb_humans = args.humains
     nb_ia = args.intelligence_artificielle
 
     # Test parameters
-    if nb_joueurs < 2:
+    if nb_players < 2:
         print("Erreur: Le nombre de joueurs doit être supérieur ou égal à 2.")
         exit(1)
 
-    if nb_humains < 0 or nb_ia < 0:
+    if nb_humans < 0 or nb_ia < 0:
         print(
             "Erreur: Le nombre de joueurs humains et IA doit être supérieur ou égal à 0."
         )
         exit(1)
 
-    if nb_humains + nb_ia > nb_joueurs:
+    if nb_humans + nb_ia > nb_players:
         print(
             "Erreur: Le nombre de joueurs humains et IA doit être inférieur ou égal au nombre total de joueurs."
         )
         exit(1)
 
-    if nb_humains == 0 and nb_ia == 0:
-        nb_ia = nb_joueurs
+    if nb_humans == 0 and nb_ia == 0:
+        nb_ia = nb_players
 
-    elif nb_humains == 0:
-        nb_humains = nb_joueurs - nb_ia
+    elif nb_humans == 0:
+        nb_humans = nb_players - nb_ia
 
     elif nb_ia == 0:
-        nb_ia = nb_joueurs - nb_humains
+        nb_ia = nb_players - nb_humans
 
     else:
-        if nb_humains + nb_ia != nb_joueurs:
+        if nb_humans + nb_ia != nb_players:
             print(
                 "Erreur: Le nombre de joueurs humains et IA doit être égal au nombre total de joueurs."
             )
@@ -86,7 +88,7 @@ def main():
         )
         exit(1)
 
-    jeu = Game(human_players=nb_humains, ia_number=nb_ia, directory=directory)
+    jeu = Game(human_players=nb_humans, ia_number=nb_ia, directory=directory)
     jeu.launch()
 
 

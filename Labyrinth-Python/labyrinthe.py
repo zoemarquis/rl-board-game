@@ -4,6 +4,9 @@ from joueurOO import *
 import random
 import copy
 
+# TODO : change robjects name -> 1 to ... (7 x 7 - 3 (colonnes impair) *  7 - 3 * 4 (lignes impair sans case commune avec colonne) - 4 coins) )
+# puis dans le code là où c'est complété -> complété jusqu'au bon nombre (pas 24 si le plateau ne fait pas 24)
+
 TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 
 NUM_TREASURES = 24
@@ -161,9 +164,13 @@ class Labyrinthe(object):
             self.current_player += 1
         self.coordonneesJoueurCourant = self.get_coord_current_player()
 
-    def current_player_find_treasure(self):
+    def get_current_player_num_find_treasure(self):
         """update the player structure when the current player find the treasure"""
         return self.players.tresorTrouve(self.current_player)  # TODO : améliorer code
+    
+    def get_current_player_remaining_treasure(self):
+        """return the number of remaining treasures for the current player"""
+        return self.get_remaining_treasures(self.current_player)
 
     def get_remaining_treasures(self, num_player):
         """return the number of remaining treasures for the player num_player"""
@@ -210,7 +217,7 @@ class Labyrinthe(object):
     #      - met à jour le plateau du labyrinthe
     #      - met à jour la carte à jouer
     #      - met à jour la nouvelle direction interdite
-    def jouerCarte(self, direction, rangee):
+    def play_tile(self, direction, rangee):
         if direction == "N":
             self.tile_to_play = self.board.shift_column_down(rangee, self.tile_to_play)
             self.forbidden_move = ("S", rangee)
@@ -238,7 +245,7 @@ class Labyrinthe(object):
 
     # Cette fonction tourne la carte à jouer dans le sens indiqué
     # en paramètre (H horaire A antihoraire)
-    def tournerCarte(self, sens="H"):
+    def rotate_tile(self, sens="H"):
         if sens == "H":
             self.tile_to_play.rotate_clockwise()
         else:
@@ -446,13 +453,13 @@ class Labyrinthe(object):
                 while k < len(lRangee) and continuer:
                     rangee = lRangee[k]
                     labyTest = copy.deepcopy(self)
-                    labyTest.jouerCarte(direction, rangee)
+                    labyTest.play_tile(direction, rangee)
                     posT = labyTest.get_coord_current_treasure()
                     xJ, yJ = labyTest.get_coord_current_player()
                     if posT != None:  # Cas ou le tresors sort du plateau
                         xT, yT = posT
                         if labyTest.accessible(xJ, yJ, xT, yT):
-                            self.jouerCarte(direction, rangee)
+                            self.play_tile(direction, rangee)
                             continuer = False
                         else:
                             (xC, yC), d = labyTest.getPositionMinDistance(
@@ -464,7 +471,7 @@ class Labyrinthe(object):
                                 )
                     k += 1
                 j += 1
-            self.tournerCarte()
+            self.rotate_tile()
             nbRotation += 1
 
         if continuer:
@@ -476,8 +483,8 @@ class Labyrinthe(object):
                 actionsPossible, key=getDistance
             )
             for i in range(nbRotation):
-                self.tournerCarte()
-            self.jouerCarte(direction, rangee)
+                self.rotate_tile()
+            self.play_tile(direction, rangee)
             xJ, yJ = self.get_coord_current_player()
             return self.accessibleDist(xJ, yJ, xC, yC)
         else:
@@ -500,12 +507,12 @@ class Labyrinthe(object):
                     # On crée une copy du labyrinthe pour ne pas altérer la structure initiale
                     labyTest = copy.deepcopy(self)
                     for i in range(nbRotation):
-                        labyTest.tournerCarte()
-                    labyTest.jouerCarte(direction, rangee)
+                        labyTest.rotate_tile()
+                    labyTest.play_tile(direction, rangee)
                     labyTest.next_player()
                     cptCoupGG = 0
                     for nbRotationT in range(4):
-                        labyTest.tournerCarte()
+                        labyTest.rotate_tile()
                         for directionT in "NESO":
                             for rangeeT in [1, 3, 5]:
                                 if (
@@ -514,7 +521,7 @@ class Labyrinthe(object):
                                 ) != labyTest.get_forbidden_move():
                                     # On crée une seconde copy pour tester les possibilités du joueur suivant
                                     labyTest2 = copy.deepcopy(labyTest)
-                                    labyTest2.jouerCarte(directionT, rangeeT)
+                                    labyTest2.play_tile(directionT, rangeeT)
                                     posT = labyTest2.get_coord_current_treasure()
                                     xJ, yJ = labyTest2.get_coord_current_player()
                                     if posT != None:
@@ -545,8 +552,8 @@ class Labyrinthe(object):
     def getCheminDefensif(self):
         (nbRotation, direction, rangee) = self.getMeilleurActionDefensive()
         for i in range(nbRotation):
-            self.tournerCarte()
-        self.jouerCarte(direction, rangee)
+            self.rotate_tile()
+        self.play_tile(direction, rangee)
         xJ, yJ = self.get_coord_current_player()
         ((xD, yD), _) = self.getPositionMinDistance(
             self.get_coord_current_treasure(), (xJ, yJ)

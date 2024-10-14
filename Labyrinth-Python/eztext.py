@@ -1,6 +1,6 @@
-# input lib
 from pygame.locals import *
-import pygame, string
+
+# TODO utilité de ce fichier ??
 
 
 class ConfigError(KeyError):

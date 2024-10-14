@@ -72,10 +72,10 @@ class LabyrinthEnv(gym.Env):
         # print("Rangee : ", rangee)
 
         # Rotation
-        self.game.tournerCarte("H" if idx_rotation == 0 else "A")
+        self.game.rotate_tile("H" if idx_rotation == 0 else "A")
 
         # Insertion de la carte
-        self.game.jouerCarte(direction, rangee)
+        self.game.play_tile(direction, rangee)
         self.derniere_insertion = idx_insertion
 
         # Calcul des pièces accessibles
@@ -102,7 +102,7 @@ class LabyrinthEnv(gym.Env):
         # Choisi forcément un mouvement valide
         self._deplacer_joueur(mouvements_ok[action_deplacement % len(mouvements_ok)])
         if self._is_tresor_trouve():
-            self.game.current_player_find_treasure()
+            self.game.get_current_player_num_find_treasure()
             recompense = 10  # Récompense : 10 si trésor trouvé
         else:
             recompense = -1  # Récompense : -1 si pas de trésor trouvé
@@ -116,7 +116,7 @@ class LabyrinthEnv(gym.Env):
         if not hasattr(self, "graphique"):
             # Crée l'interface graphique si elle n'existe pas encore
             self.graphique = GUI_manager(self.game)
-        self.graphique.afficheJeu()
+        self.graphique.display_game()
 
     # Fonction permettant de fermer l'environnement
     # TODO : Voir ce qu'il y a à faire

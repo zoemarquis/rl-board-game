@@ -81,7 +81,7 @@ class Game(object):
             ),
             prefixeImage=self.directory,
         )
-        g.demarrer()
+        g.start()
 
         pygame.display.flip()
         pygame.quit()
