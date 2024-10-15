@@ -107,11 +107,12 @@ class Tile(object):
         """Return the value of the treasure on the tile, 0 if there is no treasure"""
         return self.treasure
 
-    def pop_treasure(self) -> int:
-        """Remove the treasure from the tile and return the value of the treasure"""
-        tresor = self.treasure
-        self.treasure = 0
-        return tresor
+    # TODO : remove this method
+    # def pop_treasure(self) -> int:
+    #     """Remove the treasure from the tile and return the value of the treasure"""
+    #     tresor = self.treasure
+    #     self.treasure = 0
+    #     return tresor
 
     def put_treasure(self, tresor: int) -> None:
         assert self.treasure == 0, "There is already a treasure on this tile"

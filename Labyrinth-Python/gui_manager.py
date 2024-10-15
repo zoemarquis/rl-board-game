@@ -440,7 +440,7 @@ class GUI_manager(object):
                                 c = self.labyrinthe.board.get_value(x, y)
                                 t = self.labyrinthe.current_treasure()
                                 if c.get_treasure() == t:
-                                    c.pop_treasure()
+                                    self.labyrinthe.remove_current_treasure()
                                     if (
                                         self.labyrinthe.get_current_player_remaining_treasure()
                                         == 0
@@ -472,7 +472,7 @@ class GUI_manager(object):
                 c: Tile = self.labyrinthe.board.get_value(x, y)
                 t: int = self.labyrinthe.current_treasure()  # nb of treasure to find
                 if c.get_treasure() == t:
-                    c.pop_treasure()
+                    self.labyrinthe.remove_current_treasure()
                     if self.labyrinthe.get_current_player_num_find_treasure() == 0:
                         self.info_message = "L'IA @img@ a gagné !!!"
                         self.info_img = [self.draw_pawn_surface(jc)]

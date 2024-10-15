@@ -1,6 +1,6 @@
 from tile import *
 from matrix import DIMENSION, Matrix
-from joueurOO import *
+from player import *
 import random
 import copy
 
@@ -27,8 +27,10 @@ class Labyrinthe(object):
         # TODO : if board dimension is not 7x7, we need to change the fixed cards
         board: Matrix = self.init_board_with_default_7x7_values()
 
-        self.players: Joueurs = Joueurs(
-            num_human_players + num_ia_players, NUM_TREASURES, NUM_TREASURES_PER_PLAYER
+        self.players: Players = Players(
+            nb_players = num_human_players + num_ia_players,
+             nb_total_treasures= NUM_TREASURES,
+              treasures_per_player= NUM_TREASURES_PER_PLAYER
         )
         # TODO Ajout des IAs
         self.joueursIA = range(
@@ -107,7 +109,7 @@ class Labyrinthe(object):
         return self.board
 
     def get_num_players(self) -> int:
-        return self.players.nbJoueurs
+        return self.players.nb_players
 
     def get_current_player(self) -> int:
         return self.current_player
@@ -118,11 +120,11 @@ class Labyrinthe(object):
     def get_tile_to_play(self):
         return self.tile_to_play
 
-    def get_players(self) -> Joueurs:
+    def get_players(self) -> Players:
         return self.players
 
     def current_treasure(self) -> int:
-        return self.players.next_treasure(self.get_current_player())
+        return self.players.get_next_treasure(self.get_current_player())
 
     def get_forbidden_move(self) -> tuple:
         return self.forbidden_move  # c'est quoi la représentation de la direction ??
@@ -176,7 +178,7 @@ class Labyrinthe(object):
 
     def get_remaining_treasures(self, num_player):
         """return the number of remaining treasures for the player num_player"""
-        return self.players.nbTresorsRestants(num_player)  # TODO : améliorer code
+        return self.players.get_nb_treasures_remaining(num_player)  # TODO : améliorer code
 
     def is_forbidden_move(self, direction, position):
         return self.forbidden_move == (direction, position)
@@ -196,6 +198,9 @@ class Labyrinthe(object):
 
     def is_current_player_IA(self):
         return self.current_player in self.joueursIA
+    
+    def remove_current_treasure(self):
+        return self.players.remove_current_treasure(self.current_player)
 
     # inutile ..
     ## # enlève le trésor numTresor sur la carte qui se trouve sur la case lin,col du plateau
@@ -561,31 +566,6 @@ class Labyrinthe(object):
             self.get_coord_current_treasure(), (xJ, yJ)
         )
         return self.accessibleDist(xJ, yJ, xD, yD)
-
-    ######################
-    # Gestion Cheat Code #
-    ######################
-
-    # Ajoute un caractere code dans le code du joueur courant
-    def ajouterCode(self, code):
-        self.players.ajouterCode(code, self.current_player)
-
-    # supprime un caractere code dans le code du joueur courant
-    def supprimerCode(self):
-        self.players.effacerCode(self.current_player)
-
-    # Efface tout le code du joueur courant
-    def effacerDernierCode(self):
-        self.players.effacerDernierCode(self.current_player)
-
-    # Permet de recuperer le code du joueur courant
-    def getCode(self):
-        return self.players.getCode(self.current_player)
-
-    # Permet de verifier si le code du joueur courant est bon ( on peut ainsi changer le bon code ici )
-    def estBonCode(self):
-        return self.getCode() == [2, 7, 1, 3]
-
 
 #############################################################
 # Fonction Utilitaire ne dépandant pas de l'objet labyrinte #
