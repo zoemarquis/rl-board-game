@@ -30,7 +30,7 @@ class GUI_manager(object):
         self.load_images(prefixeImage)
         pygame.init()
         pygame.display.set_icon(self.logo)
-        window  = pygame.display.set_mode(size, pygame.RESIZABLE | pygame.DOUBLEBUF)
+        window = pygame.display.set_mode(size, pygame.RESIZABLE | pygame.DOUBLEBUF)
         pygame.display.set_caption(titre)
         self.surface = pygame.display.get_surface()
         self.surface.fill((0, 0, 139))
@@ -70,25 +70,27 @@ class GUI_manager(object):
                 os.path.join(prefixImage, "carte_tresor" + str(i) + ".png")
             )
             self.treasures_images_for_text.append(s)
-            
+
         self.logo = pygame.image.load(os.path.join(prefixImage, "logo.png"))
-        self.boussole = pygame.image.load(os.path.join(prefixImage, "boussole.png")) # TODO inutile ?
+        self.boussole = pygame.image.load(
+            os.path.join(prefixImage, "boussole.png")
+        )  # TODO inutile ?
 
     def update_parameters(self):
         self.surface = pygame.display.get_surface()
-        self.dimension = self.surface.get_height()  
+        self.dimension = self.surface.get_height()
         self.delta = self.dimension // (self.num_rows + 2)
         self.finh = self.delta * (self.num_rows + 2)
         self.finl = self.delta * (self.num_cols + 2)
         self.tailleFont = min(self.delta, self.delta) * 1 // 4
 
-    def draw_tile_surface(self, tile : Tile):
+    def draw_tile_surface(self, tile: Tile):
         tresor = tile.get_treasure()
         base = tile.is_base()
         pions = tile.get_pawns()
         img = self.tiles_images[tile.tile_to_char()]
 
-        if img == None: # TODO : à enlever ?
+        if img == None:  # TODO : à enlever ?
             return None
 
         surfCarte = pygame.transform.smoothscale(img, (self.delta, self.delta))
@@ -284,7 +286,7 @@ class GUI_manager(object):
             xp, yp = x, y
         return xp, yp
 
-    def getCase(self, pos): # TODO : à revoir, que fait cette fonction ?
+    def getCase(self, pos):  # TODO : à revoir, que fait cette fonction ?
         if (
             self.finl + self.delta // 2
             <= pos[0]
@@ -317,7 +319,11 @@ class GUI_manager(object):
                 self.display_message(
                     2,
                     "C'est au tour de l'IA @img@",
-                    [self.render_text_pawn_surface(self.labyrinthe.get_current_player())],
+                    [
+                        self.render_text_pawn_surface(
+                            self.labyrinthe.get_current_player()
+                        )
+                    ],
                 )
                 self.display_message(
                     3,
@@ -328,7 +334,11 @@ class GUI_manager(object):
                 self.display_message(
                     2,
                     "C'est au tour du joueur @img@",
-                    [self.render_text_pawn_surface(self.labyrinthe.get_current_player())],
+                    [
+                        self.render_text_pawn_surface(
+                            self.labyrinthe.get_current_player()
+                        )
+                    ],
                 )
                 self.display_message(
                     3,
@@ -340,7 +350,7 @@ class GUI_manager(object):
         self.display_playable_tile()
         pygame.display.flip()
 
-    def start(self): # TODO : à revoir
+    def start(self):  # TODO : à revoir
         self.phase = 1
         pygame.time.set_timer(pygame.USEREVENT + 1, 100)
 
@@ -360,10 +370,10 @@ class GUI_manager(object):
             if ev.type == KEYDOWN:
                 if ev.key == K_ESCAPE:
                     break
-                
+
             if self.labyrinthe.is_current_player_human():
 
-                if ev.type == KEYDOWN: # TODO : à revoir
+                if ev.type == KEYDOWN:  # TODO : à revoir
                     if ev.key == K_KP0:
                         self.labyrinthe.ajouterCode(0)
                     if ev.key == K_KP1:
@@ -403,7 +413,7 @@ class GUI_manager(object):
                                 self.info_img = []
                             else:
                                 self.labyrinthe.play_tile(x, y)
-                                self.phase = 2 # TODO : revoir gestion des phases, surement autre modele pour gym (3 phases ou seulement 1)
+                                self.phase = 2  # TODO : revoir gestion des phases, surement autre modele pour gym (3 phases ou seulement 1)
 
                         elif x != -1:
                             self.info_message = (

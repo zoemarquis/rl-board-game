@@ -76,21 +76,23 @@ class Labyrinthe(object):
     def init_board_with_default_7x7_values(self):
         board: Matrix = Matrix()
         # fill the board with fixed cards
-        board.set_value(0, 2, Tile(False, True, True, True, 5))  # grimoire
-        board.set_value(0, 4, Tile(False, True, True, True, 13))  # bourse
+        board.set_value(0, 2, Tile(False, True, True, True, treasure=5))  # grimoire
+        board.set_value(0, 4, Tile(False, True, True, True, treasure=13))  # bourse
 
-        board.set_value(2, 0, Tile(True, True, True, False, 1))  # fiole
-        board.set_value(2, 2, Tile(True, True, True, False, 7))  # couronne
-        board.set_value(2, 4, Tile(False, True, True, True, 14))  # clef
-        board.set_value(2, 6, Tile(True, False, True, True, 22))  # calice
+        board.set_value(2, 0, Tile(True, True, True, False, treasure=1))  # fiole
+        board.set_value(2, 2, Tile(True, True, True, False, treasure=7))  # couronne
+        board.set_value(2, 4, Tile(False, True, True, True, treasure=14))  # clef
+        board.set_value(2, 6, Tile(True, False, True, True, treasure=22))  # calice
 
-        board.set_value(4, 0, Tile(True, True, True, False, 2))  # bague
-        board.set_value(4, 2, Tile(True, True, False, True, 8))  # trésor
-        board.set_value(4, 4, Tile(True, False, True, True, 15))  # pierre précieuse
-        board.set_value(4, 6, Tile(True, False, True, True, 23))  # épée
+        board.set_value(4, 0, Tile(True, True, True, False, treasure=2))  # bague
+        board.set_value(4, 2, Tile(True, True, False, True, treasure=8))  # trésor
+        board.set_value(
+            4, 4, Tile(True, False, True, True, treasure=15)
+        )  # pierre précieuse
+        board.set_value(4, 6, Tile(True, False, True, True, treasure=23))  # épée
 
-        board.set_value(6, 2, Tile(True, True, False, True, 9))  # chandelier
-        board.set_value(6, 4, Tile(True, True, False, True, 16))  # casque
+        board.set_value(6, 2, Tile(True, True, False, True, treasure=9))  # chandelier
+        board.set_value(6, 4, Tile(True, True, False, True, treasure=16))  # casque
 
         # 4 corners
         board.set_value(0, 0, Tile(False, True, True, False, base=1))  # A
@@ -167,7 +169,7 @@ class Labyrinthe(object):
     def get_current_player_num_find_treasure(self):
         """update the player structure when the current player find the treasure"""
         return self.players.tresorTrouve(self.current_player)  # TODO : améliorer code
-    
+
     def get_current_player_remaining_treasure(self):
         """return the number of remaining treasures for the current player"""
         return self.get_remaining_treasures(self.current_player)
