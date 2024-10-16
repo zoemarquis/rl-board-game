@@ -44,7 +44,7 @@ class LabyrinthEnv(gym.Env):
     def reset(self):
         # Paramètres du jeu
         self.game = Labyrinthe(
-            num_human_players=1, nbTresors=2, nbTresorParPersonne=0, num_ia_players=0
+            num_human_players=2, num_ia_players=0
         )
 
         self.termine = False
@@ -126,19 +126,19 @@ class LabyrinthEnv(gym.Env):
     # Fonction permettant de retourner l'état actuel du jeu
     def _get_observation(self):
         infos_labyrinthe = np.zeros((7, 7, 5))
-        plateau = self.game.getPlateau()
+        plateau = self.game.get_board()
 
         # Récupération des infos sur le plateau
         for i in range(7):
             for j in range(7):
                 carte = plateau.get_value(i, j)
                 # Infos murs
-                infos_labyrinthe[i, j, 0] = carte.murNord()
-                infos_labyrinthe[i, j, 1] = carte.murSud()
-                infos_labyrinthe[i, j, 2] = carte.murEst()
-                infos_labyrinthe[i, j, 3] = carte.murOuest()
+                infos_labyrinthe[i, j, 0] = carte.wall_north()
+                infos_labyrinthe[i, j, 1] = carte.wall_south()
+                infos_labyrinthe[i, j, 2] = carte.wall_east()
+                infos_labyrinthe[i, j, 3] = carte.wall_west()
                 # Infos joueur : 1 = joueur présent
-                if carte.getNbPions() > 0:
+                if carte.get_nb_pawns() > 0:
                     infos_labyrinthe[i, j, 4] = 1
 
         return infos_labyrinthe.flatten()
