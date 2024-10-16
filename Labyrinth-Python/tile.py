@@ -50,7 +50,6 @@ class Tile(object):
             or (not north and east and south and not west)
             or (not north and not east and south and west)
             or (north and not east and not south and west)
-            or (north and not east and not south and west)
             or (north and east and south and not west)
             or (north and east and not south and west)
             or (not north and east and south and west)
@@ -63,6 +62,14 @@ class Tile(object):
         self.treasure = treasure
         self.pawns = set()
         self.base = base
+        if (north and south and not east and not west) or (not north and not south and east and west):
+            self.type = "|"
+        elif (north and east and not south and not west) or (not north and east and south and not west) or (not north and not east and south and west) or (north and not east and not south and west):
+            self.type = "L"
+        elif  (north and east and south and not west) or (north and east and not south and west) or (not north and east and south and west) or (north and not east and south and west):
+            self.type = "T"
+        else: 
+            exit("Error in tile type")
 
     def is_base(self) -> int:
         return self.base
