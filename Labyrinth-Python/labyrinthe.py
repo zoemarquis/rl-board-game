@@ -113,6 +113,9 @@ class Labyrinthe(object):
 
     def get_current_player(self) -> int:
         return self.current_player
+    
+    def get_current_tile(self) -> Tile:
+        return self.tile_to_play
 
     def get_phase(self):  # ?
         return self.phase  # ? 1 choisir sens carte, 2 choisir rangee, 3 avancer ???
