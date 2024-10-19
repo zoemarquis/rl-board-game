@@ -37,6 +37,10 @@ class GUI_manager(object):
         self.update_parameters()
         self.display_game()
 
+    # Fermeture de la fenêtre
+    def close(self):
+        pygame.quit()
+
     def load_images(self, prefixImage="./original_images"):
         self.tiles_images = []
         self.pawns_images = []
@@ -171,12 +175,16 @@ class GUI_manager(object):
         return res
 
     def render_text_treasure(self, treasure):
-        res = pygame.Surface((self.delta, self.delta))
-        treasure_surface = pygame.transform.smoothscale(
-            self.treasures_images_for_text[treasure - 1], (self.delta, self.delta)
-        )
-        res.blit(treasure_surface, (0, 0))
-        return res
+        if treasure is None:
+            # retourner une surface vide
+            return pygame.Surface((self.delta, self.delta))
+        else:
+            res = pygame.Surface((self.delta, self.delta))
+            treasure_surface = pygame.transform.smoothscale(
+                self.treasures_images_for_text[treasure - 1], (self.delta, self.delta)
+            )
+            res.blit(treasure_surface, (0, 0))
+            return res
 
     def display_message(self, ligne, text, images=[], color=None):
         font = pygame.font.Font(None, self.tailleFont)

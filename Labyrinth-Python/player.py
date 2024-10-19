@@ -2,10 +2,12 @@ from random import randint
 
 class Player(object):
 
-    def __init__(self, id:int):
+    def __init__(self, id:int, start_position):
         self.id_player = id
         self.treasures = []
         self.nb_treasures = len(self.treasures)
+        self.start_position = start_position
+        self.current_position = start_position
 
     def get_nb_treasures_remaining(self):
         return len(self.treasures)
@@ -24,7 +26,18 @@ class Player(object):
         return self.nb_treasures
 
     def get_next_treasure(self):
-        return self.treasures[0]
+        if len(self.treasures) > 0:
+            return self.treasures[0]
+        else:
+            return None
+
+    # Ajouté pour tester l'entrainement dans le notebook - à modifier    
+    def has_won(self):
+                return self.get_nb_treasures_remaining() == 0 and self.current_position == self.start_position
+
+    # Ajouté pour tester l'entrainement dans le notebook - à modifier
+    def move_to(self, new_position):
+        self.current_position = new_position
         
 
 class Players(object):
@@ -36,7 +49,15 @@ class Players(object):
     def __init__(self, nb_players, nb_total_treasures, treasures_per_player):
         assert nb_players >= 2 and nb_players <= 4, "The number of players must be between 2 and 4"
         assert nb_total_treasures >= nb_players * treasures_per_player, "Not enough treasures for all players"
-        self.players = {i: Player(id=i) for i in range(1, nb_players + 1)}
+        
+        start_positions = {
+            1: (0, 0),  #haut gauche
+            2: (0, 6),  #haut droit
+            3: (6, 0),  #bas gauche
+            4: (6, 6),  #bas droit
+        }
+
+        self.players = {i: Player(id=i, start_position=start_positions[i]) for i in range(1, nb_players + 1)}
         self.nb_players = nb_players
         self.nb_total_treasures = nb_total_treasures
         self.treasures_per_player = treasures_per_player
@@ -64,3 +85,16 @@ class Players(object):
     def get_nb_treasures_remaining(self, id_player : int):
         assert id_player >= 1 and id_player <= self.nb_players, "Invalid player id"
         return self.players[id_player].get_nb_treasures_remaining()
+ 
+    # Ajouté pour tester l'entrainement dans le notebook - à modifier
+    def tresorTrouve(self, id_player):
+        assert id_player >= 1 and id_player <= self.nb_players, "Invalid player id"
+        self.players[id_player].remove_current_treasure()
+    
+    # Ajouté pour tester l'entrainement dans le notebook - à modifier
+    def check_for_winner(self):
+        """Vérifie si un des joueurs a gagné la partie."""
+        for player_id, player in self.players.items():
+            if player.has_won():
+                return player_id
+        return None

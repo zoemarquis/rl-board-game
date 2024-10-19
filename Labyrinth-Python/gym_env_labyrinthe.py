@@ -2,8 +2,8 @@
 from labyrinthe import NUM_TREASURES, NUM_TREASURES_PER_PLAYER, Labyrinthe
 from gui_manager import GUI_manager
 
-import gym
-from gym import spaces
+import gymnasium as gym
+from gymnasium import spaces
 
 import numpy as np
 
@@ -18,8 +18,11 @@ class LabyrinthEnv(gym.Env):
     metadata = {"render.modes": ["human"]}  # TODO : Peut-être mettre 'rgb_array'
 
     # Fonction permettant d'initialiser l'environnement
-    def __init__(self):
+    def __init__(self, max_steps=-1):
         super(LabyrinthEnv, self).__init__()
+
+        self.max_steps = max_steps
+        self.current_step = 0
 
         # Nb actions possibles par le joueur : 12 emplacements d'insertion * 4 rotations * mouvements (49 pièces)
         # TODO : Voir si que 11 emplacements d'insertion (pas mouvement inverse)
@@ -41,7 +44,13 @@ class LabyrinthEnv(gym.Env):
 
     # Fonction permettant de réinitialiser l'environnement
     # Retourne l'état du jeu
-    def reset(self):
+    def reset(self, seed=None, options=None):
+
+        self.current_step = 0
+
+        # Fixer une seed aléatoire
+        self.np_random, seed = gym.utils.seeding.np_random(seed)
+
         # Paramètres du jeu
         self.game = Labyrinthe(
             num_human_players=2, num_ia_players=0
@@ -49,10 +58,12 @@ class LabyrinthEnv(gym.Env):
 
         self.termine = False
         self.derniere_insertion = None
-        return self._get_observation()
+        return self._get_observation(), {}
 
     # Fonction permettant à l'agent de réaliser une action
     def step(self, action):
+
+        self.current_step += 1
 
         action_deplacement = action % 49
         idx_insertion = (action // 49) // 4
@@ -65,7 +76,8 @@ class LabyrinthEnv(gym.Env):
         if self._est_interdit(idx_insertion):
             recompense = -10  # Récompense : -10 si mouvement interdit
             termine = False
-            return self._get_observation(), recompense, termine, {}
+            tronque = False
+            return self._get_observation(), recompense, termine, tronque, {}
 
         direction, rangee = self._get_insertion(idx_insertion)
         # print("Direction : ", direction)
@@ -107,9 +119,20 @@ class LabyrinthEnv(gym.Env):
         else:
             recompense = -1  # Récompense : -1 si pas de trésor trouvé
 
-        termine = self._is_termine()
+        gagnant = self.game.players.check_for_winner()
+        if gagnant is not None:
+            print(f"Le joueur {gagnant} a gagné la partie !")
+            termine = True  # Terminer la partie
+        else:
+            termine = False
 
-        return self._get_observation(), recompense, termine, {}
+        if self.max_steps!=-1 and (self.current_step >= self.max_steps):
+            termine = True
+
+        #termine = self._is_termine()
+        tronque = False # A définir si on veut arreter la partie avant la fin
+
+        return self._get_observation(), recompense, termine, tronque, {}
 
     # Fonction permettant d'afficher le jeu
     def render(self):
@@ -121,11 +144,13 @@ class LabyrinthEnv(gym.Env):
     # Fonction permettant de fermer l'environnement
     # TODO : Voir ce qu'il y a à faire
     def close(self):
-        pass
+        if hasattr(self, "graphique"):
+            self.graphique.close()
+        super().close() 
 
     # Fonction permettant de retourner l'état actuel du jeu
     def _get_observation(self):
-        infos_labyrinthe = np.zeros((7, 7, 5))
+        infos_labyrinthe = np.zeros((7, 7, 5), dtype=np.float32)
         plateau = self.game.get_board()
 
         # Récupération des infos sur le plateau
@@ -141,7 +166,7 @@ class LabyrinthEnv(gym.Env):
                 if carte.get_nb_pawns() > 0:
                     infos_labyrinthe[i, j, 4] = 1
 
-        return infos_labyrinthe.flatten()
+        return infos_labyrinthe.flatten().astype(np.float32) 
 
     # Fonction permettant de vérifier si le joueur a atteint le trésor
     def _is_tresor_trouve(self):
@@ -156,6 +181,9 @@ class LabyrinthEnv(gym.Env):
         ligA, colA = new_position
         self.game.prendreJoueurCourant(ligD, colD)
         self.game.poserJoueurCourant(ligA, colA)
+
+        joueur_courant = self.game.players.players[self.game.get_current_player()]
+        joueur_courant.move_to((ligA, colA))
 
     # Fonction permettant de vérifier si le jeu est terminé
     # TODO : Ajouter le retour à la case de départ ?

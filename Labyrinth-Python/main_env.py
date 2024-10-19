@@ -12,13 +12,13 @@ for tour in range(num_tours):
 
     action = env.action_space.sample()  # Au hasard pour le test
 
-    observation, recompense, termine, info = env.step(action)
+    observation, recompense, termine, tronque, info = env.step(action)
 
     print(f"Action : {action}")
     print(f"Recompense : {recompense}")
 
     env.render()
-    time.sleep(1)
+    #time.sleep(1)
 
     if termine:
         print("Game over !")
