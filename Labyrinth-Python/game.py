@@ -77,7 +77,7 @@ class Game(object):
         g = GUI_manager(
             Labyrinthe(
                 num_human_players=self.human_players,
-                num_ia_players=self.ia_number,
+                num_ai_players=self.ia_number,
             ),
             prefixeImage=self.directory,
         )

@@ -1,13 +1,10 @@
 from tile import *
 from matrix import DIMENSION, Matrix
 from player import *
-import random
 import copy
 
 # TODO : change robjects name -> 1 to ... (7 x 7 - 3 (colonnes impair) *  7 - 3 * 4 (lignes impair sans case commune avec colonne) - 4 coins) )
 # puis dans le code là où c'est complété -> complété jusqu'au bon nombre (pas 24 si le plateau ne fait pas 24)
-
-TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 
 NUM_TREASURES = 24
 NUM_TREASURES_PER_PLAYER = 6
@@ -22,57 +19,55 @@ class Labyrinthe(object):
     def __init__(
         self,
         num_human_players: int,
-        num_ia_players: int,
+        num_ai_players: int,
     ):
         # TODO : if board dimension is not 7x7, we need to change the fixed cards
         board: Matrix = self.init_board_with_default_7x7_values()
 
+        self.total_players = num_human_players + num_ai_players
+
         self.players: Players = Players(
-            nb_players = num_human_players + num_ia_players,
-             nb_total_treasures= NUM_TREASURES,
-              treasures_per_player= NUM_TREASURES_PER_PLAYER
+            nb_players=self.total_players,
+            nb_total_treasures=NUM_TREASURES,
+            treasures_per_player=NUM_TREASURES_PER_PLAYER,
         )
-        # TODO Ajout des IAs
-        self.joueursIA = range(
-            num_human_players + 1, num_human_players + num_ia_players + 1
-        )
-        if num_ia_players > 1:
-            self.joueursIADef = range(
-                num_human_players + num_ia_players,
-                num_human_players + num_ia_players + 1,
+        self.ai_players = range(num_human_players + 1, self.total_players + 1)
+        if num_ai_players > 1:
+            self.ia_players_def = range(
+                num_human_players + num_ai_players,
+                num_human_players + num_ai_players + 1,
             )
         else:
-            self.joueursIADef = []
+            self.ia_players_def = []
 
         self.current_player = 1
-        self.coordonneesJoueurCourant = (0, 0)
+        self.coords_current_player = (0, 0)
 
         self.phase = 1  # inutile ??
 
         self.forbidden_move: tuple = ("N", 0)
 
-        # Placement des joueurs
-        self.nbJoueurs = num_human_players + num_ia_players
-        if self.nbJoueurs >= 1:
+        # Players placement
+        if self.total_players >= 1:
             board.get_value(0, 0).put_pawn(1)  # A
-        if self.nbJoueurs >= 2:
+        if self.total_players >= 2:
             board.get_value(0, 6).put_pawn(2)  # B
-        if self.nbJoueurs >= 3:
+        if self.total_players >= 3:
             board.get_value(6, 0).put_pawn(3)  # C
-        if self.nbJoueurs == 4:
+        if self.total_players == 4:
             board.get_value(6, 6).put_pawn(4)  # D
 
-        # Trésors et cartes amovible
-        listeCarte = creerCartesAmovibles(NUM_TREASURES)
+        # Treasures and movable tiles
+        tiles_list = create_movable_tiles(NUM_TREASURES)
         for i in range(DIMENSION):
             for j in range(DIMENSION):
                 if (
                     i % 2 == 1 or j % 2 == 1
                 ):  # Cela correspond aux emplacements non fixe
                     board.set_value(
-                        i, j, listeCarte.pop(randint(0, len(listeCarte) - 1))
+                        i, j, tiles_list.pop(randint(0, len(tiles_list) - 1))
                     )
-        self.tile_to_play: Tile = listeCarte[0]
+        self.tile_to_play: Tile = tiles_list[0]
         self.board = board
 
     def init_board_with_default_7x7_values(self):
@@ -113,7 +108,7 @@ class Labyrinthe(object):
 
     def get_current_player(self) -> int:
         return self.current_player
-    
+
     def get_current_tile(self) -> Tile:
         return self.tile_to_play
 
@@ -169,7 +164,7 @@ class Labyrinthe(object):
             self.current_player = 1
         else:
             self.current_player += 1
-        self.coordonneesJoueurCourant = self.get_coord_current_player()
+        self.coords_current_player = self.get_coord_current_player()
 
     def get_current_player_num_find_treasure(self):
         """update the player structure when the current player find the treasure"""
@@ -181,157 +176,144 @@ class Labyrinthe(object):
 
     def get_remaining_treasures(self, num_player):
         """return the number of remaining treasures for the player num_player"""
-        return self.players.get_nb_treasures_remaining(num_player)  # TODO : améliorer code
+        return self.players.get_nb_treasures_remaining(
+            num_player
+        )  # TODO : améliorer code
 
     def is_forbidden_move(self, direction, position):
         return self.forbidden_move == (direction, position)
 
-    # TODO : remove this function
-    # Test si le joueur courant est un IA attaquant
-    def joueurCourantIsIA(self):
-        return self.current_player in self.joueursIA
-
-    # TODO : remove this function
-    # Test si le joueur courant est un IA defensif
-    def joueurCourantIsIADef(self):
-        return self.current_player in self.joueursIADef
-
     def is_current_player_human(self):
-        return self.current_player not in self.joueursIA
+        return self.current_player not in self.ai_players
 
-    def is_current_player_IA(self):
-        return self.current_player in self.joueursIA
-    
+    def is_current_player_ai(self):
+        return self.current_player in self.ai_players
+
     def remove_current_treasure(self):
         return self.players.remove_current_treasure(self.current_player)
 
-    # inutile ..
-    ## # enlève le trésor numTresor sur la carte qui se trouve sur la case lin,col du plateau
-    ## # si le trésor ne s'y trouve pas la fonction ne fait rien
-    ## def prendreTresorL(self, lin, col, numTresor):
-    ##     if self.board.get_value(lin, col).get_treasure() == numTresor:
-    ##         self.board.get_value(lin, col).pop_treasure()
+    def remove_current_player_from_tile(self, row, col):
+        """remove the current player from the tile at row, col"""
+        self.board.get_value(row, col).remove_pawn(self.get_current_player())
 
-    # enlève le joueur courant de la carte qui se trouve sur la case lin,col du plateau
-    # si le joueur ne s'y trouve pas la fonction ne fait rien
-    def prendreJoueurCourant(self, lin, col):
-        self.board.get_value(lin, col).remove_pawn(self.get_current_player())
+    def put_current_player_in_tile(self, row, col):
+        """put the current player in the tile at row, col"""
+        self.board.get_value(row, col).put_pawn(self.get_current_player())
 
-    # pose le joueur courant de la carte qui se trouve sur la case lin,col du plateau
-    # si le joueur s'y trouve déjà la fonction ne fait rien
-    def poserJoueurCourant(self, lin, col):
-        self.board.get_value(lin, col).put_pawn(self.get_current_player())
+    def play_tile(self, direction, index):
+        """play the tile in the direction and on the row/col index
+        direction : N, E, S, O
+        index : 1, 3, 5 if board is 7x7
 
-    # fonction qui joue la carte amovible dans la direction et sur la rangée passées
-    # en paramètres. Cette fonction
-    #      - met à jour le plateau du labyrinthe
-    #      - met à jour la carte à jouer
-    #      - met à jour la nouvelle direction interdite
-    def play_tile(self, direction, rangee):
+        update the board, the tile to play and the forbidden move
+        """
         if direction == "N":
-            self.tile_to_play = self.board.shift_column_down(rangee, self.tile_to_play)
-            self.forbidden_move = ("S", rangee)
+            self.tile_to_play = self.board.shift_column_down(index, self.tile_to_play)
+            self.forbidden_move = ("S", index)
         if direction == "E":
-            self.tile_to_play = self.board.shift_row_left(rangee, self.tile_to_play)
-            self.forbidden_move = ("O", rangee)
+            self.tile_to_play = self.board.shift_row_left(index, self.tile_to_play)
+            self.forbidden_move = ("O", index)
         if direction == "S":
-            self.tile_to_play = self.board.shift_column_up(rangee, self.tile_to_play)
-            self.forbidden_move = ("N", rangee)
+            self.tile_to_play = self.board.shift_column_up(index, self.tile_to_play)
+            self.forbidden_move = ("N", index)
         if direction == "O":
-            self.tile_to_play = self.board.shift_row_right(rangee, self.tile_to_play)
-            self.forbidden_move = ("E", rangee)
+            self.tile_to_play = self.board.shift_row_right(index, self.tile_to_play)
+            self.forbidden_move = ("E", index)
         pions = self.tile_to_play.get_pawns()
         for pion in pions:
             self.tile_to_play.remove_pawn(pion)
             if pion == 1:
-                self.poserPionL(6, 6, 1)
+                self.put_pawn(6, 6, 1)
             if pion == 2:
-                self.poserPionL(0, 6, 2)
+                self.put_pawn(0, 6, 2)
             if pion == 3:
-                self.poserPionL(6, 0, 3)
+                self.put_pawn(6, 0, 3)
             if pion == 4:
-                self.poserPionL(0, 0, 4)
-        self.coordonneesJoueurCourant = self.get_coord_current_player()
+                self.put_pawn(0, 0, 4)
+        self.coords_current_player = self.get_coord_current_player()
 
-    # Cette fonction tourne la carte à jouer dans le sens indiqué
-    # en paramètre (H horaire A antihoraire)
     def rotate_tile(self, sens="H"):
+        """rotate the tile to play
+        sens : H for clockwise, A for counter clockwise
+        """
         if sens == "H":
             self.tile_to_play.rotate_clockwise()
         else:
             self.tile_to_play.rotate_counter_clockwise()
 
-    # TODO inutile ??
-    # # prend le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
-    # def prendrePionL(self, lin, col, numJoueur):
-    #     self.board.get_value(lin, col).remove_pawn(numJoueur)
+    def put_pawn(self, row, col, player):
+        """put the player in the tile at row, col"""
+        self.board.get_value(row, col).put_pawn(player)
 
-    # pose le pion numJoueur sur sur la carte se trouvant en position lin,col du plateau
-    def poserPionL(self, lin, col, joueur):
-        self.board.get_value(lin, col).put_pawn(joueur)
+    # TODO : revoir les fonctions d'accessibilité des paths
 
-    # indique si il y a un chemin entre la case ligD,colD et la case ligA,colA du labyrinthe
-    # Fonction marquant les case autour d'une case dont la valeur est val et qui est accessible
-    def marquer(self, mat: Matrix, val, marque):
+    def tag_tiles(self, matrix: Matrix, value, tag):
+        # TODO : remove cette fonction pour calcul plus efficace OU réutiliser ce tag pour ne pas tester tous les chemins possibles
+        """mark the cells around a tile with value val and that is accessible from the current tile with tag"""
         changer = False
         for i in range(DIMENSION):
             for j in range(DIMENSION):
-                if mat.get_value(i, j) == val:
+                if matrix.get_value(i, j) == value:
                     if i > 0:
                         if self.board.get_value(i, j).can_go_north(
                             self.board.get_value(i - 1, j)
                         ):
-                            if mat.get_value(i - 1, j) == 0:
-                                mat.set_value(i - 1, j, marque)
+                            if matrix.get_value(i - 1, j) == 0:
+                                matrix.set_value(i - 1, j, tag)
                                 changer = True
                     if i < DIMENSION - 1:
                         if self.board.get_value(i, j).can_go_south(
                             self.board.get_value(i + 1, j)
                         ):
-                            if mat.get_value(i + 1, j) == 0:
-                                mat.set_value(i + 1, j, marque)
+                            if matrix.get_value(i + 1, j) == 0:
+                                matrix.set_value(i + 1, j, tag)
                                 changer = True
                     if j > 0:
                         if self.board.get_value(i, j).can_go_west(
                             self.board.get_value(i, j - 1)
                         ):
-                            if mat.get_value(i, j - 1) == 0:
-                                mat.set_value(i, j - 1, marque)
+                            if matrix.get_value(i, j - 1) == 0:
+                                matrix.set_value(i, j - 1, tag)
                                 changer = True
                     if j < DIMENSION - 1:
                         if self.board.get_value(i, j).can_go_east(
                             self.board.get_value(i, j + 1)
                         ):
-                            if mat.get_value(i, j + 1) == 0:
-                                mat.set_value(i, j + 1, marque)
+                            if matrix.get_value(i, j + 1) == 0:
+                                matrix.set_value(i, j + 1, tag)
                                 changer = True
         return changer
 
-    def accessible(self, ligD, colD, ligA, colA):
+    def accessible(self, rowS, colS, rowE, colE):
+        """
+        propagation algo to check if there is a path between the two cells (rowS, colS) and (rowE, colE)
+        by tagging the cells with a value and checking if the destination cell is tagged
+        """
         matTest = Matrix()
-        matTest.set_value(ligD, colD, 1)
-        changer = True
-        while changer and matTest.get_value(ligA, colA) == 0:
-            changer = self.marquer(matTest, 1, 1)
-        return matTest.get_value(ligA, colA) == 1
+        matTest.set_value(rowS, colS, 1)
+        change = True
+        while change and matTest.get_value(rowE, colE) == 0:
+            change = self.tag_tiles(matTest, 1, 1)
+        return matTest.get_value(rowE, colE) == 1
 
-    # indique si il y a un chemin entre la case ligD,colD et la case ligA,colA du labyrinthe
-    # mais la valeur de retour est None s'il n'y a pas de chemin, sinon c'est un chemin possible entre ces deux cases
-    def accessibleDist(self, ligD, colD, ligA, colA):
-        if not self.accessible(ligD, colD, ligA, colA):
+    def is_accessible(self, rowS, colS, rowE, colE):
+        """
+        return None if there is no path between the two cells (rowS, colS) and (rowE, colE)
+        """
+        if not self.accessible(rowS, colS, rowE, colE):
             return []
         else:
             matTest = Matrix()
-            matTest.set_value(ligD, colD, 1)
+            matTest.set_value(rowS, colS, 1)
             changer = True
             i = 1
-            while changer and matTest.get_value(ligA, colA) == 0:
-                changer = self.marquer(matTest, i, i + 1)
+            while changer and matTest.get_value(rowE, colE) == 0:
+                changer = self.tag_tiles(matTest, i, i + 1)
                 i += 1
-            x, y = ligA, colA
+            x, y = rowE, colE
             chemin = [(x, y)]
             val = matTest.get_value(x, y)
-            while x != ligD or y != colD:
+            while x != rowS or y != colS:
                 if x > 0:
                     if 0 < matTest.get_value(
                         x - 1, y
@@ -371,13 +353,14 @@ class Labyrinthe(object):
             chemin.reverse()
             return chemin
 
-    # verifie si le joueur courant peut accéder la case ligA,colA
-    # si c'est le cas la fonction retourne une liste représentant un chemin possible
-    # sinon ce n'est pas le cas, la fonction retourne None
-    def accessibleDistJoueurCourant(self, ligA, colA):
+    def get_accessible_current_player(self, rowE, colE):
+        """return the path from the current player to the cell (rowE, colE) if it exists
+        if not return None"""
         (ligD, colD) = self.get_coord_current_player()
-        return self.accessibleDist(ligD, colD, ligA, colA)
+        return self.is_accessible(ligD, colD, rowE, colE)
 
+    # TODO :
+    # tout ça : doit disaparaitre
     ###################
     # Gestion de l'IA #
     ###################
@@ -496,9 +479,9 @@ class Labyrinthe(object):
                 self.rotate_tile()
             self.play_tile(direction, rangee)
             xJ, yJ = self.get_coord_current_player()
-            return self.accessibleDist(xJ, yJ, xC, yC)
+            return self.is_accessible(xJ, yJ, xC, yC)
         else:
-            return self.accessibleDist(xJ, yJ, xT, yT)
+            return self.is_accessible(xJ, yJ, xT, yT)
 
     # Fonction cherchant le meilleur coup pour empecher le joueur suivant de trouver son tresor
     def getMeilleurActionDefensive(self):
@@ -568,34 +551,9 @@ class Labyrinthe(object):
         ((xD, yD), _) = self.getPositionMinDistance(
             self.get_coord_current_treasure(), (xJ, yJ)
         )
-        return self.accessibleDist(xJ, yJ, xD, yD)
-
-#############################################################
-# Fonction Utilitaire ne dépandant pas de l'objet labyrinte #
-#############################################################
-# fonction qui permet de créer les cartes amovibles du jeu en y positionnant aléatoirement nbTresor Trésors
-# la fonction retourne la liste, mélangée aléatoirement, des cartes ainsi créées
-def creerCartesAmovibles(nbTresors):
-    listeCarte = []
-    for i in range(16):  # 16 carte coude
-        carte = Tile(True, True, False, False)
-        carte.rotate_random()
-        listeCarte.append(carte)
-    for i in range(12):  # 12 carte tout-droit
-        carte = Tile(True, False, True, False)
-        carte.rotate_random()
-        listeCarte.append(carte)
-    for i in range(6):  # 6 carte T
-        carte = Tile(True, True, True, False)
-        carte.rotate_random()
-        listeCarte.append(carte)
-    random.shuffle(listeCarte)
-    # Placer les trésors sur les cartes (attention à ne pas mettre les trésors déjà sur cartes fixes
-    for tresor in range(1, nbTresors + 1):
-        if not tresor in TRESORS_FIXES:
-            listeCarte[tresor].put_treasure(tresor)
-    return listeCarte
+        return self.is_accessible(xJ, yJ, xD, yD)
 
 
+# TODO : placer cette fonction ailleurs ?
 def distance(pos1, pos2):
     return ((pos1[0] - pos2[0]) ** 2 + ((pos1[1] - pos2[1]) ** 2)) ** (0.5)

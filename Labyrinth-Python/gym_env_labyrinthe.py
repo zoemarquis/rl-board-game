@@ -52,9 +52,7 @@ class LabyrinthEnv(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
         # Paramètres du jeu
-        self.game = Labyrinthe(
-            num_human_players=2, num_ia_players=0
-        )
+        self.game = Labyrinthe(num_human_players=2, num_ai_players=0)
 
         self.termine = False
         self.derniere_insertion = None
@@ -126,11 +124,11 @@ class LabyrinthEnv(gym.Env):
         else:
             termine = False
 
-        if self.max_steps!=-1 and (self.current_step >= self.max_steps):
+        if self.max_steps != -1 and (self.current_step >= self.max_steps):
             termine = True
 
-        #termine = self._is_termine()
-        tronque = False # A définir si on veut arreter la partie avant la fin
+        # termine = self._is_termine()
+        tronque = False  # A définir si on veut arreter la partie avant la fin
 
         return self._get_observation(), recompense, termine, tronque, {}
 
@@ -146,7 +144,7 @@ class LabyrinthEnv(gym.Env):
     def close(self):
         if hasattr(self, "graphique"):
             self.graphique.close()
-        super().close() 
+        super().close()
 
     # Fonction permettant de retourner l'état actuel du jeu
     def _get_observation(self):
@@ -166,7 +164,7 @@ class LabyrinthEnv(gym.Env):
                 if carte.get_nb_pawns() > 0:
                     infos_labyrinthe[i, j, 4] = 1
 
-        return infos_labyrinthe.flatten().astype(np.float32) 
+        return infos_labyrinthe.flatten().astype(np.float32)
 
     # Fonction permettant de vérifier si le joueur a atteint le trésor
     def _is_tresor_trouve(self):
@@ -179,8 +177,8 @@ class LabyrinthEnv(gym.Env):
     def _deplacer_joueur(self, new_position):
         ligD, colD = self.game.get_coord_current_player()
         ligA, colA = new_position
-        self.game.prendreJoueurCourant(ligD, colD)
-        self.game.poserJoueurCourant(ligA, colA)
+        self.game.remove_current_player_from_tile(ligD, colD)
+        self.game.put_current_player_in_tile(ligA, colA)
 
         joueur_courant = self.game.players.players[self.game.get_current_player()]
         joueur_courant.move_to((ligA, colA))

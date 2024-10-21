@@ -18,7 +18,7 @@ for tour in range(num_tours):
     print(f"Recompense : {recompense}")
 
     env.render()
-    #time.sleep(1)
+    # time.sleep(1)
 
     if termine:
         print("Game over !")

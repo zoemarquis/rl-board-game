@@ -1,4 +1,4 @@
-from random import randint
+from random import randint, shuffle
 
 # List of semi-graphic characters representing the tiles
 SEMI_GRAPHIC_TILES = [
@@ -19,6 +19,9 @@ SEMI_GRAPHIC_TILES = [
     "Ø",
     "Ø",
 ]
+
+
+TRESORS_FIXES = set([5, 13, 1, 7, 14, 22, 2, 8, 15, 23, 9, 16])
 
 
 class Tile(object):
@@ -62,13 +65,25 @@ class Tile(object):
         self.treasure = treasure
         self.pawns = set()
         self.base = base
-        if (north and south and not east and not west) or (not north and not south and east and west):
+        if (north and south and not east and not west) or (
+            not north and not south and east and west
+        ):
             self.type = "|"
-        elif (north and east and not south and not west) or (not north and east and south and not west) or (not north and not east and south and west) or (north and not east and not south and west):
+        elif (
+            (north and east and not south and not west)
+            or (not north and east and south and not west)
+            or (not north and not east and south and west)
+            or (north and not east and not south and west)
+        ):
             self.type = "L"
-        elif  (north and east and south and not west) or (north and east and not south and west) or (not north and east and south and west) or (north and not east and south and west):
+        elif (
+            (north and east and south and not west)
+            or (north and east and not south and west)
+            or (not north and east and south and west)
+            or (north and not east and south and west)
+        ):
             self.type = "T"
-        else: 
+        else:
             exit("Error in tile type")
 
     def is_base(self) -> int:
@@ -129,7 +144,7 @@ class Tile(object):
         self.pawns = self.pawns.difference({pawn})
 
     def put_pawn(self, pawn: int) -> None:
-        self.pawns.add(pawn) 
+        self.pawns.add(pawn)
 
     # TODO : check c'est le mauvais sens ???
     def rotate_clockwise(self) -> None:
@@ -218,3 +233,28 @@ class Tile(object):
     def to_char(self) -> str:
         """Return the semi-graphic character corresponding to the tile"""
         return SEMI_GRAPHIC_TILES[self.tile_to_char()]
+
+
+def create_movable_tiles(nb_treasures):
+    """create the movable tiles with nbTresors treasures on it
+    return the list of tiles shuffled randomly
+    """
+    tiles_list = []
+    for _ in range(16):  # 16 L
+        carte = Tile(True, True, False, False)
+        carte.rotate_random()
+        tiles_list.append(carte)
+    for _ in range(12):  # 12 |
+        carte = Tile(True, False, True, False)
+        carte.rotate_random()
+        tiles_list.append(carte)
+    for _ in range(6):  # 6 T
+        carte = Tile(True, True, True, False)
+        carte.rotate_random()
+        tiles_list.append(carte)
+    shuffle(tiles_list)
+    # place remaining treasures on the movable tiles
+    for tresor in range(1, nb_treasures + 1):
+        if not tresor in TRESORS_FIXES:
+            tiles_list[tresor].put_treasure(tresor)
+    return tiles_list

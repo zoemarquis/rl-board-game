@@ -287,8 +287,10 @@ class GUI_manager(object):
     def animated_path(self, chemin, pause=0.2):
         (xp, yp) = chemin.pop(0)
         for x, y in chemin:
-            self.labyrinthe.prendreJoueurCourant(xp, yp)  # pas la bonne fonction
-            self.labyrinthe.poserJoueurCourant(x, y)  # la meme
+            self.labyrinthe.remove_current_player_from_tile(
+                xp, yp
+            )  # pas la bonne fonction
+            self.labyrinthe.put_current_player_in_tile(x, y)  # la meme
             self.display_game()
             time.sleep(pause)
             xp, yp = x, y
@@ -323,7 +325,7 @@ class GUI_manager(object):
         self.draw_arrows()
         self.draw_board()
         if not self.fini:
-            if self.labyrinthe.joueurCourantIsIA():
+            if self.labyrinthe.is_current_player_ai():
                 self.display_message(
                     2,
                     "C'est au tour de l'IA @img@",
@@ -436,8 +438,8 @@ class GUI_manager(object):
                             self.info_img = []
                         else:
                             jc = self.labyrinthe.get_current_player()
-                            xD, yD = self.labyrinthe.coordonneesJoueurCourant
-                            chemin = self.labyrinthe.accessibleDist(xD, yD, x, y)
+                            xD, yD = self.labyrinthe.coords_current_player
+                            chemin = self.labyrinthe.is_accessible(xD, yD, x, y)
                             if len(chemin) == 0:
                                 self.info_message = (
                                     "Cette case est inaccessible pour le joueur @img@."
@@ -470,7 +472,7 @@ class GUI_manager(object):
                     self.display_game()
             # TODO : gestion de l'IA : temporiser les coups
             elif not self.fini:
-                if self.labyrinthe.joueurCourantIsIADef():
+                if self.labyrinthe.is_current_player_ai():
                     chemin = self.labyrinthe.getCheminDefensif()
                 else:
                     chemin = self.labyrinthe.getMeilleurAction()

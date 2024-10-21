@@ -25,3 +25,10 @@ Chaque agent aura un comportement différent, ce qui permettra d'analyser l'impa
 - Personnaliser les agents selon divers styles de jeu.
 - Optimiser les règles grâce aux retours des simulations d'agents RL.
 
+
+
+```
+    sudo apt install python3-pip
+    pip install pygame
+    pip install gymnasium
+```
