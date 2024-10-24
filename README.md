@@ -31,4 +31,20 @@ Chaque agent aura un comportement différent, ce qui permettra d'analyser l'impa
     sudo apt install python3-pip
     pip install pygame
     pip install gymnasium
+
+    sudo apt install postgresql postgresql-contrib
+
+    sudo systemctl start postgresql
+    sudo systemctl enable postgresql
+
+    pip install psycopg2-binary sqlalchemy pandas
+
+    # Ajouter le dépôt DBeaver
+    sudo add-apt-repository ppa:serge-rider/dbeaver-ce
+    sudo apt update
+
+    # Installer DBeaver Community Edition
+    sudo apt install dbeaver-ce
+
+
 ```
