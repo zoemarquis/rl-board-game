@@ -21,6 +21,8 @@ class Matrix(object):
 
     def set_value(self, row, col, value) -> None:
         """Set the value in the matrix at the line and column passed as parameters"""
+        assert row >= 0 and row < DIMENSION, "Row out of bounds"
+        assert col >= 0 and col < DIMENSION, "Column out of bounds"
         self.matrix[row, col] = value
 
     def shift_row_left(self, row_index, updated_value=0) -> int:

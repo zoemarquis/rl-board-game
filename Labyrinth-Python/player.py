@@ -80,7 +80,7 @@ class Players(object):
         # and distribute them to the players
         for i in range(self.nb_players):
             for _ in range(self.treasures_per_player):
-                treasure = available_treasures[randint(0, len(available_treasures) -1)]
+                treasure = available_treasures[randint(0, len(available_treasures) - 1)]
                 self.players[i].add_treasure(treasure)
                 available_treasures.remove(treasure)
 

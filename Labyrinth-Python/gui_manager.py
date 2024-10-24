@@ -179,7 +179,7 @@ class GUI_manager(object):
         if treasure is None:
             # retourner une surface vide
             return pygame.Surface((self.delta, self.delta))
-            # TODO : coté interface graphique, retourner la surface représentant la base 
+            # TODO : coté interface graphique, retourner la surface représentant la base
         else:
             res = pygame.Surface((self.delta, self.delta))
             treasure_surface = pygame.transform.smoothscale(
