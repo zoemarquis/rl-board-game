@@ -38,7 +38,7 @@ Chaque agent aura un comportement différent, ce qui permettra d'analyser l'impa
     sudo systemctl enable postgresql
 
     pip install psycopg2-binary sqlalchemy pandas
-
+ 
     # Ajouter le dépôt DBeaver
     sudo add-apt-repository ppa:serge-rider/dbeaver-ce
     sudo apt update

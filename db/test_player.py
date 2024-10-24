@@ -15,10 +15,12 @@ players = session.query(Player).all()
 
 # Afficher les informations des joueurs
 for player in players:
-    print(f"ID: {player.player_id}, Name: {player.name}, Type: {player.type}, "
-          f"Strategy: {player.strategy}, Description: {player.description}, "
-          f"Difficulty: {player.difficulty},"
-          f"Registration Date: {player.registration_date}")
+    print(
+        f"ID: {player.player_id}, Name: {player.name}, Type: {player.type}, "
+        f"Strategy: {player.strategy}, Description: {player.description}, "
+        f"Difficulty: {player.difficulty},"
+        f"Registration Date: {player.registration_date}"
+    )
 
 # Fermer la session
 session.close()

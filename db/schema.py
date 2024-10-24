@@ -19,7 +19,6 @@ from sqlalchemy import (
     Integer,
     PrimaryKeyConstraint,
     String,
-    text,
 )
 from sqlalchemy.orm import sessionmaker, declarative_base, Mapped
 from sqlalchemy.inspection import inspect
@@ -27,12 +26,7 @@ from sqlalchemy.inspection import inspect
 # Create a new SQLAlchemy engine
 engine = create_engine(DATABASE_URL)
 
-Base = declarative_base()  
-
-
-class PlayerType(enum.Enum):
-    HUMAN = "human"
-    AGENT = "agent"
+Base = declarative_base()
 
 
 class Player(Base):
@@ -40,7 +34,7 @@ class Player(Base):
 
     player_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False, unique=True)
-    type = Column(Enum(PlayerType), nullable=False, default=PlayerType.HUMAN)
+    is_human = Column(Boolean, nullable=False, default=True)
     strategy = Column(String, nullable=True)
     description = Column(String, nullable=True)
     difficulty = Column(Integer, nullable=True)
@@ -89,7 +83,7 @@ class Game(Base):
         nullable=False,
     )
     played_at = Column(DateTime(timezone=True), server_default=func.now())
-    nb_participants = Column(Integer, nullable=False) 
+    nb_participants = Column(Integer, nullable=False)
 
 
 class Participant(Base):
@@ -103,14 +97,17 @@ class Participant(Base):
     )
     __table_args__ = (PrimaryKeyConstraint("game_id", "player_id"),)
 
-    turn_order = Column(Integer, nullable=False) 
+    turn_order = Column(Integer, nullable=False)
     __table_args__ = (
         PrimaryKeyConstraint("game_id", "player_id"),
-        CheckConstraint('turn_order IN (1, 2, 3, 4)', name='check_turn_order')
+        CheckConstraint("turn_order IN (1, 2, 3, 4)", name="check_turn_order"),
     )
-    score = Column(Integer, nullable=False, default=0) # 0 if the player is human -> score of the selected agent
+    score = Column(
+        Integer, nullable=False, default=0
+    )  # 0 if the player is human -> score of the selected agent
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
+
 
 # Create all tables in the database
 Base.metadata.create_all(engine)
@@ -127,7 +124,6 @@ def display_schema():
             )
 
 
-
 # Fonction principale pour ajouter des joueurs
 def add_players():
     # Créer une session
@@ -137,10 +133,10 @@ def add_players():
     try:
         # Créer des instances de Player
         human_players = [
-            Player(name="Zoé", type=PlayerType.HUMAN),
-            Player(name="Charlotte", type=PlayerType.HUMAN),
-            Player(name="Katia", type=PlayerType.HUMAN),
-            Player(name="Daniil", type=PlayerType.HUMAN),
+            Player(name="Zoé"),
+            Player(name="Charlotte"),
+            Player(name="Katia"),
+            Player(name="Daniil"),
         ]
 
         # Ajouter les joueurs à la session
@@ -161,6 +157,6 @@ def add_players():
 if __name__ == "__main__":
     # Créer toutes les tables dans la base de données
     Base.metadata.create_all(engine)
-    
+
     # Ajouter des joueurs
     add_players()
