@@ -58,15 +58,15 @@ class Players(object):
         ), "Not enough treasures for all players"
 
         start_positions = {
-            1: (0, 0),  # haut gauche
-            2: (0, 6),  # haut droit
-            3: (6, 0),  # bas gauche
-            4: (6, 6),  # bas droit
+            0: (0, 0),  # haut gauche
+            1: (0, 6),  # haut droit
+            2: (6, 0),  # bas gauche
+            3: (6, 6),  # bas droit
         }
 
         self.players = {
             i: Player(id=i, start_position=start_positions[i])
-            for i in range(1, nb_players + 1)
+            for i in range(nb_players)
         }
         self.nb_players = nb_players
         self.nb_total_treasures = nb_total_treasures
@@ -75,30 +75,30 @@ class Players(object):
 
     def distribute_treasures(self):
         # randomly distribute the available treasures to the players
-        available_treasures = [i for i in range(1, self.nb_total_treasures + 1)]
+        available_treasures = [i for i in range(self.nb_total_treasures)]
         # select randomly treasures_per_player treasures
         # and distribute them to the players
-        for i in range(1, self.nb_players + 1):
-            for _ in range(0, self.treasures_per_player):
-                treasure = available_treasures[randint(0, len(available_treasures) - 1)]
-                self.players[i].add_treasure(treasure + 1)
+        for i in range(self.nb_players):
+            for _ in range(self.treasures_per_player):
+                treasure = available_treasures[randint(0, len(available_treasures) -1)]
+                self.players[i].add_treasure(treasure)
                 available_treasures.remove(treasure)
 
     def get_next_treasure(self, id_player: int):
-        assert id_player >= 1 and id_player <= self.nb_players, "Invalid player id"
+        assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].get_next_treasure()
 
     def remove_current_treasure(self, id_player: int):
-        assert id_player >= 1 and id_player <= self.nb_players, "Invalid player id"
+        assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].remove_current_treasure()
 
     def get_nb_treasures_remaining(self, id_player: int):
-        assert id_player >= 1 and id_player <= self.nb_players, "Invalid player id"
+        assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].get_nb_treasures_remaining()
 
     # Ajouté pour tester l'entrainement dans le notebook - à modifier
     def tresorTrouve(self, id_player):
-        assert id_player >= 1 and id_player <= self.nb_players, "Invalid player id"
+        assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         self.players[id_player].remove_current_treasure()
 
     # Ajouté pour tester l'entrainement dans le notebook - à modifier

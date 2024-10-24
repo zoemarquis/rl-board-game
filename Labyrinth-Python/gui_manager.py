@@ -4,7 +4,7 @@ import pygame
 import time
 import os
 
-NB_PLAYER = 4  # TODO : enlever ça
+NB_MAX_PLAYER = 4  # TODO : enlever ça
 
 
 class GUI_manager(object):
@@ -58,7 +58,7 @@ class GUI_manager(object):
                 s = None
             self.tiles_images.append(s)
 
-        for i in range(1, NB_PLAYER + 1):
+        for i in range(NB_MAX_PLAYER):
             s = pygame.image.load(os.path.join(prefixImage, "pion" + str(i) + ".png"))
             self.pawns_images.append(s)
             s = pygame.image.load(
@@ -67,7 +67,8 @@ class GUI_manager(object):
             self.pawns_images_for_text.append(s)
             s = pygame.image.load(os.path.join(prefixImage, "base" + str(i) + ".png"))
             self.bases_images.append(s)
-        for i in range(1, NUM_TREASURES + 1):
+
+        for i in range(NUM_TREASURES):
             s = pygame.image.load(os.path.join(prefixImage, "tresor" + str(i) + ".png"))
             self.treasures_images.append(s)
             s = pygame.image.load(
@@ -98,16 +99,16 @@ class GUI_manager(object):
             return None
 
         surfCarte = pygame.transform.smoothscale(img, (self.delta, self.delta))
-        if base != 0:
+        if base != -1:
             surfBase = pygame.transform.smoothscale(
-                self.bases_images[base - 1], (self.delta // 2, self.delta // 2)
+                self.bases_images[base], (self.delta // 2, self.delta // 2)
             )
             base_x = (self.delta - surfBase.get_width()) // 2
             base_y = (self.delta - surfBase.get_height()) // 2
             surfCarte.blit(surfBase, (base_x, base_y))
-        if tresor != 0:
+        if tresor != -1:
             surfTresor = pygame.transform.smoothscale(
-                self.treasures_images[tresor - 1], (self.delta // 2, self.delta // 2)
+                self.treasures_images[tresor], (self.delta // 2, self.delta // 2)
             )
             base_x = (self.delta - surfTresor.get_width()) // 2
             base_y = (self.delta - surfTresor.get_height()) // 2
@@ -125,7 +126,7 @@ class GUI_manager(object):
         ]
         for pions in pions:
             surfPion = pygame.transform.smoothscale(
-                self.pawns_images[pions - 1], (self.delta // 4, self.delta // 4)
+                self.pawns_images[pions], (self.delta // 4, self.delta // 4)
             )
             surfCarte.blit(surfPion, coord.pop(0))
         return surfCarte
@@ -153,7 +154,7 @@ class GUI_manager(object):
     def draw_pawn_surface(self, pawn):
         res = pygame.Surface((self.delta, self.delta))
         pawn_surface = pygame.transform.smoothscale(
-            self.pawns_images[pawn - 1], (self.delta // 2, self.delta // 2)
+            self.pawns_images[pawn], (self.delta // 2, self.delta // 2)
         )
         res.blit(pawn_surface, (self.delta // 4, self.delta // 4))
         return res
@@ -161,7 +162,7 @@ class GUI_manager(object):
     def render_text_pawn_surface(self, pawn):
         res = pygame.Surface((self.delta, self.delta))
         pawn_surface = pygame.transform.smoothscale(
-            self.pawns_images_for_text[pawn - 1], (self.delta, self.delta)
+            self.pawns_images_for_text[pawn], (self.delta, self.delta)
         )
         res.blit(pawn_surface, (0, 0))
         return res
@@ -169,7 +170,7 @@ class GUI_manager(object):
     def draw_treasure_surface(self, treasure):
         res = pygame.Surface((self.delta, self.delta))
         treasure_surface = pygame.transform.smoothscale(
-            self.treasures_images[treasure - 1], (self.delta // 2, self.delta // 2)
+            self.treasures_images[treasure], (self.delta // 2, self.delta // 2)
         )
         res.blit(treasure_surface, (self.delta // 4, self.delta // 4))
         return res
@@ -178,10 +179,11 @@ class GUI_manager(object):
         if treasure is None:
             # retourner une surface vide
             return pygame.Surface((self.delta, self.delta))
+            # TODO : coté interface graphique, retourner la surface représentant la base 
         else:
             res = pygame.Surface((self.delta, self.delta))
             treasure_surface = pygame.transform.smoothscale(
-                self.treasures_images_for_text[treasure - 1], (self.delta, self.delta)
+                self.treasures_images_for_text[treasure], (self.delta, self.delta)
             )
             res.blit(treasure_surface, (0, 0))
             return res
@@ -218,10 +220,10 @@ class GUI_manager(object):
         img = []
         for i in range(self.labyrinthe.get_num_players()):
             text += " @img@ " + str(
-                self.labyrinthe.get_remaining_treasures(i + 1)
+                self.labyrinthe.get_remaining_treasures(i)
             )  # ERREUR ici nbTresorsRestants au lieu de nbTresorsRestantsJoueur
             # TODO ???
-            img.append(self.draw_pawn_surface(i + 1))
+            img.append(self.draw_pawn_surface(i))
         self.display_message(row_index, text, img)
 
     def display_info_message(self, row_index=4):

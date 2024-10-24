@@ -40,7 +40,7 @@ class Labyrinthe(object):
         else:
             self.ia_players_def = []
 
-        self.current_player = 1
+        self.current_player = 0
         self.coords_current_player = (0, 0)
 
         self.phase = 1  # inutile ??
@@ -49,13 +49,13 @@ class Labyrinthe(object):
 
         # Players placement
         if self.total_players >= 1:
-            board.get_value(0, 0).put_pawn(1)  # A
+            board.get_value(0, 0).put_pawn(0)  # A
         if self.total_players >= 2:
-            board.get_value(0, 6).put_pawn(2)  # B
+            board.get_value(0, 6).put_pawn(1)  # B
         if self.total_players >= 3:
-            board.get_value(6, 0).put_pawn(3)  # C
+            board.get_value(6, 0).put_pawn(2)  # C
         if self.total_players == 4:
-            board.get_value(6, 6).put_pawn(4)  # D
+            board.get_value(6, 6).put_pawn(3)  # D
 
         # Treasures and movable tiles
         tiles_list = create_movable_tiles(NUM_TREASURES)
@@ -92,10 +92,10 @@ class Labyrinthe(object):
         board.set_value(6, 4, Tile(True, True, False, True, treasure=16))  # casque
 
         # 4 corners
-        board.set_value(0, 0, Tile(False, True, True, False, base=1))  # A
-        board.set_value(0, 6, Tile(False, False, True, True, base=2))  # B
-        board.set_value(6, 0, Tile(True, True, False, False, base=3))  # C
-        board.set_value(6, 6, Tile(True, False, False, True, base=4))  # D
+        board.set_value(0, 0, Tile(False, True, True, False, base=0))  # A
+        board.set_value(0, 6, Tile(False, False, True, True, base=1))  # B
+        board.set_value(6, 0, Tile(True, True, False, False, base=2))  # C
+        board.set_value(6, 6, Tile(True, False, False, True, base=3))  # D
         return board
 
     # getters
@@ -160,10 +160,8 @@ class Labyrinthe(object):
         # current = self.get_current_player()
         # current += 1
         # 1 à 4 ou 0 à 3 ???
-        if self.get_current_player() == self.get_num_players():
-            self.current_player = 1
-        else:
-            self.current_player += 1
+        self.current_player += 1
+        self.current_player %= self.get_num_players()
         self.coords_current_player = self.get_coord_current_player()
 
     def get_current_player_num_find_treasure(self):

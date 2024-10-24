@@ -31,9 +31,9 @@ class Tile(object):
         if north == True, there is no wall on the north side
         elif north == False, there is a wall on the north side
     - treasure : the value of the treasure on the tile
-        0 if there is no treasure
+        -1 if there is no treasure
     - pawns : list of pawns on the tile
-    - is_base : 0 if it's not a base, else the number of the player who has the base
+    - is_base : -1 if it's not a base, else the number of the player who has the base
     """
 
     def __init__(
@@ -42,8 +42,8 @@ class Tile(object):
         east: bool,
         south: bool,
         west: bool,
-        treasure: int = 0,
-        base=0,
+        treasure: int = -1,
+        base=-1,
     ):
         # check form of the tile is correct
         assert (
@@ -126,18 +126,11 @@ class Tile(object):
         self.pawns = self.pawns.union(pawns)
 
     def get_treasure(self) -> int:
-        """Return the value of the treasure on the tile, 0 if there is no treasure"""
+        """Return the value of the treasure on the tile, -1 if there is no treasure"""
         return self.treasure
 
-    # TODO : remove this method
-    # def pop_treasure(self) -> int:
-    #     """Remove the treasure from the tile and return the value of the treasure"""
-    #     tresor = self.treasure
-    #     self.treasure = 0
-    #     return tresor
-
     def put_treasure(self, tresor: int) -> None:
-        assert self.treasure == 0, "There is already a treasure on this tile"
+        assert self.treasure == -1, "There is already a treasure on this tile"
         self.treasure = tresor
 
     def remove_pawn(self, pawn: int) -> None:
@@ -254,7 +247,7 @@ def create_movable_tiles(nb_treasures):
         tiles_list.append(carte)
     shuffle(tiles_list)
     # place remaining treasures on the movable tiles
-    for tresor in range(1, nb_treasures + 1):
+    for tresor in range(nb_treasures):
         if not tresor in TRESORS_FIXES:
             tiles_list[tresor].put_treasure(tresor)
     return tiles_list
