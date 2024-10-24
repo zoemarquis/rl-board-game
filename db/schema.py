@@ -1,10 +1,7 @@
-import enum
 import sys
 import os
 
-# Add the project root to the Python path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from secret.config import DATABASE_URL
 
 from sqlalchemy import (
@@ -13,7 +10,6 @@ from sqlalchemy import (
     Boolean,
     Column,
     DateTime,
-    Enum,
     ForeignKey,
     func,
     Integer,
@@ -112,7 +108,7 @@ class Participant(Base):
 # Create all tables in the database
 Base.metadata.create_all(engine)
 
-# Function to display the schema
+
 def display_schema():
     inspector = inspect(engine)
     for table_name in inspector.get_table_names():
@@ -124,14 +120,12 @@ def display_schema():
             )
 
 
-# Fonction principale pour ajouter des joueurs
 def add_players():
-    # Créer une session
     Session = sessionmaker(bind=engine)
     session = Session()
 
     try:
-        # Créer des instances de Player
+
         human_players = [
             Player(name="Zoé"),
             Player(name="Charlotte"),
@@ -139,24 +133,19 @@ def add_players():
             Player(name="Daniil"),
         ]
 
-        # Ajouter les joueurs à la session
         session.add_all(human_players)
-
-        # Committer les changements à la base de données
         session.commit()
-        print("Les joueurs ont été ajoutés avec succès.")
+        print("Players have been added successfully.")
 
     except Exception as e:
-        print(f"Erreur lors de l'ajout des joueurs : {e}")
-        session.rollback()  # Annuler les changements en cas d'erreur
+        print(f"Error during adding players: {e}")
+        session.rollback()
 
     finally:
-        session.close()  # Fermer la session
+        session.close()
 
 
 if __name__ == "__main__":
-    # Créer toutes les tables dans la base de données
     Base.metadata.create_all(engine)
-
-    # Ajouter des joueurs
-    add_players()
+    display_schema()
+    # add_players()
