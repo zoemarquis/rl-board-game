@@ -91,13 +91,11 @@ class Participant(Base):
     player_id = Column(
         Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False
     )
-    __table_args__ = (PrimaryKeyConstraint("game_id", "player_id"),)
-
-    turn_order = Column(Integer, nullable=False)
     __table_args__ = (
         PrimaryKeyConstraint("game_id", "player_id"),
         CheckConstraint("turn_order IN (1, 2, 3, 4)", name="check_turn_order"),
     )
+    turn_order = Column(Integer, nullable=False)
     score = Column(
         Integer, nullable=False, default=0
     )  # 0 if the player is human -> score of the selected agent

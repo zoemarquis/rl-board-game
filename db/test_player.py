@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from schema import Player  # Assurez-vous d'importer votre modèle Player
+from schema import Player
 from secret.config import DATABASE_URL
 
 engine = create_engine(DATABASE_URL)
