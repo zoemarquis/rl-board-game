@@ -31,8 +31,8 @@ class Player(Base):
     player_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False, unique=True)
     is_human = Column(Boolean, nullable=False, default=True)
-    strategy = Column(String, nullable=True)
     description = Column(String, nullable=True)
+    strategy = Column(String, nullable=True)
     difficulty = Column(Integer, nullable=True)
     registration_date = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -137,6 +137,54 @@ def add_players():
 
     except Exception as e:
         print(f"Error during adding players: {e}")
+        session.rollback()
+
+    finally:
+        session.close()
+
+def add_agents():
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    try:
+
+        agents = [
+            Player(
+                name="Agent Collecteur", 
+                is_human=False, 
+                strategy="Collecteur", 
+                difficulty=1,
+                description="Collecte les trésors le plus vite possible. \
+                    Il gagne des points de récompense en fonction de la distance entre son pion et son objectif.\
+                        ", # TODO : prendre en compte le jnombre de cout nécessaire à l'obtention du trésor
+                        # reward si il gagne
+                
+            ),
+            Player(
+                name="Agent Emmureur", 
+                is_human=False, 
+                strategy="Emmureur",
+                difficulty=1,
+                description="Bloque les autres joueurs pour les empêcher de gagner des points.\
+                    Il gagne des points de récompense en fonction de la distance que peuvent parcourir les joueurs.\
+                    Si il réduit considérablement les chemins possibles, il gagne des points de récompense.\
+                        ", # TODO : prendre en compte 1 2 ou 3 agents ?, prendre en compte quelque chose pour l'amener un eptit peu vers la victoire aussi
+            ),
+            Player(name="Agent Stable", is_human=False, strategy="Stable",
+                difficulty=1,
+                description="N'aime pas s'arreter sur une case qui bouge. Il aime la stabilité, il déteste donc être sur une case mouvante et encore plus être au bord.\
+                        ", # TODO : prendre en compte le nombre de tour nécessaire à l'obtention du trésor
+                   
+                   
+                   ),
+        ]
+
+        session.add_all(agents)
+        session.commit()
+        print("Agents have been added successfully.")
+
+    except Exception as e:
+        print(f"Error during adding agents: {e}")
         session.rollback()
 
     finally:

@@ -45,6 +45,8 @@ Chaque agent aura un comportement différent, ce qui permettra d'analyser l'impa
 
     # Installer DBeaver Community Edition
     sudo apt install dbeaver-ce
+    pip install streamlit
+    pip install plotly seaborn matplotlib
 
 
 ```
