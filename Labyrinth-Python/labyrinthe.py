@@ -206,28 +206,29 @@ class Labyrinthe(object):
         update the board, the tile to play and the forbidden move
         """
         if direction == "N":
-            self.tile_to_play = self.board.shift_column_down(index, self.tile_to_play)
+            ejected_tile = self.board.shift_column_down(index, self.tile_to_play)
             self.forbidden_move = ("S", index)
-        if direction == "E":
-            self.tile_to_play = self.board.shift_row_left(index, self.tile_to_play)
+            opposite_position = (6, index)
+        elif direction == "E":
+            ejected_tile = self.board.shift_row_left(index, self.tile_to_play)
             self.forbidden_move = ("O", index)
-        if direction == "S":
-            self.tile_to_play = self.board.shift_column_up(index, self.tile_to_play)
+            opposite_position = (index, 6)
+        elif direction == "S":
+            ejected_tile = self.board.shift_column_up(index, self.tile_to_play)
             self.forbidden_move = ("N", index)
-        if direction == "O":
-            self.tile_to_play = self.board.shift_row_right(index, self.tile_to_play)
+            opposite_position = (0, index)
+        elif direction == "O":
+            ejected_tile = self.board.shift_row_right(index, self.tile_to_play)
             self.forbidden_move = ("E", index)
-        pions = self.tile_to_play.get_pawns()
+            opposite_position = (index, 0)
+
+
+        pions = ejected_tile.get_pawns()
         for pion in pions:
-            self.tile_to_play.remove_pawn(pion)
-            if pion == 1:
-                self.put_pawn(6, 6, 1)
-            if pion == 2:
-                self.put_pawn(0, 6, 2)
-            if pion == 3:
-                self.put_pawn(6, 0, 3)
-            if pion == 4:
-                self.put_pawn(0, 0, 4)
+            ejected_tile.remove_pawn(pion)
+            self.put_pawn(opposite_position[0], opposite_position[1], pion)
+
+        self.tile_to_play = ejected_tile
         self.coords_current_player = self.get_coord_current_player()
 
     def rotate_tile(self, sens="H"):
