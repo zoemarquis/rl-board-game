@@ -50,7 +50,7 @@ class Matrix(object):
         assert row_index % 1 == 0, "Row index must be odd"
 
         ejected_value = self.get_value(row_index, DIMENSION - 1)
-        for j in range(DIMENSION, 0, -1):
+        for j in range(DIMENSION - 1, 0, -1):
             self.set_value(row_index, j, self.get_value(row_index, j - 1))
         self.set_value(row_index, 0, updated_value)
         return ejected_value
@@ -80,7 +80,7 @@ class Matrix(object):
         assert col_index % 1 == 0, "Column index must be odd"
 
         ejected_value = self.get_value(DIMENSION - 1, col_index)
-        for i in range(DIMENSION, 0, -1):
+        for i in range(DIMENSION - 1, 0, -1):
             self.set_value(i, col_index, self.get_value(i - 1, col_index))
         self.set_value(0, col_index, updated_value)
         return ejected_value
