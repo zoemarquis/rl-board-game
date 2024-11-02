@@ -12,15 +12,21 @@ class GUI_manager(object):
 
     def __init__(
         self,
-        labyrinthe: Labyrinthe,
+        labyrinthe,
+        model,
+        env,
         titre="Labyrinthe",
         size=(1500, 900),
         couleur=(209, 238, 238),
-        prefixeImage="./original_images",
+        prefixeImage="./original_images", 
     ):
+        
+        self.rl_model = model
+        self.env = env
+
         self.info_message = None
         self.info_img = None
-        self.labyrinthe: Labyrinthe = labyrinthe
+        self.labyrinthe = labyrinthe
         self.fini = False
         self.text_color = couleur
         self.matrix = labyrinthe.board
@@ -474,27 +480,47 @@ class GUI_manager(object):
                     self.display_game()
             # TODO : gestion de l'IA : temporiser les coups
             elif not self.fini:
-                if self.labyrinthe.is_current_player_ai():
-                    chemin = self.labyrinthe.getCheminDefensif()
+                if self.rl_model:
+                    # Récupération action insertion de la tuile
+                    obs = self.env._get_observation()
+                    action, _ = self.rl_model.predict(obs, deterministic=True)
+                    
+                    # Ajout de la tuile au labyrinthe
+                    rotation_idx, insertion_idx = action
+                
+                    direction_map = {0: "N", 1: "E", 2: "S", 3: "O"}
+                    direction = direction_map[rotation_idx]
+
+                    insertion_positions = [1, 3, 5]
+                    index = insertion_positions[insertion_idx % 3]
+
+                    self.labyrinthe.play_tile(direction, index)
+                    
+                    # Affichage sur labyrinthe graphique
+                    self.display_game()
+                    pygame.display.flip()
+                    time.sleep(0.5)
+
+                    # Récupération de l'action de déplacement
+                    obs = self.env._get_observation()
+                    movement_action, _ = self.rl_model.predict(obs, deterministic=True)
+
+                    print("Action de déplacement :", movement_action)
+                    
+                    #self.labyrinthe.move_player(movement_action)  # Appliquez le déplacement
+                    #current_player = self.labyrinthe.get_current_player_object()  # Obtient l'objet Player
+                    #current_player.move_to(movement_action)  # Applique le déplacement
+
+                    # Déplacement sur labyrinth
+                    movement_action_tuple = tuple(movement_action)
+                    self.env._deplacer_joueur(movement_action_tuple)
+
+                    # Afficahge
+                    self.display_game()
+                    pygame.display.flip()
+                    time.sleep(0.5)
                 else:
-                    chemin = self.labyrinthe.getMeilleurAction()
-                jc = self.labyrinthe.get_current_player()
-                self.animated_path(chemin)
-                x, y = self.labyrinthe.get_coord_current_treasure()
-                c: Tile = self.labyrinthe.board.get_value(x, y)
-                t: int = self.labyrinthe.current_treasure()  # nb of treasure to find
-                if c.get_treasure() == t:
-                    self.labyrinthe.remove_current_treasure()
-                    if self.labyrinthe.get_current_player_num_find_treasure() == 0:
-                        self.info_message = "L'IA @img@ a gagné !!!"
-                        self.info_img = [self.draw_pawn_surface(jc)]
-                        self.fini = True
-                    else:
-                        self.info_message = "L'IA @img@ a trouvé le trésor @img@"
-                        self.info_img = [
-                            self.draw_pawn_surface(jc),
-                            self.render_text_treasure(t),
-                        ]
+                    print("Modèle RL manquant pour l'agent.")
 
                 self.labyrinthe.next_player()
                 self.display_game()

@@ -21,6 +21,9 @@ class Labyrinthe(object):
         num_human_players: int,
         num_ai_players: int,
     ):
+        
+        self.player_types = ["human"] * num_human_players + ["ai"] * num_ai_players
+        
         # TODO : if board dimension is not 7x7, we need to change the fixed cards
         board: Matrix = self.init_board_with_default_7x7_values()
 
@@ -108,6 +111,9 @@ class Labyrinthe(object):
 
     def get_current_player(self) -> int:
         return self.current_player
+    
+    def get_current_player_object(self):
+        return self.players.players[self.current_player]
 
     def get_current_tile(self) -> Tile:
         return self.tile_to_play
@@ -182,10 +188,10 @@ class Labyrinthe(object):
         return self.forbidden_move == (direction, position)
 
     def is_current_player_human(self):
-        return self.current_player not in self.ai_players
+        return self.player_types[self.current_player] == "human"
 
     def is_current_player_ai(self):
-        return self.current_player in self.ai_players
+        return self.player_types[self.current_player] == "ai"
 
     def remove_current_treasure(self):
         return self.players.remove_current_treasure(self.current_player)
@@ -205,7 +211,10 @@ class Labyrinthe(object):
 
         update the board, the tile to play and the forbidden move
         """
-        if direction == "N":
+
+        #print(f"play_tile : {direction} {index}")
+
+        if direction == "N" :
             ejected_tile = self.board.shift_column_down(index, self.tile_to_play)
             self.forbidden_move = ("S", index)
             opposite_position = (6, index)
@@ -221,6 +230,8 @@ class Labyrinthe(object):
             ejected_tile = self.board.shift_row_right(index, self.tile_to_play)
             self.forbidden_move = ("E", index)
             opposite_position = (index, 0)
+        else:
+            raise ValueError(f"Direction non valide : {direction}")
 
 
         pions = ejected_tile.get_pawns()

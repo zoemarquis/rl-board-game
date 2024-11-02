@@ -3,27 +3,16 @@ from gymnasium import spaces
 import numpy as np
 from labyrinthe import NUM_TREASURES, NUM_TREASURES_PER_PLAYER, Labyrinthe
 from gui_manager import GUI_manager
-
+import time
 import random
 
-
-# Classe de rappel pour enregistrer les récompenses
 from stable_baselines3.common.callbacks import BaseCallback
 
-class RewardLoggingCallback(BaseCallback):
-    def __init__(self, verbose=0):
-        super(RewardLoggingCallback, self).__init__(verbose)
-
-    def _on_step(self) -> bool:
-        joueur_actuel = self.training_env.envs[0].joueur_actuel
-        recompense_actuelle = self.locals["rewards"]
-        self.logger.record(f"reward/player_{joueur_actuel}", recompense_actuelle)
-        return True
 
 
 # Environnement Gym pour le jeu Labyrinthe
 class LabyrinthEnv(gym.Env):
-    def __init__(self, max_steps=-1, render_mode="human", epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.1):
+    def __init__(self, num_human_players=0, num_ai_players=2,max_steps=-1, render_mode="human", epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.1):
         super(LabyrinthEnv, self).__init__()
         
         self.epsilon = epsilon  # taux d'exploration initial
@@ -55,10 +44,13 @@ class LabyrinthEnv(gym.Env):
 
         self.render_mode = render_mode
 
-        self.reset()
+        self.num_human_players = num_human_players
+        self.num_ai_players = num_ai_players
+
+        self.reset(self.num_human_players, self.num_ai_players)
 
 
-    def reset(self, seed=None, options=None):
+    def reset(self, num_human_players=0, num_ai_players=2, seed=None, options=None):
         self.current_step = 0
         self.phase = 0  # Commence par la phase d'insertion
 
@@ -69,7 +61,7 @@ class LabyrinthEnv(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
         # Initialisation du jeu
-        self.game = Labyrinthe(num_human_players=2, num_ai_players=0)
+        self.game = Labyrinthe(num_human_players=num_human_players, num_ai_players=num_ai_players)
 
         self.termine = False
         self.derniere_insertion = None
@@ -299,3 +291,49 @@ class LabyrinthEnv(gym.Env):
         # 0: 0°, 1: 90°, 2: 180°, 3: 270°
         for _ in range(rotation_idx):
             self.game.rotate_tile("H")
+
+
+# Classe de rappel pour enregistrer les stats
+
+class RewardLoggingCallback(BaseCallback):
+    def __init__(self, verbose=0):
+        super(RewardLoggingCallback, self).__init__(verbose)
+
+    def _on_step(self) -> bool:
+        joueur_actuel = self.training_env.envs[0].joueur_actuel
+        recompense_actuelle = self.locals["rewards"]
+        self.logger.record(f"reward/player_{joueur_actuel}", recompense_actuelle)
+        return True
+
+
+class SaveModelCallback(BaseCallback):
+    def __init__(self, save_freq: int, save_path: str, verbose=0):
+        super(SaveModelCallback, self).__init__(verbose)
+        self.save_freq = save_freq
+        self.save_path = save_path
+
+    def _on_step(self) -> bool:
+        if self.n_calls % self.save_freq == 0:
+            model_path = f"{self.save_path}/modele_{self.n_calls}_steps"
+            self.model.save(model_path)
+            if self.verbose > 0:
+                print(f"Sauvegarde du modele au step {self.n_calls} dans {model_path}")
+        return True
+
+class ExplorationExploitationCallback(BaseCallback):
+    def __init__(self, verbose=0):
+        super(ExplorationExploitationCallback, self).__init__(verbose)
+        self.positive_rewards = 0
+        self.negative_rewards = 0
+
+    def _on_step(self) -> bool:
+        reward = self.locals["rewards"][0]
+        if reward > 0:
+            self.positive_rewards += 1
+        elif reward < 0:
+            self.negative_rewards += 1
+
+        if self.n_calls % 1000 == 0:
+            self.logger.record("exploration_exploitation/positive_rewards", self.positive_rewards)
+            self.logger.record("exploration_exploitation/negative_rewards", self.negative_rewards)
+        return True

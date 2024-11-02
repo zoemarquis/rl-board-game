@@ -1,13 +1,16 @@
 from eztext import *
 from gui_manager import *
+from stable_baselines3 import PPO
+
+from gym_env_2dim import LabyrinthEnv
 
 
 class Game(object):
     """Main class of the game, managing the game parameters and the events of the menu window"""
 
-    def __init__(self, human_players, ia_number, directory):
+    def __init__(self, human_players, ia_number, directory, use_rl_agent=True):
         """Initialization of the Game class"""
-
+        
         self.space = 50  # inutile ?
         self.iOpt = 0  # inutile ?
 
@@ -35,6 +38,14 @@ class Game(object):
 
         self.human_players = human_players
         self.ia_number = ia_number
+        self.use_rl_agent = use_rl_agent
+
+        self.env = LabyrinthEnv(num_human_players=human_players, num_ai_players=ia_number, render_mode="human")
+
+        self.model = None
+        if self.use_rl_agent:
+            self.model = PPO.load("./modeles/best_model.zip")
+  
 
     def display_font(self):
         """Display the font on the screen"""
@@ -74,13 +85,9 @@ class Game(object):
             2 <= self.human_players + self.ia_number <= 4
         ), "La somme de joueurs humains et IA doit être entre 2 et 4"
 
-        g = GUI_manager(
-            Labyrinthe(
-                num_human_players=self.human_players,
-                num_ai_players=self.ia_number,
-            ),
-            prefixeImage=self.directory,
-        )
+        
+        g = GUI_manager(self.env.game, self.model, self.env)
+
         g.start()
 
         pygame.display.flip()

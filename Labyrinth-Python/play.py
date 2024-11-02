@@ -88,7 +88,11 @@ def main():
         )
         exit(1)
 
-    jeu = Game(human_players=nb_humans, ia_number=nb_ia, directory=directory)
+    use_rl_agent = False
+    if nb_ia > 0:
+        use_rl_agent = True
+        
+    jeu = Game(human_players=nb_humans, ia_number=nb_ia, directory=directory, use_rl_agent=use_rl_agent)
     jeu.launch()
 
 

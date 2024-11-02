@@ -21,7 +21,8 @@ class Player(object):
         self.nb_treasures = len(self.treasures)
 
     def remove_current_treasure(self):
-        self.treasures.pop(0)
+        if self.treasures:
+            self.treasures.pop(0)
         self.nb_treasures = len(self.treasures)
         return self.nb_treasures
 
