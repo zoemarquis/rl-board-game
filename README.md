@@ -26,23 +26,38 @@ Chaque agent aura un comportement différent, ce qui permettra d'analyser l'impa
 - Optimiser les règles grâce aux retours des simulations d'agents RL.
 
 ## Installer les packages : 
-
+    cd .\Labyrinth-Python\
     sudo apt install python3-pip  
-    pip install -r requirements
+    pip install -r requirements.txt
 
 ## Commandes à exécuter pour pouvoir lancer le jeu 
     chmod u+x *
+    cd .\Labyrinth-Python\
     python3 play.py [option]
 
 Vous pouvez configurer le nombre total de joueurs, le nombre de joueurs humains et IA, ainsi que le thème du jeu à l'aide d'options passées en ligne de commande.
 
 ### Option
-- -j, --joueurs : Nombre total de joueurs (par défaut : 2).
-- -hu, --humains : Nombre de joueurs humains (par défaut : 0).
-- -ia, --intelligence-artificielle : Nombre de joueurs IA (par défaut : 0).
-- -t, --theme : Choix du thème (disponibles : original, kity, par défaut : original).
+- `-j`, `--joueurs` : Nombre total de joueurs (par défaut : 2).
+- `-hu`, `--humains` : Nombre de joueurs humains (par défaut : 0).
+- `-ia`, `--intelligence-artificielle` : Nombre de joueurs IA (par défaut : 0).
+- `-t`, `--theme` : Choix du thème (disponibles : original, kity, par défaut : original).
 
 ! Si seul le nombre total de joueurs est precisé, on considere que la partie se passe entre les joueurs IA.
+
+## Test de l'environnement Gymnasium
+### Execution rapide
+Pour tester l'environnement de jeu `gym_env_2dim.py`, il faut lancer la commande suivante :  
+```console
+python3 ./main_env.py
+```
+Cette commande lance une partie entre deux agents RL jouant des actions aléatoires dans l'environnement, et la visualisation en temps réel du jeu est assurée par le `GUI_manager`.
+
+### Notebooks pour l'entainement des agents
+Le notebook `entrainement_agents.ipynb` permet d'entraîner des agents RL sur l'environnement `gym_env_2dim.py`. Il enregistre les modèles d'agents entraînés et permet de suivre les métriques de performance avec TensorBoard.
+
+Le notebook `notebook.ipynb` permet d'entraîner des agents sur l'ancien environnement `gym_env_labyrinthe.py`, qui est conçu pour un seul agent jouant seul. Cet environnement a été abandonné au profit de gym_env_2dim.py.
+
 
 ## En cours 🛠️
 Pour la base de données : 
