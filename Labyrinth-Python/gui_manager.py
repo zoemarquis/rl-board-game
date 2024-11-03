@@ -15,10 +15,10 @@ class GUI_manager(object):
         labyrinthe,
         model,
         env,
+        prefixeImage="./original_images",
         titre="Labyrinthe",
         size=(1500, 900),
         couleur=(209, 238, 238),
-        prefixeImage="./original_images", 
     ):
         
         self.rl_model = model

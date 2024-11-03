@@ -86,7 +86,7 @@ class Game(object):
         ), "La somme de joueurs humains et IA doit être entre 2 et 4"
 
         
-        g = GUI_manager(self.env.game, self.model, self.env)
+        g = GUI_manager(self.env.game, self.model, self.env, prefixeImage=self.directory)
 
         g.start()
 
