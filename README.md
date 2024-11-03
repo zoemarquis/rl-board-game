@@ -25,28 +25,20 @@ Chaque agent aura un comportement différent, ce qui permettra d'analyser l'impa
 - Personnaliser les agents selon divers styles de jeu.
 - Optimiser les règles grâce aux retours des simulations d'agents RL.
 
+## Installer les packages : 
+
+    sudo apt install python3-pip  
+    pip install -r requirements
+
+## Jouer avec 2 humains : 
+    cd Labyrinth-Python
+    python3 play.py -hu 2
 
 
-```
-    sudo apt install python3-pip
-    pip install pygame
-    pip install gymnasium
+
+## En cours 🛠️
+Pour la base de données : 
 
     sudo apt install postgresql postgresql-contrib
-
     sudo systemctl start postgresql
     sudo systemctl enable postgresql
-
-    pip install psycopg2-binary sqlalchemy pandas
- 
-    # Ajouter le dépôt DBeaver
-    sudo add-apt-repository ppa:serge-rider/dbeaver-ce
-    sudo apt update
-
-    # Installer DBeaver Community Edition
-    sudo apt install dbeaver-ce
-    pip install streamlit
-    pip install plotly seaborn matplotlib
-
-
-```
