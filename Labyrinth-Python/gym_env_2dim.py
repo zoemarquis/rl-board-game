@@ -1,12 +1,8 @@
-import gymnasium as gym
-from gymnasium import spaces
-import numpy as np
-from labyrinthe import NUM_TREASURES, NUM_TREASURES_PER_PLAYER, Labyrinthe
+from labyrinthe import Labyrinthe
 from gui_manager import GUI_manager
-import time
+import gymnasium as gym
+import numpy as np
 import random
-
-from stable_baselines3.common.callbacks import BaseCallback
 
 
 
@@ -28,13 +24,13 @@ class LabyrinthEnv(gym.Env):
 
         # Espace des actions pour chaque phase
         # Phase d'insertion : [rotation (4), position d'insertion (12)]
-        self.action_space_insertion = spaces.MultiDiscrete([4, 12])
+        self.action_space_insertion = gym.spaces.MultiDiscrete([4, 12])
 
         # Initialiser l'action_space avec l'espace d'actions de la phase d'insertion
         self.action_space = self.action_space_insertion
 
         # Espace d'observation
-        self.observation_space = spaces.Box(
+        self.observation_space = gym.spaces.Box(
             low=0, high=1, shape=(7 * 7 * 5,), dtype=np.float32
         )
 
@@ -70,7 +66,7 @@ class LabyrinthEnv(gym.Env):
 
 
     def step(self, action):
-        
+        #print("action", action)
         # selection d'une action aléatoire pour explorer
         if random.uniform(0, 1) < self.epsilon:
             action = self.action_space.sample()
@@ -85,6 +81,9 @@ class LabyrinthEnv(gym.Env):
 
         # Phase d'insertion
         if self.phase == 0:
+            #print("phase 0")
+
+
             rotation_idx, insertion_idx = action
             
             # Rotation et insertion
@@ -128,7 +127,7 @@ class LabyrinthEnv(gym.Env):
             # Définir l'espace des actions pour le déplacement
             mouvements_possibles = self._get_mouvements_possibles()
             self.mouvements_possibles = mouvements_possibles  # Sauvegarder pour utilisation ultérieure
-            self.action_space = spaces.Discrete(len(mouvements_possibles))
+            self.action_space = gym.spaces.Discrete(len(mouvements_possibles))
 
             # Pas de récompense à cette étape
             recompense = 0
@@ -138,6 +137,9 @@ class LabyrinthEnv(gym.Env):
 
         # Phase de déplacement
         elif self.phase == 1:
+            
+            #print("phase 1")
+
             mouvement_idx = action[0] if isinstance(action, np.ndarray) else action
 
 
@@ -183,7 +185,7 @@ class LabyrinthEnv(gym.Env):
     def render(self):
         if self.render_mode == "human":
             if not hasattr(self, "graphique"):
-                self.graphique = GUI_manager(self.game)
+                self.graphique = GUI_manager(self.game, model="./modeles/best_model.zip", env=self)
             self.graphique.display_game()
 
     def close(self):
@@ -291,49 +293,3 @@ class LabyrinthEnv(gym.Env):
         # 0: 0°, 1: 90°, 2: 180°, 3: 270°
         for _ in range(rotation_idx):
             self.game.rotate_tile("H")
-
-
-# Classe de rappel pour enregistrer les stats
-
-class RewardLoggingCallback(BaseCallback):
-    def __init__(self, verbose=0):
-        super(RewardLoggingCallback, self).__init__(verbose)
-
-    def _on_step(self) -> bool:
-        joueur_actuel = self.training_env.envs[0].joueur_actuel
-        recompense_actuelle = self.locals["rewards"]
-        self.logger.record(f"reward/player_{joueur_actuel}", recompense_actuelle)
-        return True
-
-
-class SaveModelCallback(BaseCallback):
-    def __init__(self, save_freq: int, save_path: str, verbose=0):
-        super(SaveModelCallback, self).__init__(verbose)
-        self.save_freq = save_freq
-        self.save_path = save_path
-
-    def _on_step(self) -> bool:
-        if self.n_calls % self.save_freq == 0:
-            model_path = f"{self.save_path}/modele_{self.n_calls}_steps"
-            self.model.save(model_path)
-            if self.verbose > 0:
-                print(f"Sauvegarde du modele au step {self.n_calls} dans {model_path}")
-        return True
-
-class ExplorationExploitationCallback(BaseCallback):
-    def __init__(self, verbose=0):
-        super(ExplorationExploitationCallback, self).__init__(verbose)
-        self.positive_rewards = 0
-        self.negative_rewards = 0
-
-    def _on_step(self) -> bool:
-        reward = self.locals["rewards"][0]
-        if reward > 0:
-            self.positive_rewards += 1
-        elif reward < 0:
-            self.negative_rewards += 1
-
-        if self.n_calls % 1000 == 0:
-            self.logger.record("exploration_exploitation/positive_rewards", self.positive_rewards)
-            self.logger.record("exploration_exploitation/negative_rewards", self.negative_rewards)
-        return True
