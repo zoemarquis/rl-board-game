@@ -315,24 +315,35 @@ class GUI_manager(object):
 
     def draw_arrows(self, couleur=(255, 255, 0)):
         self.surface.fill((0, 0, 139))  # pour gérer les effets de transparence
-        # TODO : amélioration : changer la couleur de la fleche dont on a pas le droit ?
         for i in range(1, self.num_rows, 2):
-            flecheO = self.draw_arrow_surface("O", couleur)
+            if self.labyrinthe.forbidden_move == ("O", i):
+                flecheO = self.draw_arrow_surface("O", (255, 68, 51))
+            else:
+                flecheO = self.draw_arrow_surface("O", couleur)
             flecheO.set_colorkey((0, 0, 0))  # Set transparency color key
             self.surface.blit(flecheO, (0, (i + 1) * self.delta))
 
-            flecheE = self.draw_arrow_surface("E", couleur)
+            if self.labyrinthe.forbidden_move == ("E", i):
+                flecheE = self.draw_arrow_surface("E", (255, 68, 51))
+            else:
+                flecheE = self.draw_arrow_surface("E", couleur)
             flecheE.set_colorkey((0, 0, 0))  # Set transparency color key
             self.surface.blit(
                 flecheE, (self.delta * (self.num_cols + 1), (i + 1) * self.delta)
             )
 
         for i in range(1, self.num_cols, 2):
-            flecheN = self.draw_arrow_surface("N", couleur)
+            if self.labyrinthe.forbidden_move == ("N", i):
+                flecheN = self.draw_arrow_surface("N", (255, 68, 51))
+            else:
+                flecheN = self.draw_arrow_surface("N", couleur)
             flecheN.set_colorkey((0, 0, 0))  # Set transparency color key
             self.surface.blit(flecheN, ((i + 1) * self.delta, 0))
 
-            flecheS = self.draw_arrow_surface("S", couleur)
+            if self.labyrinthe.forbidden_move == ("S", i):
+                flecheS = self.draw_arrow_surface("S", (255, 68, 51))
+            else:
+                flecheS = self.draw_arrow_surface("S", couleur)
             flecheS.set_colorkey((0, 0, 0))  # Set transparency color key
             self.surface.blit(
                 flecheS, ((i + 1) * self.delta, self.delta * (self.num_rows + 1))
