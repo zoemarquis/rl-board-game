@@ -232,6 +232,7 @@ class Labyrinthe(object):
         else:
             raise ValueError(f"Direction non valide : {direction}")
 
+        pions = ejected_tile.get_pawns()
         for pion in pions:
             ejected_tile.remove_pawn(pion)
             self.put_pawn(opposite_position[0], opposite_position[1], pion)
