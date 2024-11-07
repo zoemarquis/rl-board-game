@@ -557,7 +557,7 @@ class GUI_manager(object):
                                 c = self.labyrinthe.board.get_value(x, y)
                                 t = self.labyrinthe.current_treasure()
                                 player_at_start = (
-                                    self.labyrinthe.get_coord_current_player() == 
+                                    self.labyrinthe.get_coord_player() == 
                                     self.labyrinthe.get_current_player_object().get_start_position()
                                 )
                                 if c.get_treasure() == t:
