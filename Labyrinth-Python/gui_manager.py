@@ -52,8 +52,16 @@ class GUI_manager(object):
         self.pawns_images = []
         self.pawns_images_for_text = []
         self.bases_images = []
+        self.bases_images_for_text = []
         self.treasures_images = []
         self.treasures_images_for_text = []
+
+        if os.path.isfile(os.path.join(prefixImage, "carte_dos" + ".png")):
+            self.treasure_face_down = pygame.image.load(
+                os.path.join(prefixImage, "carte_dos" + ".png")
+            )
+        else:
+            self.treasure_face_down = None
 
         for i in range(16):
             if os.path.isfile(os.path.join(prefixImage, "Carte" + str(i) + ".png")):
@@ -73,6 +81,11 @@ class GUI_manager(object):
             self.pawns_images_for_text.append(s)
             s = pygame.image.load(os.path.join(prefixImage, "base" + str(i) + ".png"))
             self.bases_images.append(s)
+
+            s = pygame.image.load(
+                os.path.join(prefixImage, "texte_base" + str(i) + ".png")
+            )
+            self.bases_images_for_text.append(s)
 
         for i in range(NUM_TREASURES):
             s = pygame.image.load(os.path.join(prefixImage, "tresor" + str(i) + ".png"))
@@ -180,12 +193,27 @@ class GUI_manager(object):
         )
         res.blit(treasure_surface, (self.delta // 4, self.delta // 4))
         return res
+    
+    def render_text_base(self, id_player: int):
+        res = pygame.Surface((self.delta, self.delta))
+        base_surface = pygame.transform.smoothscale(
+            self.bases_images_for_text[id_player], (self.delta, self.delta)
+        )
+        res.blit(base_surface, (0, 0))
+        return res
 
     def render_text_treasure(self, treasure):
         if treasure is None:
             # retourner une surface vide
             return pygame.Surface((self.delta, self.delta))
             # TODO : coté interface graphique, retourner la surface représentant la base
+        elif treasure == -1:
+            res = pygame.Surface((self.delta, self.delta))
+            treasure_surface = pygame.transform.smoothscale(
+                self.treasure_face_down, (self.delta, self.delta)
+            )
+            res.blit(treasure_surface, (0, 0))
+            return res
         else:
             res = pygame.Surface((self.delta, self.delta))
             treasure_surface = pygame.transform.smoothscale(
@@ -203,7 +231,34 @@ class GUI_manager(object):
             ligne - 1
         )  # Garde la même hauteur pour chaque ligne de texte
         posx = (
-            self.finl + self.delta
+            self.finl 
+        )  # Déplace à droite du plateau en utilisant la largeur du plateau
+
+        text_list = text.split("@img@")
+        for msg in text_list:
+            if msg != "":
+                text = font.render(msg, 1, color)
+                textpos = text.get_rect()
+                textpos.y = posy
+                textpos.x = posx
+                self.surface.blit(text, textpos)
+                posx += textpos.width  # +(self.deltal//3)
+            if images != []:
+                surface = images.pop(0)
+                beginy = posy - (self.delta // 3)
+                self.surface.blit(surface, (posx, beginy))
+                posx += surface.get_width()  # +(self.deltal//3)
+
+    def display_message_second_column(self, ligne, text, images=[], color=None):
+        font = pygame.font.Font(None, self.tailleFont)
+        if color == None:
+            color = self.text_color
+
+        posy = self.delta * (
+            ligne - 1
+        )  # Garde la même hauteur pour chaque ligne de texte
+        posx = (
+            self.finl + self.delta * 4
         )  # Déplace à droite du plateau en utilisant la largeur du plateau
 
         text_list = text.split("@img@")
@@ -222,15 +277,23 @@ class GUI_manager(object):
                 posx += surface.get_width()  # +(self.deltal//3)
 
     def display_score(self, row_index=3):
-        text = "Nb trésors restants:"
-        img = []
+        text = "Trésors de chaque joueur : "
+        self.display_message(row_index, text)
+        current_row_index = row_index + 1
         for i in range(self.labyrinthe.get_num_players()):
-            text += " @img@ " + str(
-                self.labyrinthe.get_remaining_treasures(i)
-            )  # ERREUR ici nbTresorsRestants au lieu de nbTresorsRestantsJoueur
-            # TODO ???
-            img.append(self.draw_pawn_surface(i))
-        self.display_message(row_index, text, img)
+            text_player = ""
+            img = []
+            img.append(self.render_text_pawn_surface(i))
+            for treasure in self.labyrinthe.players.get_found_treasures(i):
+                text_player += " @img@ "
+                img.append(self.render_text_treasure(treasure))
+
+            for treasure in range(self.labyrinthe.players.get_nb_treasures_remaining(i)):
+                text_player += " @img@ "
+                img.append(self.render_text_treasure(-1))
+                
+            self.display_message(current_row_index, text_player, img)
+            current_row_index += 1
 
     def display_info_message(self, row_index=4):
         if self.info_message != None:
@@ -238,11 +301,16 @@ class GUI_manager(object):
         self.info_message = None
         self.info_img = None
 
-    def display_playable_tile(self):
-        self.surface.blit(
-            self.draw_tile_surface(self.labyrinthe.get_tile_to_play()),
-            (self.finl + self.delta // 2, self.finh // 2),
-        )  # Ici, carte == get_tile_to_play ?? TODO qu'est ce qu'il veut dire par là ?
+    def display_playable_tile(self, row_index):
+        text_player = "Tuile à insérer :  "
+        tile_surface = self.draw_tile_surface(self.labyrinthe.get_tile_to_play())
+    
+        self.display_message(
+            row_index,      
+            text_player,            
+            images=[tile_surface]   
+        )
+
 
     def draw_arrows(self, couleur=(255, 255, 0)):
         self.surface.fill((0, 0, 139))  # pour gérer les effets de transparence
@@ -304,12 +372,15 @@ class GUI_manager(object):
             xp, yp = x, y
         return xp, yp
 
-    def getCase(self, pos):  # TODO : à revoir, que fait cette fonction ?
+    def get_case(self, pos): 
+        """determine the type of action to do based the position on the mouseclick"""
         if (
-            self.finl + self.delta // 2
+            self.finl + 1.35 * self.delta
             <= pos[0]
-            <= self.finl + self.delta // 2 + self.delta
-            and self.finh // 2 <= pos[1] <= self.finh // 2 + self.delta
+            <= self.finl + 1.35 * self.delta + self.delta
+            and (self.finh - 5.5 * self.delta) // 2 
+            <= pos[1] 
+            <= (self.finh - 5.5 * self.delta) // 2 + self.delta
         ):
             return ("T", "T")
         if pos[0] < 0 or pos[0] > self.finl or pos[1] < 0 or pos[1] > self.finh:
@@ -334,7 +405,7 @@ class GUI_manager(object):
         self.draw_board()
         if not self.fini:
             if self.labyrinthe.is_current_player_ai():
-                self.display_message(
+                self.display_message_second_column(
                     2,
                     "C'est au tour de l'IA @img@",
                     [
@@ -343,11 +414,22 @@ class GUI_manager(object):
                         )
                     ],
                 )
-                self.display_message(
-                    3,
-                    "Trésor à trouver @img@",
-                    [self.render_text_treasure(self.labyrinthe.current_treasure())],
-                )
+                if self.labyrinthe.get_current_player_remaining_treasure() == 0:
+                    self.display_message_second_column(
+                        2, 
+                        "Retournez à @img@", 
+                        [
+                            self.render_text_base(
+                                self.labyrinthe.get_current_player()
+                            )
+                        ]
+                    )
+                else:
+                    self.display_message_second_column(
+                        2,
+                        "Trésor à trouver @img@",
+                        [self.render_text_treasure(self.labyrinthe.current_treasure())],
+                    )
             else:
                 self.display_message(
                     2,
@@ -358,14 +440,25 @@ class GUI_manager(object):
                         )
                     ],
                 )
-                self.display_message(
-                    3,
-                    "Trésor à trouver @img@",
-                    [self.render_text_treasure(self.labyrinthe.current_treasure())],
-                )
-        self.display_score(4)
-        self.display_info_message(5)
-        self.display_playable_tile()
+                if self.labyrinthe.get_current_player_remaining_treasure() == 0:
+                    self.display_message_second_column(
+                        2, 
+                        "Retournez à @img@", 
+                        [
+                            self.render_text_base(
+                                self.labyrinthe.get_current_player()
+                            )
+                        ]
+                    )
+                else:
+                    self.display_message_second_column(
+                        2,
+                        "Trésor à trouver @img@",
+                        [self.render_text_treasure(self.labyrinthe.current_treasure())],
+                    )
+        self.display_playable_tile(3)
+        self.display_info_message(4)
+        self.display_score(5)
         pygame.display.flip()
 
     def start(self):  # TODO : à revoir
@@ -416,7 +509,7 @@ class GUI_manager(object):
                         self.labyrinthe.effacerDernierCode()
                         self.display_game()
                 if ev.type == pygame.MOUSEBUTTONDOWN:
-                    (x, y) = self.getCase(ev.pos)
+                    (x, y) = self.get_case(ev.pos)
                     if self.fini:
                         continue
 
@@ -450,30 +543,47 @@ class GUI_manager(object):
                             chemin = self.labyrinthe.is_accessible(xD, yD, x, y)
                             if len(chemin) == 0:
                                 self.info_message = (
-                                    "Cette case est inaccessible pour le joueur @img@."
+                                    "Cette case est inaccessible pour le joueur @img@"
                                 )
-                                self.info_img = [self.draw_pawn_surface(jc)]
+                                self.info_img = [self.render_text_pawn_surface(jc)]
                             else:
                                 self.animated_path(chemin)
                                 c = self.labyrinthe.board.get_value(x, y)
                                 t = self.labyrinthe.current_treasure()
+                                player_at_start = (
+                                    self.labyrinthe.get_coord_current_player() == 
+                                    self.labyrinthe.get_current_player_object().get_start_position()
+                                )
                                 if c.get_treasure() == t:
                                     self.labyrinthe.remove_current_treasure()
                                     if (
                                         self.labyrinthe.get_current_player_remaining_treasure()
-                                        == 0
+                                        == 0  
                                     ):
-                                        self.info_message = "Le joueur @img@ a gagné"
-                                        self.info_img = [self.draw_pawn_surface(jc)]
-                                        self.fini = True
+                                        if player_at_start:
+                                            self.info_message = "Le joueur @img@ a gagné"
+                                            self.info_img = [self.render_text_pawn_surface(jc)]
+                                            self.fini = True
+                                        else:
+                                            self.info_message = "Le joueur @img@ trouvé tous ses trésors, retournez à @img@ pour gagner"
+                                            self.info_img = [self.render_text_pawn_surface(jc), self.render_text_base(jc)]
                                     else:
                                         self.info_message = (
-                                            "Le joueur @img@ a trouvé le trésor @img@."
+                                            "Le joueur @img@ a trouvé le trésor @img@"
                                         )
                                         self.info_img = [
-                                            self.draw_pawn_surface(jc),
+                                            self.render_text_pawn_surface(jc),
                                             self.render_text_treasure(t),
                                         ]
+                                
+                                if (
+                                        self.labyrinthe.get_current_player_remaining_treasure()
+                                        == 0  and player_at_start
+                                    ):
+                                        self.info_message = "Le joueur @img@ a gagné"
+                                        self.info_img = [self.render_text_pawn_surface(jc)]
+                                        self.fini = True
+
                                 self.labyrinthe.next_player()
                                 self.phase = 1
 

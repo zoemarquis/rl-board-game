@@ -5,6 +5,7 @@ class Player(object):
     def __init__(self, id: int, start_position):
         self.id_player = id
         self.treasures = []
+        self.found_treasures = []
         self.nb_treasures = len(self.treasures)
         self.start_position = start_position
         self.current_position = start_position
@@ -17,12 +18,14 @@ class Player(object):
         self.nb_treasures = len(self.treasures)
 
     def remove_treasure(self, treasure: int):
+        self.found_treasures.append(treasure)
         self.treasures.remove(treasure)
         self.nb_treasures = len(self.treasures)
 
     def remove_current_treasure(self):
         if self.treasures:
-            self.treasures.pop(0)
+            found = self.treasures.pop(0)
+            self.found_treasures.append(found)
         self.nb_treasures = len(self.treasures)
         return self.nb_treasures
 
@@ -31,6 +34,15 @@ class Player(object):
             return self.treasures[0]
         else:
             return None
+    
+    def get_found_treasures(self):
+        return self.found_treasures
+    
+    def get_nb_found_treasures(self):
+        return len(self.found_treasures)
+    
+    def get_start_position(self):
+        return self.start_position
 
     # Ajouté pour tester l'entrainement dans le notebook - à modifier
     def has_won(self):
@@ -96,6 +108,14 @@ class Players(object):
     def get_nb_treasures_remaining(self, id_player: int):
         assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].get_nb_treasures_remaining()
+    
+    def get_found_treasures(self, id_player: int):
+        assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
+        return self.players[id_player].get_found_treasures()
+    
+    def get_nb_found_treasures(self, id_player: int):
+        assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
+        return self.players[id_player].get_nb_found_treasures()
 
     # Ajouté pour tester l'entrainement dans le notebook - à modifier
     def tresorTrouve(self, id_player):

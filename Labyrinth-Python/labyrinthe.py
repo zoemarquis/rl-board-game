@@ -111,7 +111,7 @@ class Labyrinthe(object):
 
     def get_current_player(self) -> int:
         return self.current_player
-    
+
     def get_current_player_object(self):
         return self.players.players[self.current_player]
 
@@ -188,10 +188,10 @@ class Labyrinthe(object):
         return self.forbidden_move == (direction, position)
 
     def is_current_player_human(self):
-        return self.player_types[self.current_player] == "human"
+        return self.current_player not in self.ai_players
 
     def is_current_player_ai(self):
-        return self.player_types[self.current_player] == "ai"
+        return self.current_player in self.ai_players
 
     def remove_current_treasure(self):
         return self.players.remove_current_treasure(self.current_player)
@@ -211,35 +211,29 @@ class Labyrinthe(object):
 
         update the board, the tile to play and the forbidden move
         """
-
-        #print(f"play_tile : {direction} {index}")
-
-        if direction == "N" :
-            ejected_tile = self.board.shift_column_down(index, self.tile_to_play)
+        if direction == "N":
+            self.tile_to_play = self.board.shift_column_down(index, self.tile_to_play)
             self.forbidden_move = ("S", index)
-            opposite_position = (6, index)
-        elif direction == "E":
-            ejected_tile = self.board.shift_row_left(index, self.tile_to_play)
+        if direction == "E":
+            self.tile_to_play = self.board.shift_row_left(index, self.tile_to_play)
             self.forbidden_move = ("O", index)
-            opposite_position = (index, 6)
-        elif direction == "S":
-            ejected_tile = self.board.shift_column_up(index, self.tile_to_play)
+        if direction == "S":
+            self.tile_to_play = self.board.shift_column_up(index, self.tile_to_play)
             self.forbidden_move = ("N", index)
-            opposite_position = (0, index)
-        elif direction == "O":
-            ejected_tile = self.board.shift_row_right(index, self.tile_to_play)
+        if direction == "O":
+            self.tile_to_play = self.board.shift_row_right(index, self.tile_to_play)
             self.forbidden_move = ("E", index)
-            opposite_position = (index, 0)
-        else:
-            raise ValueError(f"Direction non valide : {direction}")
-
-
-        pions = ejected_tile.get_pawns()
+        pions = self.tile_to_play.get_pawns()
         for pion in pions:
-            ejected_tile.remove_pawn(pion)
-            self.put_pawn(opposite_position[0], opposite_position[1], pion)
-
-        self.tile_to_play = ejected_tile
+            self.tile_to_play.remove_pawn(pion)
+            if pion == 1:
+                self.put_pawn(6, 6, 1)
+            if pion == 2:
+                self.put_pawn(0, 6, 2)
+            if pion == 3:
+                self.put_pawn(6, 0, 3)
+            if pion == 4:
+                self.put_pawn(0, 0, 4)
         self.coords_current_player = self.get_coord_current_player()
 
     def rotate_tile(self, sens="H"):
