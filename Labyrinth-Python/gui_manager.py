@@ -485,6 +485,7 @@ class GUI_manager(object):
 
                     self.display_game()
             # TODO : gestion de l'IA : temporiser les coups
+            # TODO : Zoé pour la DB
             elif not self.fini:
                 if self.rl_model:
                     # Récupération action insertion de la tuile
