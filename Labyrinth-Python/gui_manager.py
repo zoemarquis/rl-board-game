@@ -3,6 +3,7 @@ from eztext import *
 import pygame
 import time
 import os
+import pythoncom
 
 NB_MAX_PLAYER = 4  # TODO : enlever ça
 
@@ -374,8 +375,13 @@ class GUI_manager(object):
 
         # Boucle d'événements
         while True:
+            
+            pythoncom.PumpWaitingMessages()
+
             ev = pygame.event.wait()
+
             if ev.type == pygame.QUIT:
+                print("Fermeture de la fenêtre")
                 break
 
             if ev.type == pygame.USEREVENT + 1:
@@ -506,14 +512,24 @@ class GUI_manager(object):
                     movement_action, _ = self.rl_model.predict(obs, deterministic=True)
 
                     print("Action de déplacement :", movement_action)
+
+                    mouvements_possibles = self.env._get_mouvements_possibles(joueur_id=self.env.game.get_current_player())
                     
-                    #self.labyrinthe.move_player(movement_action)  # Appliquez le déplacement
-                    #current_player = self.labyrinthe.get_current_player_object()  # Obtient l'objet Player
-                    #current_player.move_to(movement_action)  # Applique le déplacement
+                    #print("Mouvements possibles :", mouvements_possibles)
+
+                    # Vérification de l'action de déplacement
+                    if isinstance(movement_action[0], int) and 0 <= movement_action[0] < len(mouvements_possibles):
+                        nouvelle_position = mouvements_possibles[movement_action[0]]
+
+                        if 0 <= nouvelle_position[0] < DIMENSION and 0 <= nouvelle_position[1] < DIMENSION:
+                            self.env._deplacer_joueur(nouvelle_position)    
+                        else:
+                            print("Déplacement hors limites. Le joueur reste à sa position.")
+                    else:
+                        print("Action de déplacement invalide. Le joueur reste à sa position.")
 
                     # Déplacement sur labyrinth
-                    movement_action_tuple = tuple(movement_action)
-                    self.env._deplacer_joueur(movement_action_tuple)
+                    
 
                     # Afficahge
                     self.display_game()

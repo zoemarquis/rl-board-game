@@ -215,12 +215,12 @@ class LabyrinthEnv(gym.Env):
         return infos_labyrinthe.flatten().astype(np.float32)
 
     def _is_tresor_trouve(self):
-        joueur_pos = self.game.get_coord_current_player()
+        joueur_pos = self.game.get_coord_player()
         tresor_pos = self.game.get_coord_current_treasure()
         return joueur_pos == tresor_pos
 
     def _deplacer_joueur(self, new_position):
-        ligD, colD = self.game.get_coord_current_player()
+        ligD, colD = self.game.get_coord_player()
         ligA, colA = new_position
         self.game.remove_current_player_from_tile(ligD, colD)
         self.game.put_current_player_in_tile(ligA, colA)
@@ -228,8 +228,11 @@ class LabyrinthEnv(gym.Env):
         joueur_courant = self.game.players.players[self.game.get_current_player()]
         joueur_courant.move_to((ligA, colA))
 
-    def _get_mouvements_possibles(self):
-        ligD, colD = self.game.get_coord_current_player()
+    def _get_mouvements_possibles(self, joueur_id=None):
+        if joueur_id is None:
+            joueur_id = self.game.get_current_player()
+        
+        ligD, colD = self.game.get_coord_player(joueur_id)
         mouvements_possibles = []
 
         # Utiliser une recherche en largeur pour trouver toutes les positions accessibles

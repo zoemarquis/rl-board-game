@@ -168,14 +168,14 @@ class LabyrinthEnv(gym.Env):
 
     # Fonction permettant de vérifier si le joueur a atteint le trésor
     def _is_tresor_trouve(self):
-        joueur_pos = self.game.get_coord_current_player()
+        joueur_pos = self.game.get_coord_player()
         tresor_pos = self.game.get_coord_current_treasure()
 
         return joueur_pos == tresor_pos
 
     # Fonction permettant de déplacer le joueur
     def _deplacer_joueur(self, new_position):
-        ligD, colD = self.game.get_coord_current_player()
+        ligD, colD = self.game.get_coord_player()
         ligA, colA = new_position
         self.game.remove_current_player_from_tile(ligD, colD)
         self.game.put_current_player_in_tile(ligA, colA)
@@ -192,7 +192,7 @@ class LabyrinthEnv(gym.Env):
 
     # Fonction permettant de récupérer les mouvements valides pour le joueur
     def _get_mouvements_ok(self):
-        ligD, colD = self.game.get_coord_current_player()
+        ligD, colD = self.game.get_coord_player()
         mouvements_ok = []
 
         for ligA in range(7):

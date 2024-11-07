@@ -38,7 +38,7 @@ for tour in range(num_tours):
 
     print(f"Action choisie : {action}")
     print(f"Récompense : {recompense}")
-    print(f"Position joueur : {env.game.get_coord_current_player()}")
+    print(f"Position joueur : {env.game.get_coord_player()}")
     print(f"Terminé : {termine}")
     print(f"Tronqué : {tronque}")
 

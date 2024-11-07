@@ -142,15 +142,17 @@ class Labyrinthe(object):
                     return (i, j)
         return None
 
-    def get_coord_current_player(self) -> tuple:
+    def get_coord_player(self, joueur_id=None) -> tuple:
         """return the coordinates of the current player"""
+        if joueur_id is None:
+            joueur_id = self.get_current_player()
+
         for i in range(DIMENSION):
             for j in range(DIMENSION):
-                if self.board.get_value(i, j).has_pawn(
-                    self.get_current_player()
-                ):  # TODO
+                if self.board.get_value(i, j).has_pawn(joueur_id):
                     return (i, j)
         return None
+
 
     def next_phase(self):
         """change the phase of the game"""
@@ -168,7 +170,7 @@ class Labyrinthe(object):
         # 1 à 4 ou 0 à 3 ???
         self.current_player += 1
         self.current_player %= self.get_num_players()
-        self.coords_current_player = self.get_coord_current_player()
+        self.coords_current_player = self.get_coord_player()
 
     def get_current_player_num_find_treasure(self):
         """update the player structure when the current player find the treasure"""
@@ -240,7 +242,7 @@ class Labyrinthe(object):
             self.put_pawn(opposite_position[0], opposite_position[1], pion)
 
         self.tile_to_play = ejected_tile
-        self.coords_current_player = self.get_coord_current_player()
+        self.coords_current_player = self.get_coord_player()
 
     def rotate_tile(self, sens="H"):
         """rotate the tile to play
@@ -366,7 +368,7 @@ class Labyrinthe(object):
     def get_accessible_current_player(self, rowE, colE):
         """return the path from the current player to the cell (rowE, colE) if it exists
         if not return None"""
-        (ligD, colD) = self.get_coord_current_player()
+        (ligD, colD) = self.get_coord_player()
         return self.is_accessible(ligD, colD, rowE, colE)
 
     # TODO :
@@ -458,7 +460,7 @@ class Labyrinthe(object):
                     labyTest = copy.deepcopy(self)
                     labyTest.play_tile(direction, rangee)
                     posT = labyTest.get_coord_current_treasure()
-                    xJ, yJ = labyTest.get_coord_current_player()
+                    xJ, yJ = labyTest.get_coord_player()
                     if posT != None:  # Cas ou le tresors sort du plateau
                         xT, yT = posT
                         if labyTest.accessible(xJ, yJ, xT, yT):
@@ -488,7 +490,7 @@ class Labyrinthe(object):
             for i in range(nbRotation):
                 self.rotate_tile()
             self.play_tile(direction, rangee)
-            xJ, yJ = self.get_coord_current_player()
+            xJ, yJ = self.get_coord_player()
             return self.is_accessible(xJ, yJ, xC, yC)
         else:
             return self.is_accessible(xJ, yJ, xT, yT)
@@ -526,7 +528,7 @@ class Labyrinthe(object):
                                     labyTest2 = copy.deepcopy(labyTest)
                                     labyTest2.play_tile(directionT, rangeeT)
                                     posT = labyTest2.get_coord_current_treasure()
-                                    xJ, yJ = labyTest2.get_coord_current_player()
+                                    xJ, yJ = labyTest2.get_coord_player()
                                     if posT != None:
                                         xT, yT = posT
                                         if labyTest2.accessible(xT, yT, xJ, yJ):
@@ -557,7 +559,7 @@ class Labyrinthe(object):
         for i in range(nbRotation):
             self.rotate_tile()
         self.play_tile(direction, rangee)
-        xJ, yJ = self.get_coord_current_player()
+        xJ, yJ = self.get_coord_player()
         ((xD, yD), _) = self.getPositionMinDistance(
             self.get_coord_current_treasure(), (xJ, yJ)
         )
