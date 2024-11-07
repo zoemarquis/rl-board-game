@@ -216,7 +216,7 @@ class Labyrinthe(object):
         if direction == "N" :
             ejected_tile = self.board.shift_column_down(index, self.tile_to_play)
             self.forbidden_move = ("S", index)
-            opposite_position = (6, index)
+            opposite_position = (0, index)
         elif direction == "E":
             ejected_tile = self.board.shift_row_left(index, self.tile_to_play)
             self.forbidden_move = ("O", index)
@@ -224,7 +224,7 @@ class Labyrinthe(object):
         elif direction == "S":
             ejected_tile = self.board.shift_column_up(index, self.tile_to_play)
             self.forbidden_move = ("N", index)
-            opposite_position = (0, index)
+            opposite_position = (6, index)
         elif direction == "O":
             ejected_tile = self.board.shift_row_right(index, self.tile_to_play)
             self.forbidden_move = ("E", index)
