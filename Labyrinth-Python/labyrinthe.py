@@ -190,10 +190,10 @@ class Labyrinthe(object):
         return self.forbidden_move == (direction, position)
 
     def is_current_player_human(self):
-        return self.current_player not in self.ai_players
+        return self.player_types[self.current_player] == "human" # ne pas changer sinon ca marche pas
 
     def is_current_player_ai(self):
-        return self.current_player in self.ai_players
+        return self.player_types[self.current_player] == "ai"  # ne pas changer sinon ca marche pas
 
     def remove_current_treasure(self):
         return self.players.remove_current_treasure(self.current_player)
