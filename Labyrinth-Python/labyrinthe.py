@@ -21,9 +21,9 @@ class Labyrinthe(object):
         num_human_players: int,
         num_ai_players: int,
     ):
-        
+
         self.player_types = ["human"] * num_human_players + ["ai"] * num_ai_players
-        
+
         # TODO : if board dimension is not 7x7, we need to change the fixed cards
         board: Matrix = self.init_board_with_default_7x7_values()
 

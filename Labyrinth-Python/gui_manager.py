@@ -21,7 +21,7 @@ class GUI_manager(object):
         size=(1500, 900),
         couleur=(209, 238, 238),
     ):
-        
+
         self.rl_model = model
         self.env = env
 
@@ -612,10 +612,10 @@ class GUI_manager(object):
                     # Récupération action insertion de la tuile
                     obs = self.env._get_observation()
                     action, _ = self.rl_model.predict(obs, deterministic=True)
-                    
+
                     # Ajout de la tuile au labyrinthe
                     rotation_idx, insertion_idx = action
-                
+
                     direction_map = {0: "N", 1: "E", 2: "S", 3: "O"}
                     direction = direction_map[rotation_idx]
 
@@ -623,7 +623,7 @@ class GUI_manager(object):
                     index = insertion_positions[insertion_idx % 3]
 
                     self.labyrinthe.play_tile(direction, index)
-                    
+
                     # Affichage sur labyrinthe graphique
                     self.display_game()
                     pygame.display.flip()

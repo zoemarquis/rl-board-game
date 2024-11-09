@@ -36,7 +36,6 @@ class Player(Base):
     difficulty = Column(Integer, nullable=True)
     registration_date = Column(DateTime(timezone=True), server_default=func.now())
 
-
 class GameRule(Base):
     __tablename__ = "game_rule"
 

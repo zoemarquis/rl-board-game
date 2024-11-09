@@ -42,7 +42,6 @@ for tour in range(num_tours):
     print(f"Terminé : {termine}")
     print(f"Tronqué : {tronque}")
 
-
     env.render()
     time.sleep(0.5)
 
