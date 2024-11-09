@@ -8,9 +8,18 @@ import math
 
 # Environnement Gym pour le jeu Labyrinthe
 class LabyrinthEnv(gym.Env):
-    def __init__(self, num_human_players=0, num_ai_players=2,max_steps=-1, render_mode="human", epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.1):
+    def __init__(
+        self,
+        num_human_players=0,
+        num_ai_players=2,
+        max_steps=-1,
+        render_mode="human",
+        epsilon=1.0,
+        epsilon_decay=0.995,
+        min_epsilon=0.1,
+    ):
         super(LabyrinthEnv, self).__init__()
-        
+
         self.epsilon = epsilon  # taux d'exploration initial
         self.epsilon_decay = epsilon_decay  # taux de décroissance de l'exploration
         self.min_epsilon = min_epsilon
@@ -45,7 +54,6 @@ class LabyrinthEnv(gym.Env):
 
         self.reset(self.num_human_players, self.num_ai_players)
 
-
     def reset(self, num_human_players=0, num_ai_players=2, seed=None, options=None):
         self.current_step = 0
         self.phase = 0  # Commence par la phase d'insertion
@@ -57,15 +65,18 @@ class LabyrinthEnv(gym.Env):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
 
         # Initialisation du jeu
-        self.game = Labyrinthe(num_human_players=num_human_players, num_ai_players=num_ai_players)
+        self.game = Labyrinthe(
+            num_human_players=num_human_players, num_ai_players=num_ai_players
+        )
 
         self.termine = False
         self.derniere_insertion = None
 
-        self.recompense = {player_id: 0 for player_id in range(num_human_players + num_ai_players)} # pour les humains c'est pas utile, peut etre modifier
+        self.recompense = {
+            player_id: 0 for player_id in range(num_human_players + num_ai_players)
+        }  # pour les humains c'est pas utile, peut etre modifier
 
         return self._get_observation(), {}
-
 
     def step(self, action):
 
@@ -73,7 +84,7 @@ class LabyrinthEnv(gym.Env):
 
         recompense = 0
 
-        #print("action", action)
+        # print("action", action)
         # selection d'une action aléatoire pour explorer
         if random.uniform(0, 1) < self.epsilon:
             action = self.action_space.sample()
@@ -83,16 +94,15 @@ class LabyrinthEnv(gym.Env):
 
         # reduction de epsilon après chaque action pour encourager l'exploitation au fil du temps
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
-        
+
         self.current_step += 1
 
         # Phase d'insertion
         if self.phase == 0:
-            #print("phase 0")
-
+            # print("phase 0")
 
             rotation_idx, insertion_idx = action
-            
+
             # Rotation et insertion
             self._appliquer_rotation(rotation_idx)
 
@@ -104,24 +114,26 @@ class LabyrinthEnv(gym.Env):
 
             if self._est_insertion_interdite(insertion_idx):
                 recompense += -1000  # pénalité pour insertion interdite
-            elif insertion_idx in self.historique_insertions[-5:]:  # Pénalité si l'insertion est répétitive
+            elif (
+                insertion_idx in self.historique_insertions[-5:]
+            ):  # Pénalité si l'insertion est répétitive
                 recompense += -5  # pénalité légère pour répétition
             else:
                 recompense += 0
 
-            self.historique_insertions.append(insertion_idx)  # enregistrement de l'insertion
-            
-            if len(self.historique_insertions) > 20: # garder 20 mouvements
+            self.historique_insertions.append(
+                insertion_idx
+            )  # enregistrement de l'insertion
+
+            if len(self.historique_insertions) > 20:  # garder 20 mouvements
                 self.historique_insertions.pop(0)
 
-
-
             # Vérifier si l'insertion est valide
-            '''if self._est_insertion_interdite(insertion_idx):
+            """if self._est_insertion_interdite(insertion_idx):
                 recompense = -10  # Pénalité pour insertion interdite
                 termine = False
                 tronque = False
-                return self._get_observation(), recompense, termine, tronque, {}'''
+                return self._get_observation(), recompense, termine, tronque, {}"""
 
             # Appliquer l'insertion
             direction, rangee = self._get_insertion(insertion_idx)
@@ -133,7 +145,9 @@ class LabyrinthEnv(gym.Env):
 
             # Définir l'espace des actions pour le déplacement
             mouvements_possibles = self._get_mouvements_possibles()
-            self.mouvements_possibles = mouvements_possibles  # Sauvegarder pour utilisation ultérieure
+            self.mouvements_possibles = (
+                mouvements_possibles  # Sauvegarder pour utilisation ultérieure
+            )
             self.action_space = gym.spaces.Discrete(len(mouvements_possibles))
 
             # Pas de récompense à cette étape
@@ -141,18 +155,25 @@ class LabyrinthEnv(gym.Env):
             termine = False
             tronque = False
             self.recompense[joueur_id] += recompense
-            return self._get_observation(), self.recompense[joueur_id], termine, tronque, {}
+            return (
+                self._get_observation(),
+                self.recompense[joueur_id],
+                termine,
+                tronque,
+                {},
+            )
 
         # Phase de déplacement
         elif self.phase == 1:
-            
-            #print("phase 1")
+
+            # print("phase 1")
 
             mouvement_idx = action[0] if isinstance(action, np.ndarray) else action
 
-
             # Vérifier si le mouvement est valide
-            if (mouvement_idx < 0).any() or (mouvement_idx >= len(self.mouvements_possibles)).any():
+            if (mouvement_idx < 0).any() or (
+                mouvement_idx >= len(self.mouvements_possibles)
+            ).any():
                 recompense += -50  # Pénalité pour mouvement invalide
                 self.invalid_move_count += 1
                 recompense += -10 * self.invalid_move_count
@@ -160,15 +181,21 @@ class LabyrinthEnv(gym.Env):
                 tronque = False
                 self.game.next_player()
                 self.recompense[joueur_id] += recompense
-                return self._get_observation(), self.recompense[joueur_id], termine, tronque, {}
-            
+                return (
+                    self._get_observation(),
+                    self.recompense[joueur_id],
+                    termine,
+                    tronque,
+                    {},
+                )
+
             self.invalid_move_count = 0
 
             # Déplacer le joueur
             ancienne_position = self.game.get_coord_player()
-            #print("ancienne_position", ancienne_position)
+            # print("ancienne_position", ancienne_position)
             nouvelle_position = self.mouvements_possibles[mouvement_idx]
-            #print("nouvelle_position", nouvelle_position)
+            # print("nouvelle_position", nouvelle_position)
             self._deplacer_joueur(nouvelle_position)
 
             # Vérifier si le trésor est trouvé
@@ -176,14 +203,11 @@ class LabyrinthEnv(gym.Env):
                 self.game.get_current_player_num_find_treasure()
                 recompense += 10  # Récompense pour avoir trouvé le trésor
             else:
-                #recompense = -1  # Pénalité légère pour chaque mouvement
+                # recompense = -1  # Pénalité légère pour chaque mouvement
                 if self.se_rapproche_du_tresor(ancienne_position, nouvelle_position):
                     recompense += 5  # Récompense pour se rapprocher du trésor
                 else:
                     recompense += -5  # Pénalité pour s'éloigner du trésor
-
-
-            
 
             # Vérifier si la partie est terminée
             gagnant = self.game.players.check_for_winner()
@@ -209,27 +233,34 @@ class LabyrinthEnv(gym.Env):
             # mettre next_players aux bons endroits
 
             self.recompense[joueur_id] += recompense
-            return self._get_observation(), self.recompense[joueur_id], termine, tronque, {}
+            return (
+                self._get_observation(),
+                self.recompense[joueur_id],
+                termine,
+                tronque,
+                {},
+            )
 
-    def se_rapproche_du_tresor(self, ancienne_position, nouvelle_position, joueur_id=None):
+    def se_rapproche_du_tresor(
+        self, ancienne_position, nouvelle_position, joueur_id=None
+    ):
         """
         Vérifie si le joueur se rapproche ou s'éloigne de son trésor.
-        
+
         ancienne_position : tuple (x, y) - Position actuelle du joueur avant le déplacement
         nouvelle_position : tuple (x, y) - Position potentielle du joueur après le déplacement
         joueur_id : int - Identifiant du joueur, si non précisé, utilise le joueur actuel.
-        
+
         Retourne True si le joueur se rapproche du trésor, False s'il s'en éloigne.
         """
         if joueur_id is None:
             joueur_id = self.game.get_current_player()
-        
+
         # Récupérer la position du trésor
         position_tresor = self.game.get_coord_current_treasure()
 
         if position_tresor is None:
-            return True # Le trésor a été trouvé
-
+            return True  # Le trésor a été trouvé
 
         # Calcul de la distance de Manhattan entre deux points
         def distance_manhattan(pos1, pos2):
@@ -242,21 +273,19 @@ class LabyrinthEnv(gym.Env):
         # Si la distance après le déplacement est plus courte, le joueur se rapproche du trésor
         return distance_apres < distance_avant
 
-
-
-
     def render(self):
         if self.render_mode == "human":
             if not hasattr(self, "graphique"):
-                self.graphique = GUI_manager(self.game, model="./modeles/best_model.zip", env=self)
+                self.graphique = GUI_manager(
+                    self.game, model="./modeles/best_model.zip", env=self
+                )
             self.graphique.display_game()
 
     def close(self):
         if hasattr(self, "graphique"):
             self.graphique.close()
-        #pygame.quit()  # ferme pygame
+        # pygame.quit()  # ferme pygame
         super().close()
-
 
     def _get_observation(self):
         infos_labyrinthe = np.zeros((7, 7, 5), dtype=np.float32)
@@ -294,7 +323,7 @@ class LabyrinthEnv(gym.Env):
     def _get_mouvements_possibles(self, joueur_id=None):
         if joueur_id is None:
             joueur_id = self.game.get_current_player()
-        
+
         ligD, colD = self.game.get_coord_player(joueur_id)
         mouvements_possibles = []
 

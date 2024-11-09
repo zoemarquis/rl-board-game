@@ -153,7 +153,6 @@ class Labyrinthe(object):
                     return (i, j)
         return None
 
-
     def next_phase(self):
         """change the phase of the game"""
         # TODO modifier pour 0 1 %2 et pas 1 2 ...
@@ -190,10 +189,14 @@ class Labyrinthe(object):
         return self.forbidden_move == (direction, position)
 
     def is_current_player_human(self):
-        return self.player_types[self.current_player] == "human" # ne pas changer sinon ca marche pas
+        return (
+            self.player_types[self.current_player] == "human"
+        )  # ne pas changer sinon ca marche pas
 
     def is_current_player_ai(self):
-        return self.player_types[self.current_player] == "ai"  # ne pas changer sinon ca marche pas
+        return (
+            self.player_types[self.current_player] == "ai"
+        )  # ne pas changer sinon ca marche pas
 
     def remove_current_treasure(self):
         return self.players.remove_current_treasure(self.current_player)
@@ -213,7 +216,7 @@ class Labyrinthe(object):
 
         update the board, the tile to play and the forbidden move
         """
-        if direction == "N" :
+        if direction == "N":
             ejected_tile = self.board.shift_column_down(index, self.tile_to_play)
             self.forbidden_move = ("S", index)
             opposite_position = (0, index)

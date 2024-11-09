@@ -31,7 +31,9 @@ for tour in range(num_tours):
 
     if env.phase == 0:
         print(f"\n\nJoueur : {env.game.current_player}")
-        print(f"Nombre trésors restants : {env.game.get_remaining_treasures(env.game.current_player)}")
+        print(
+            f"Nombre trésors restants : {env.game.get_remaining_treasures(env.game.current_player)}"
+        )
         print(f"\nPhase : Insertion")
     else:
         print(f"\nPhase : Déplacement")

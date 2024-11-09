@@ -88,8 +88,7 @@ class LabyrinthEnv(gym.Env):
 
         # Phase d'insertion
         if self.phase == 0:
-            #print("phase 0")
-
+            # print("phase 0")
 
             rotation_idx, insertion_idx = action
 
@@ -135,7 +134,9 @@ class LabyrinthEnv(gym.Env):
 
             # Définir l'espace des actions pour le déplacement
             mouvements_possibles = self._get_mouvements_possibles()
-            self.mouvements_possibles = mouvements_possibles  # Sauvegarder pour utilisation ultérieure
+            self.mouvements_possibles = (
+                mouvements_possibles  # Sauvegarder pour utilisation ultérieure
+            )
             self.action_space = gym.spaces.Discrete(len(mouvements_possibles))
 
             # Pas de récompense à cette étape
@@ -146,8 +147,8 @@ class LabyrinthEnv(gym.Env):
 
         # Phase de déplacement
         elif self.phase == 1:
-            
-            #print("phase 1")
+
+            # print("phase 1")
 
             mouvement_idx = action[0] if isinstance(action, np.ndarray) else action
 
@@ -195,7 +196,9 @@ class LabyrinthEnv(gym.Env):
     def render(self):
         if self.render_mode == "human":
             if not hasattr(self, "graphique"):
-                self.graphique = GUI_manager(self.game, model="./modeles/best_model.zip", env=self)
+                self.graphique = GUI_manager(
+                    self.game, model="./modeles/best_model.zip", env=self
+                )
             self.graphique.display_game()
 
     def close(self):
@@ -240,7 +243,7 @@ class LabyrinthEnv(gym.Env):
     def _get_mouvements_possibles(self, joueur_id=None):
         if joueur_id is None:
             joueur_id = self.game.get_current_player()
-        
+
         ligD, colD = self.game.get_coord_player(joueur_id)
         mouvements_possibles = []
 

@@ -15,6 +15,7 @@ class SaveModelCallback(BaseCallback):
                 print(f"Sauvegarde du modele au step {self.n_calls} dans {model_path}")
         return True
 
+
 # Classe permettant de d'enregistrer le nombre de rewards positifs et négatifs
 class ExplorationExploitationCallback(BaseCallback):
     def __init__(self, verbose=0):
@@ -30,6 +31,10 @@ class ExplorationExploitationCallback(BaseCallback):
             self.negative_rewards += 1
 
         if self.n_calls % 1000 == 0:
-            self.logger.record("exploration_exploitation/positive_rewards", self.positive_rewards)
-            self.logger.record("exploration_exploitation/negative_rewards", self.negative_rewards)
+            self.logger.record(
+                "exploration_exploitation/positive_rewards", self.positive_rewards
+            )
+            self.logger.record(
+                "exploration_exploitation/negative_rewards", self.negative_rewards
+            )
         return True

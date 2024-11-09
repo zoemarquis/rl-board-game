@@ -67,8 +67,8 @@ class LabyrinthEnv(gym.Env):
         idx_insertion = (action // 49) // 4
         idx_rotation = action_deplacement % 4
 
-        # print ("idx_insertion : ", idx_insertion)
-        # print ("idx_rotation : ", idx_rotation)
+        # print("idx_insertion : ", idx_insertion)
+        # print("idx_rotation : ", idx_rotation)
 
         # TODO : Voir comment gérer le cas où l'insertion est interdite
         if self._est_interdit(idx_insertion):

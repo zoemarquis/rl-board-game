@@ -34,13 +34,13 @@ class Player(object):
             return self.treasures[0]
         else:
             return None
-    
+
     def get_found_treasures(self):
         return self.found_treasures
-    
+
     def get_nb_found_treasures(self):
         return len(self.found_treasures)
-    
+
     def get_start_position(self):
         return self.start_position
 
@@ -108,11 +108,11 @@ class Players(object):
     def get_nb_treasures_remaining(self, id_player: int):
         assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].get_nb_treasures_remaining()
-    
+
     def get_found_treasures(self, id_player: int):
         assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].get_found_treasures()
-    
+
     def get_nb_found_treasures(self, id_player: int):
         assert id_player >= 0 and id_player < self.nb_players, "Invalid player id"
         return self.players[id_player].get_nb_found_treasures()

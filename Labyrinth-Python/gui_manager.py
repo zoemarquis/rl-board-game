@@ -194,7 +194,7 @@ class GUI_manager(object):
         )
         res.blit(treasure_surface, (self.delta // 4, self.delta // 4))
         return res
-    
+
     def render_text_base(self, id_player: int):
         res = pygame.Surface((self.delta, self.delta))
         base_surface = pygame.transform.smoothscale(
@@ -232,7 +232,7 @@ class GUI_manager(object):
             ligne - 1
         )  # Garde la même hauteur pour chaque ligne de texte
         posx = (
-            self.finl 
+            self.finl
         )  # Déplace à droite du plateau en utilisant la largeur du plateau
 
         text_list = text.split("@img@")
@@ -289,10 +289,12 @@ class GUI_manager(object):
                 text_player += " @img@ "
                 img.append(self.render_text_treasure(treasure))
 
-            for treasure in range(self.labyrinthe.players.get_nb_treasures_remaining(i)):
+            for treasure in range(
+                self.labyrinthe.players.get_nb_treasures_remaining(i)
+            ):
                 text_player += " @img@ "
                 img.append(self.render_text_treasure(-1))
-                
+
             self.display_message(current_row_index, text_player, img)
             current_row_index += 1
 
@@ -305,13 +307,8 @@ class GUI_manager(object):
     def display_playable_tile(self, row_index):
         text_player = "Tuile à insérer :  "
         tile_surface = self.draw_tile_surface(self.labyrinthe.get_tile_to_play())
-    
-        self.display_message(
-            row_index,      
-            text_player,            
-            images=[tile_surface]   
-        )
 
+        self.display_message(row_index, text_player, images=[tile_surface])
 
     def draw_arrows(self, couleur=(255, 255, 0)):
         self.surface.fill((0, 0, 139))  # pour gérer les effets de transparence
@@ -384,14 +381,14 @@ class GUI_manager(object):
             xp, yp = x, y
         return xp, yp
 
-    def get_case(self, pos): 
+    def get_case(self, pos):
         """determine the type of action to do based the position on the mouseclick"""
         if (
             self.finl + 1.35 * self.delta
             <= pos[0]
             <= self.finl + 1.35 * self.delta + self.delta
-            and (self.finh - 5.5 * self.delta) // 2 
-            <= pos[1] 
+            and (self.finh - 5.5 * self.delta) // 2
+            <= pos[1]
             <= (self.finh - 5.5 * self.delta) // 2 + self.delta
         ):
             return ("T", "T")
@@ -428,13 +425,9 @@ class GUI_manager(object):
                 )
                 if self.labyrinthe.get_current_player_remaining_treasure() == 0:
                     self.display_message_second_column(
-                        2, 
-                        "Retournez à @img@", 
-                        [
-                            self.render_text_base(
-                                self.labyrinthe.get_current_player()
-                            )
-                        ]
+                        2,
+                        "Retournez à @img@",
+                        [self.render_text_base(self.labyrinthe.get_current_player())],
                     )
                 else:
                     self.display_message_second_column(
@@ -454,13 +447,9 @@ class GUI_manager(object):
                 )
                 if self.labyrinthe.get_current_player_remaining_treasure() == 0:
                     self.display_message_second_column(
-                        2, 
-                        "Retournez à @img@", 
-                        [
-                            self.render_text_base(
-                                self.labyrinthe.get_current_player()
-                            )
-                        ]
+                        2,
+                        "Retournez à @img@",
+                        [self.render_text_base(self.labyrinthe.get_current_player())],
                     )
                 else:
                     self.display_message_second_column(
@@ -479,7 +468,7 @@ class GUI_manager(object):
 
         # Boucle d'événements
         while True:
-            
+
             pythoncom.PumpWaitingMessages()
 
             ev = pygame.event.wait()
@@ -568,22 +557,29 @@ class GUI_manager(object):
                                 c = self.labyrinthe.board.get_value(x, y)
                                 t = self.labyrinthe.current_treasure()
                                 player_at_start = (
-                                    self.labyrinthe.get_coord_player() == 
-                                    self.labyrinthe.get_current_player_object().get_start_position()
+                                    self.labyrinthe.get_coord_player()
+                                    == self.labyrinthe.get_current_player_object().get_start_position()
                                 )
                                 if c.get_treasure() == t:
                                     self.labyrinthe.remove_current_treasure()
                                     if (
                                         self.labyrinthe.get_current_player_remaining_treasure()
-                                        == 0  
+                                        == 0
                                     ):
                                         if player_at_start:
-                                            self.info_message = "Le joueur @img@ a gagné"
-                                            self.info_img = [self.render_text_pawn_surface(jc)]
+                                            self.info_message = (
+                                                "Le joueur @img@ a gagné"
+                                            )
+                                            self.info_img = [
+                                                self.render_text_pawn_surface(jc)
+                                            ]
                                             self.fini = True
                                         else:
                                             self.info_message = "Le joueur @img@ trouvé tous ses trésors, retournez à @img@ pour gagner"
-                                            self.info_img = [self.render_text_pawn_surface(jc), self.render_text_base(jc)]
+                                            self.info_img = [
+                                                self.render_text_pawn_surface(jc),
+                                                self.render_text_base(jc),
+                                            ]
                                     else:
                                         self.info_message = (
                                             "Le joueur @img@ a trouvé le trésor @img@"
@@ -592,14 +588,15 @@ class GUI_manager(object):
                                             self.render_text_pawn_surface(jc),
                                             self.render_text_treasure(t),
                                         ]
-                                
+
                                 if (
-                                        self.labyrinthe.get_current_player_remaining_treasure()
-                                        == 0  and player_at_start
-                                    ):
-                                        self.info_message = "Le joueur @img@ a gagné"
-                                        self.info_img = [self.render_text_pawn_surface(jc)]
-                                        self.fini = True
+                                    self.labyrinthe.get_current_player_remaining_treasure()
+                                    == 0
+                                    and player_at_start
+                                ):
+                                    self.info_message = "Le joueur @img@ a gagné"
+                                    self.info_img = [self.render_text_pawn_surface(jc)]
+                                    self.fini = True
 
                                 self.labyrinthe.next_player()
                                 self.phase = 1
@@ -635,23 +632,31 @@ class GUI_manager(object):
 
                     print("Action de déplacement :", movement_action)
 
-                    mouvements_possibles = self.env._get_mouvements_possibles(joueur_id=self.env.game.get_current_player())
-                    
-                    #print("Mouvements possibles :", mouvements_possibles)
+                    mouvements_possibles = self.env._get_mouvements_possibles(
+                        joueur_id=self.env.game.get_current_player()
+                    )
 
                     # Vérification de l'action de déplacement
-                    if isinstance(movement_action[0], int) and 0 <= movement_action[0] < len(mouvements_possibles):
+                    if isinstance(movement_action[0], int) and 0 <= movement_action[
+                        0
+                    ] < len(mouvements_possibles):
                         nouvelle_position = mouvements_possibles[movement_action[0]]
 
-                        if 0 <= nouvelle_position[0] < DIMENSION and 0 <= nouvelle_position[1] < DIMENSION:
-                            self.env._deplacer_joueur(nouvelle_position)    
+                        if (
+                            0 <= nouvelle_position[0] < DIMENSION
+                            and 0 <= nouvelle_position[1] < DIMENSION
+                        ):
+                            self.env._deplacer_joueur(nouvelle_position)
                         else:
-                            print("Déplacement hors limites. Le joueur reste à sa position.")
+                            print(
+                                "Déplacement hors limites. Le joueur reste à sa position."
+                            )
                     else:
-                        print("Action de déplacement invalide. Le joueur reste à sa position.")
+                        print(
+                            "Action de déplacement invalide. Le joueur reste à sa position."
+                        )
 
                     # Déplacement sur labyrinth
-                    
 
                     # Afficahge
                     self.display_game()
