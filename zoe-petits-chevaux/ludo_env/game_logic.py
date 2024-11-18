@@ -200,6 +200,7 @@ class GameLogic:
         Vérifie si un joueur a remporté la partie.
         """
         for player_id in range(NUM_PLAYERS):
+            print(f"player {player_id} : {self.board[player_id][-1]}")
             if self.board[player_id][-1] == NB_PAWNS:
                 return player_id
         return -1
