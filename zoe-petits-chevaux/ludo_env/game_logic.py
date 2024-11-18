@@ -8,6 +8,17 @@ class State(Enum):
     SAFEZONE = 2  # Le pion est dans la zone protégée avant d'atteindre la destination
     SAFE = 3  # Le pion a atteint sa destination finale et ne bouge plus
 
+    def get_state_from_position(self, relative_position : int):
+        assert 0 <= relative_position <= 63, "Position invalide"
+        if relative_position == 0:
+            return State.HOME
+        elif relative_position < 57:
+            return State.PATH
+        elif relative_position < 63:
+            return State.SAFEZONE
+        else:
+            return State.SAFE
+
 class Action(Enum):
     MOVE_OUT = 0  # Sortir de la maison
     MOVE_FORWARD = 1  # Avancer le long du chemin
@@ -25,6 +36,7 @@ action_table = {
     State.SAFE: []  # Aucun mouvement autorisé
 }
 
+
 REWARD_TABLE = {
     Action.MOVE_OUT: 50,
     Action.MOVE_FORWARD: 5,
@@ -39,139 +51,70 @@ REWARD_TABLE = {
 class GameLogic:
 
     def init_board(self):
-        self.board_path = [[] for _ in range(BOARD_SIZE)] # faire + 1 -> 0 = HOME -> toujours order ?
-        self.board_home = []
+        self.board = [[] for _ in range(NUM_PLAYERS)]
         for i in range(NUM_PLAYERS):
-            self.board_home.extend([i] * NB_PAWNS)
-        self.board_safe_zone = [[] for _ in range(SAFE_ZONE_SIZE)] # faire + 57 
-        self.board_goal = [] # + 63 pour position
-
-        # ou alors une liste pas pawn + une fonction qui retourne "get plateau overview"
+            self.board[i] = [0 for _ in range(TOTAL_SIZE)] # tableau de len TOTAL_SIZE
+            self.board[i][0] = NB_PAWNS # on met les pions à HOME
 
     def get_pawns_info(self, player_id):
-        player_pawns = []
-        count_home = self.board_home.count(player_id)
-        for _ in range(count_home):
-            player_pawns.append({
-                "position": 0,
-                "state": State.HOME
-            })
-        for i in range(len(self.board_path)):
-            count_path = self.board_path[i].count(player_id)
-            for _ in range(count_path):
-                player_pawns.append({
-                    "position": i + 1,
-                    "state": State.PATH
-                })
-        for i in range(len(self.board_safe_zone)):
-            count_safe_zone = self.board_safe_zone[i].count(player_id)
-            for _ in range(count_safe_zone):
-                player_pawns.append({
-                    "position": i + 57,
-                    "state": State.SAFEZONE
-                })
-        count_goal = self.board_goal.count(player_id)
-        for _ in range(count_goal):
-            player_pawns.append({
-                "position": 63,
-                "state": State.GOAL
-            })
-        assert len(player_pawns) == NB_PAWNS, "Nombre de pions incorrect"
+        pawns_info = []
+        for i in range(TOTAL_SIZE):
+            count_i = self.board[player_id][i]
+            for _ in range(count_i):
+                pawns_info.append({
+                    "position": i,
+                    "state": State.get_state_from_position(i)
+                })  
+        assert len(pawns_info) == NB_PAWNS, "Nombre de pions incorrect"
 
-    def get_plateau_player(self, player_id): # info que de ce joueur
-        plateau = np.zeros(64, dtype=np.int32)
-        count_home = self.board_home.count(player_id)
-        plateau[0] += count_home
-        if player_id == 0:
-            for i in range(len(self.board_path)):
-                count_path = self.board_path[i].count(player_id)
-            plateau[i + i] += count_path
-        elif player_id == 1:
-            if NUM_PLAYERS != 2:
-                ind_0 = 0
-                ind_j = 14
-                while ind_j < 56:
-                    count_path = self.board_path[ind_0].count(player_id)
-                    plateau[ind_j] += count_path
-                    ind_0 += 1
-                    ind_j += 1
-                ind_j = 0
-                while ind_j < 14:
-                    count_path = self.board_path[ind_0].count(player_id)
-                    plateau[ind_j] += count_path
-                    ind_0 += 1
-                    ind_j += 1
-            else: # que 2 joueurs opposés
-                ind_0 = 0
-                ind_j = 28
-                while ind_j < 56:
-                    count_path = self.board_path[ind_0].count(player_id)
-                    plateau[ind_j] += count_path
-                    ind_0 += 1
-                    ind_j += 1
-                ind_j = 0
-                while ind_j < 28:
-                    count_path = self.board_path[ind_0].count(player_id)
-                    plateau[ind_j] += count_path
-                    ind_0 += 1
-                    ind_j += 1
-        elif player_id == 2:
-            ind_0 = 0
-            ind_j = 28
-            while ind_j < 56:
-                count_path = self.board_path[ind_0].count(player_id)
-                plateau[ind_j] += count_path
-                ind_0 += 1
-                ind_j += 1
-            ind_j = 0
-            while ind_j < 28:
-                count_path = self.board_path[ind_0].count(player_id)
-                plateau[ind_j] += count_path
-                ind_0 += 1
-                ind_j += 1
-        elif player_id == 3:    
-            ind_0 = 0
-            ind_j = 42
-            while ind_j < 56:
-                count_path = self.board_path[ind_0].count(player_id)
-                plateau[ind_j] += count_path
-                ind_0 += 1
-                ind_j += 1
-            ind_j = 0
-            while ind_j < 42:
-                count_path = self.board_path[ind_0].count(player_id)
-                plateau[ind_j] += count_path
-                ind_0 += 1
-                ind_j += 1
-        for i in range(len(self.board_safe_zone)):
-            count_safe_zone = self.board_safe_zone[i].count(player_id)
-            plateau[i + 57] += count_safe_zone
-        count_goal = self.board_goal.count(player_id)
-        plateau[63] += count_goal
-        return plateau
+    def get_home_overview(self):
+        home_overview = []
+        for i in range(NUM_PLAYERS):
+            for _ in range(self.board[i][0]):
+                home_overview.append(i)
+        return home_overview
+    
+    def get_goal_overview(self):
+        goal_overview = []
+        for i in range(NUM_PLAYERS):
+            for _ in range(self.board[i][-1]):
+                goal_overview.append(i)
+        return goal_overview
+    
+    def get_safe_zone_overview(self):
+        safe_zone_overview = [[] for _ in range(6)]
+        for i in range(NUM_PLAYERS):
+            for j in range(57, 63):
+                for _ in range(self.board[i][j]):
+                    safe_zone_overview[j-57].append(i)
+        return safe_zone_overview
 
-    def get_overview(self):
-        # indice 0 -> les joueurs 0 
-        # indice 1 -> les joueurs 1 mais avec le bon décalage
-        # indice 2 -> les joueurs 2 mais avec le bon décalage
-        # indice 3 -> les joueurs 3 mais avec le bon décalage
-        # TODO
-        pass
+    def get_path_overview(self):
+        # tout rabattre sur plateau du pion 0 pour "affichage"
+        path_overview = [[] for _ in range(56)]
+        for i in range(NUM_PLAYERS):
+            for j in range(1, 57):
+                for _ in range(self.board[i][j]):
+                    if NUM_PLAYERS == 2:
+                        indice = ((i*28)+j-1) % 56
+                        path_overview[indice].append(i)
+                    else : 
+                        indice = ((i*14)+j-1) % 56
+                        path_overview[indice].append(i)
 
+    def print_board_overview(self):
+        for i in range(NUM_PLAYERS):
+            print("HOME : ", self.board[i][0])
 
-    def get_plateau(player_id, nb_joueurs):
-        # objectif pour tous les jouerus retourne un tableau de 0 à 63
-        # le 0 pas commun pour tous les joueurs -> HOME
-        # de 1 à 56 -> PATH -> commun (il va falloir faire des calculs)
-        # de 57 à 62 -> SAFEZONE -> unique
-        # 63 -> GOAL -> unique
+        board_path = self.get_path_overview()
+        for i in range(56//14):
+            print(board_path[i*14:(i+1)*14])
 
-        # si 2 joueurs : 
-        # joueur 0 : case 1 = joueur 1 case 29
-        # joueur 0 : case 2 = joueur 1 case 30
+        for i in range(NUM_PLAYERS):
+            print("SAFEZONE : ", self.board[i][57:63])
 
-        # si 3 ou 4 joueures : 
-        # joueur 0 : case 1, joueur 1 case 43 , joueur 2 case 29, joueur 3 case 18
+        for i in range(NUM_PLAYERS):
+            print("GOAL : ", self.board[i][-1])
 
     def dice_generator(self):
         return np.random.randint(1, 7)
@@ -312,3 +255,23 @@ class GameLogic:
 
     def sortir_pion(pion):
         pass
+
+
+
+    def get_valid_actions(self, player, dice_value) -> dict:
+        """
+        Calcule les actions possibles pour tous les pions d'un joueur.
+        
+        Parameters:
+            - player (int): ID du joueur
+            - dice_value (int): Résultat du dé
+            
+        Returns:
+            - dict: Actions possibles par pion {pawn_index: [actions]}
+        """
+        valid_actions = {}
+        for pawn_index in range(PAWNS_PER_PLAYER):
+            position = self.board[player][pawn_index]
+            state = self.states[player][pawn_index]
+            valid_actions[pawn_index] = self.get_valid_actions_for_pawn(player, position, state, dice_value)
+        return valid_actions
