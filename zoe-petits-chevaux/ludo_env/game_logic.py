@@ -217,6 +217,9 @@ class GameLogic:
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_pion_safe_zone(self, player_id, old_position, dice_value):
+        print("avance pion safe zone")
+        print(f"old position : {old_position}")
+        print(f"dice value : {dice_value}")
         assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
         assert old_position + dice_value < 63, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
@@ -307,7 +310,7 @@ class GameLogic:
         board_path = self.get_path_overview()
         for i in range(56//14):
             print(i*14, " -> ", (i+1)*14)
-            print(board_path[i*14:(i+1)*14 - 1])
+            print(board_path[i*14:(i+1)*14 ])
 
         for i in range(NUM_PLAYERS):
             print(f"SAFEZONE {i}: {self.board[i][57:63]}")
