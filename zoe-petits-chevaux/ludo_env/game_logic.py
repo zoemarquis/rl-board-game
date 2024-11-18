@@ -66,6 +66,7 @@ class GameLogic:
                     "state": State.get_state_from_position(i)
                 })  
         assert len(pawns_info) == NB_PAWNS, "Nombre de pions incorrect"
+        return pawns_info
 
     def get_home_overview(self):
         home_overview = []
@@ -119,159 +120,137 @@ class GameLogic:
     def dice_generator(self):
         return np.random.randint(1, 7)
     
-    def move_pawn(self, player_id, pawn_position, dice_value, action): # ici pawn position ici c'est en absolu (1 à 56) (57 à 62): pas en relatif
-        # TODO assert que c'est ok 
+    def get_pawns_on_position(self, player_id, target_position_relative):
+        if player_id == 0:
+            return self.get_path_overview()[target_position_relative - 1]
+        elif player_id == 1:
+            if NUM_PLAYERS != 2:
+                indice = (target_position_relative - 1+ 14) % 56
+                return self.get_path_overview()[indice]
+            else:
+                indice = target_position_relative - 1 + 28
+                return self.get_path_overview()[indice]
+        elif player_id == 2:
+            indice = target_position_relative - 1 + 28
+            return self.get_path_overview()[indice]
+        elif player_id == 3:
+            indice = target_position_relative - 1 + 42
+            return self.get_path_overview()[indice]
+        # TODO print pour check tout ça
 
-        # TODO à revoir logiqu avec les % des différents  avec relatif ce sera plus simple
-        if action == Action.MOVE_OUT:
-            assert self.board_home.count(player_id) > 0, "Pas de pion à sortir"
-            self.board_home.remove(player_id)
-            if player_id == 0:
-                self.board_path[0].append(player_id)
-            elif player_id == 1:
-                if NUM_PLAYERS != 2:
-                    self.board_path[14].append(player_id)
-                else:
-                    self.board_path[28].append(player_id)
-            elif player_id == 2:
-                self.board_path[28].append(player_id)
-            elif player_id == 3:
-                self.board_path[42].append(player_id)
-
-        elif action == Action.MOVE_FORWARD:
-            # on avance juste le pion de dice_value dans path (attention il doit rester dans limite)
-            assert self.board_path[pawn_position].count(player_id) > 0, "Pas de pion à déplacer à cette position"
-            # assert vérif pas kill TODO
-
-            self.board_path[pawn_position - 1].remove(player_id)
-            get_position_relative = (pawn_position + dice_value)%56
-            self.board_path[get_position_relative].append(player_id)
-
-        elif action == Action.ENTER_SAFEZONE:
-            assert self.board_path[pawn_position].count(player_id) > 0, "Pas de pion à déplacer à cette position"
-            # assert vérif pas kill TODO
-
-            self.board_path[pawn_position - 1].remove(player_id)
-            get_position_relative = 57
-            self.board_safe_zone[get_position_relative].append(player_id)
-
-        elif action == Action.REACH_GOAL:
-            assert self.board_safe_zone[pawn_position].count(player_id) > 0, "Pas de pion à déplacer à cette position"
-            # assert vérif pas kill TODO
-
-            self.board_safe_zone[pawn_position - 57].remove(player_id)
-            self.board_goal.append(player_id)
-
-    def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
-        # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
-
-        valid_actions = []
-        
-        if state == State.HOME:
-            if dice_value == 6:
-                valid_actions.append(Action.MOVE_OUT)
-
-        elif state == State.PATH:
-            if position + dice_value < 56: # limite avant zone protégée
-                valid_actions.append(Action.MOVE_FORWARD)
-
-            elif position + dice_value >= 56:
-                valid_actions.append(Action.ENTER_SAFEZONE)
-
-            # est ce que tu tues un pion au passage ? -> alors ajouter kill
-            if is_opponent_pawn_on(position+dice_value, player_id):
-                valid_actions.append(Action.KILL)
-
-
-        elif state == State.SAFEZONE:
-            if position + dice_value <= 62:
-                valid_actions.append(Action.MOVE_FORWARD)
-
-            if position + dice_value >= 63:
-                valid_actions.append(Action.REACH_GOAL)
-
-        elif state == State.GOAL:
-            pass # on peut recevoir des rewards pour pions déjà placés ?
-
-        # on peut reward si on protége un pion (HOME + PATH POSSIBLE)
-        if is_pawn_protected(player, position + dice_value):
-            valid_actions.append(Action.PROTECT)
-
-        return valid_actions
-    
-
-    def is_opponent_pawn_on(self, target_position, player):
-        # TODO 
-        pass
-        for opponent in range(NUM_PLAYERS):
-            if opponent != player:
-                if target_position in self.board_path:
-                    return True
+    def is_opponent_pawn_on(self, player_id, target_position_relative):
+        case = self.get_pawns_on_position(player_id, target_position_relative)
+        # si il y a autre chose que moi meme sur la case return true
+        for i in range(NUM_PLAYERS):
+            if i != player_id and case.count(i) > 0:
+                return True
         return False
-    
 
-    def is_pawn_threatened(player, position):
+    def is_pawn_threatened(player, position): # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
         # TODO
+        # retourne combien de pions sont menacés ?
         pass
 
-    def is_pawn_protected(player, position):
+    def is_pawn_protected(player, position): # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
         # TODO
         pass
 
     def kill_pawn(self, player_id, position):
-        # TODO
+        # TODO pour tous les pions sur la case -> retourne HOME
         pass
-
-
-
-
-
-
-
+    
     def is_game_over(self):
         """
         Vérifie si un joueur a remporté la partie.
         """
-        for player in range(NUM_PLAYERS):
-            if all(state == State.GOAL for state in self.states[player]):
-                return True
-        return False
+        for player_id in range(NUM_PLAYERS):
+            if self.board[player_id][-1] == NB_PAWNS:
+                return player_id
+        return -1
+    
+    def sortir_pion(self, player_id, dice_value):
+        assert dice_value == 6, "Le dé n'est pas un 6"
+        assert self.board[player_id][0] > 0, "Pas de pion à sortir"
+        self.board[player_id][0] -= 1
+        self.board[player_id][1] += 1
 
+    def avance_pion_path(self, player_id, old_position, dice_value):
+        assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
+        assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
+        self.board[player_id][old_position] -= 1
+        self.board[player_id][old_position + dice_value] += 1
 
-    def encode_possible_actions(self, possible_actions):
-            action_vector = np.zeros(4, dtype=np.int32)  # Taille fixe pour 4 actions
-            action_mapping = {"MOVE_OUT": 0, "MOVE": 1, "REACH_GOAL": 2, "NO_ACTION": 3}
-            for action in possible_actions:
-                action_vector[action_mapping[action]] = 1
-            return action_vector
+    def avance_pion_safe_zone(self, player_id, old_position, dice_value):
+        assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
+        assert old_position + dice_value < 63, "Déplacement pas conforme à la position"
+        self.board[player_id][old_position] -= 1
+        self.board[player_id][old_position + dice_value] += 1
 
-    def decode_possible_actions(self, action_vector):
-        pass
+    def securise_pion_goal(self, player_id, old_position, dice_value):
+        assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
+        assert old_position + dice_value >= 63, "Déplacement pas conforme à la position"
+        self.board[player_id][old_position] -= 1
+        self.board[player_id][-1] += 1
 
-
-    def avance(pion, de):
-        # TODO
-        pass
-
-    def sortir_pion(pion):
-        pass
-
-
-
-    def get_valid_actions(self, player, dice_value) -> dict:
-        """
-        Calcule les actions possibles pour tous les pions d'un joueur.
+    def move_pawn(self, player_id, old_position, dice_value, action):
+        if action == Action.MOVE_OUT:
+            self.sortir_pion(player_id, dice_value)
+        elif action == Action.MOVE_FORWARD:
+            self.avance_pion_path(player_id, old_position, dice_value)
+        elif action == Action.ENTER_SAFEZONE:
+            self.avance_pion_safe_zone(player_id, old_position, dice_value)
+        elif action == Action.REACH_GOAL:
+            self.securise_pion_goal(player_id, old_position, dice_value)
+        else:
+            raise ValueError("Action non valide")
         
-        Parameters:
-            - player (int): ID du joueur
-            - dice_value (int): Résultat du dé
-            
-        Returns:
-            - dict: Actions possibles par pion {pawn_index: [actions]}
-        """
-        valid_actions = {}
-        for pawn_index in range(PAWNS_PER_PLAYER):
-            position = self.board[player][pawn_index]
-            state = self.states[player][pawn_index]
-            valid_actions[pawn_index] = self.get_valid_actions_for_pawn(player, position, state, dice_value)
+
+
+
+
+
+    def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
+        # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
+        valid_actions = []
+        if state == State.HOME:
+            if dice_value == 6:
+                valid_actions.append(Action.MOVE_OUT)
+            else :
+                valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
+        elif state == State.PATH:
+            if position + dice_value < 56: # limite avant zone protégée
+                valid_actions.append(Action.MOVE_FORWARD)
+            elif position + dice_value >= 56:
+                valid_actions.append(Action.ENTER_SAFEZONE)
+            # est ce que tu tues un pion au passage ? -> alors ajouter kill
+            if self.is_opponent_pawn_on(player_id, position+dice_value):
+                valid_actions.append(Action.KILL)
+            if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
+                valid_actions.append(Action.PROTECT)
+        elif state == State.SAFEZONE:
+            if position + dice_value <= 62:
+                valid_actions.append(Action.MOVE_FORWARD)
+            if position + dice_value >= 63:
+                valid_actions.append(Action.REACH_GOAL)
+        elif state == State.GOAL:
+            valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ? 
         return valid_actions
+    
+    def get_valid_actions(self, player_id, dice_value):
+        valid_actions = [ [] for _ in range(NB_PAWNS)]
+        infos = self.get_pawns_info(player_id)
+        for i in range(NB_PAWNS):
+            valid_actions[i] = self.get_valid_actions_for_pawns(player_id, infos[i]["position"], infos[i]["state"], dice_value)
+        return valid_actions
+
+    # TODO :
+    # # pour l'env : 
+    # def encode_possible_actions(self, possible_actions):
+    #         action_vector = np.zeros(4, dtype=np.int32)  # Taille fixe pour 4 actions
+    #         action_mapping = {"MOVE_OUT": 0, "MOVE": 1, "REACH_GOAL": 2, "NO_ACTION": 3}
+    #         for action in possible_actions:
+    #             action_vector[action_mapping[action]] = 1
+    #         return action_vector
+    # 
+    # def decode_possible_actions(self, action_vector):
+    #     pass
