@@ -22,12 +22,12 @@ class State(Enum):
 class Action(Enum):
     MOVE_OUT = 0  # Sortir de la maison
     MOVE_FORWARD = 1  # Avancer le long du chemin
-    REACH_GOAL = 3  # Atteindre l'objectif final
     ENTER_SAFEZONE = 2  # Entrer dans la zone protégée
+    REACH_GOAL = 3  # Atteindre l'objectif final
     PROTECT = 4  # Protéger un pion allié
-    KILL = 4  # Tuer un pion adverse
-    DIE = 5  # Se faire tuer
-    NO_ACTION = 6  # Ne rien faire : TODO est ce que c'est utile ? possible ? on a le droit de ne pas bouger si on a la possibilité ?
+    KILL = 5  # Tuer un pion adverse
+    DIE = 6  # Se faire tuer
+    NO_ACTION = 7  # Ne rien faire : TODO est ce que c'est utile ? possible ? on a le droit de ne pas bouger si on a la possibilité ?
 
 action_table = {
     State.HOME: [Action.MOVE_OUT],
@@ -46,7 +46,9 @@ REWARD_TABLE = {
     Action.KILL: 30,
     Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 }
-
+# La table des récompenses est bien définie. 
+# Tu peux envisager d'utiliser une fonction pour calculer les récompenses 
+# dynamiquement selon des critères plus complexes (comme l’état du jeu).
 
 class GameLogic:
 
@@ -102,6 +104,49 @@ class GameLogic:
                     else : 
                         indice = ((i*14)+j-1) % 56
                         path_overview[indice].append(i)
+
+    def get_adversaire_relative_overview(self, player_id):
+        board = [0 for _ in range(TOTAL_SIZE)]
+        # mettre tous les home ensemble, puis les safe zone, puis les goal
+        # ensuite calculer pour les path
+        count_all_home = self.get_home_overview()
+        count_self_home = count_all_home.count(player_id)
+        board[0] = count_self_home
+
+        count_all_goal = self.get_goal_overview()
+        count_self_goal = count_all_goal.count(player_id)
+        board[-1] = count_self_goal
+
+        safe_zone = self.get_safe_zone_overview()
+        for i in range(6):
+            count_all_safe = safe_zone[i]
+            count_self_safe = count_all_safe.count(player_id)
+            board[i+57] = count_self_safe
+        
+        path_zone = self.get_path_overview()
+        path_board = [0 for _ in range(56)]
+        for i in range(56):
+            count_all_path = path_zone[i]
+            count_self_path = count_all_path.count(player_id)
+            path_board[i] = count_self_path
+        # shift path board pour matcher avec le bon joueur
+        if player_id == 0:
+            board[1:57] = path_board
+        elif player_id == 1:
+            if NUM_PLAYERS != 2:
+                board[15:57] = path_board[:42]
+                board[1:15] = path_board[42:]
+            else:
+                board[29:57] = path_board[:28]
+                board[1:29] = path_board[28:]
+        elif player_id == 2:
+            board[29:57] = path_board[:28]
+            board[1:29] = path_board[28:]
+        elif player_id == 3:
+            board[43:57] = path_board[:14]
+            board[1:43] = path_board[14:]
+        # TODO print pour etre sur 
+        return board
 
     def print_board_overview(self):
         for i in range(NUM_PLAYERS):
@@ -235,6 +280,7 @@ class GameLogic:
         elif state == State.GOAL:
             valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ? 
         return valid_actions
+        # TODO : ne pas inclure les no action, seulement au global si toutes les listes sont vides
     
     def get_valid_actions(self, player_id, dice_value):
         valid_actions = [ [] for _ in range(NB_PAWNS)]
@@ -242,6 +288,8 @@ class GameLogic:
         for i in range(NB_PAWNS):
             valid_actions[i] = self.get_valid_actions_for_pawns(player_id, infos[i]["position"], infos[i]["state"], dice_value)
         return valid_actions
+    
+
 
     # TODO :
     # # pour l'env : 
@@ -253,4 +301,15 @@ class GameLogic:
     #         return action_vector
     # 
     # def decode_possible_actions(self, action_vector):
-    #     pass
+    # return [Action(i) for i, val in enumerate(action_vector) if val == 1]  
+
+    # # TODO : 
+    # def calculate_relative_index(player_id, position):
+    #     base = 28 if NUM_PLAYERS == 2 else 14
+    #     return ((player_id * base) + position - 1) % 56
+
+# Remarques : 
+# Pense à ajouter des tests unitaires pour couvrir des cas comme :
+# Un joueur tente de bouger un pion alors que ce dernier est bloqué.
+# Deux pions ennemis entrent en collision sur une même case.
+# Si le jeu doit évoluer, envisager l’utilisation d’une classe dédiée à chaque joueur, encapsulant les informations liées à ses pions et états.

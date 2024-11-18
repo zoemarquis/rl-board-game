@@ -5,6 +5,7 @@ from ludo_env.constants import BOARD_SIZE, NUM_PLAYERS, PIECES
 from ludo_env.game_logic import GameLogic
 from ludo_env.renderer import Renderer
 from gym.spaces import Discrete, Dict, Box
+from ludo_env.game_logic import Action
 
 
 class LudoEnv(gym.Env):
@@ -21,49 +22,48 @@ class LudoEnv(gym.Env):
         self.game_logic = GameLogic()
         self.renderer = Renderer()
 
-        self.action_space = Dict({
-            f"pawn_{i}": Discrete(len(Action)) for i in range(1, self.num_pawns + 1)
-        })
+        self.action_space = Discrete(self.num_pawns * len(Action))
 
-        self.observation_space =  Dict({
-            "token_1": Dict({
-                "position": Discrete(60),
-                "state": Discrete(4),
-                "distance_to_goal": Box(low=0, high=60, shape=(1,), dtype=np.int32),
-                "conflict": Discrete(2),
-                "actions_possibles": MultiBinary(len(Action))  # MOVE_OUT, MOVE, REACH_GOAL, NO_ACTION -> à ajuster
-            }),
-            "token_2": Dict({
-                "position": Discrete(60),
-                "state": Discrete(4),
-                "distance_to_goal": Box(low=0, high=60, shape=(1,), dtype=np.int32),
-                "conflict": Discrete(2)
-            }),
-            # Répéter pour chaque pion
-        })
+        # TODO 
+        # self.observation_space =  Dict({
+        #     "token_1": Dict({
+        #         "position": Discrete(60),
+        #         "state": Discrete(4),
+        #         "distance_to_goal": Box(low=0, high=60, shape=(1,), dtype=np.int32),
+        #         "conflict": Discrete(2),
+        #         "actions_possibles": MultiBinary(len(Action))  # MOVE_OUT, MOVE, REACH_GOAL, NO_ACTION -> à ajuster
+        #     }),
+        #     "token_2": Dict({
+        #         "position": Discrete(60),
+        #         "state": Discrete(4),
+        #         "distance_to_goal": Box(low=0, high=60, shape=(1,), dtype=np.int32),
+        #         "conflict": Discrete(2)
+        #     }),
+        #     # Répéter pour chaque pion
+        # })
+        # self.observation_space = Dict({
+        #     "board": Box(low=0, high=1, shape=(self.board_size,), dtype=np.int8),
+        #     "player_pawns": Box(low=0, high=60, shape=(self.num_pawns,), dtype=np.int32), # + state ?
+        #     "opponent_pawns": Box(low=0, high=60, shape=(self.num_players - 1, self.num_pawns), dtype=np.int32), # combien sur chaque case sur son échelle de 1 à 56
+        #     "dice_roll": Discrete(6),  # Résultat du dé
+        # })
+
 
         self.reset()
 
     def reset(self, seed=None, options=None):
-        """
-        Reset the state of the environment and return an initial observation.
-
-        Parameters:
-        - seed (int, optional): Seed for random number generator.
-        - options (dict, optional): Additional options for reset.
-
-        Returns:
-        - observation (dict): Initial observation of the environment.
-        - info (dict): Additional info.
-        """
         super().reset(seed=seed, options=options)
-        self.board = np.full(self.board_size, -1)
-        self.pawns = np.zeros((self.num_players, self.num_pawns), dtype=np.int8) # pions dans HOME
+        self.board = np.full(self.board_size, -1) # TODO : revoir en fonction observation
+        self.pawns = np.zeros((self.num_players, self.num_pawns), dtype=np.int8) # # TODO revoir en fonction observation
         self.current_player = 0
+        self.dice_roll = None  # Aucun jet au début
         return self._get_observation(), {}    
+
 
     # celui là
     def step(self, action):
+        # token_id, action_type = divmod(action, len(Action))
+
         player_id = self.current_player
         dice_value = roll_dice() # TODO 
         valid_actions = get_valid_actions(self.board, self.pieces, player_id, dice_value)
