@@ -154,7 +154,7 @@ class GameLogic:
         return board
 
     def dice_generator(self):
-        return np.random.randint(1, 7)
+        return np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
     
     def get_pawns_on_position(self, player_id, target_position_relative):
         if player_id == 0:
