@@ -25,6 +25,7 @@ class LudoEnv(gym.Env):
         self.action_space = Discrete(self.num_pawns * len(Action))
 
         # TODO 
+        # get_adversaire_relative_overview
         # self.observation_space =  Dict({
         #     "token_1": Dict({
         #         "position": Discrete(60),

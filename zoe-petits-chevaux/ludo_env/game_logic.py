@@ -52,6 +52,9 @@ REWARD_TABLE = {
 
 class GameLogic:
 
+    def __init__(self):
+        self.init_board()
+
     def init_board(self):
         self.board = [[] for _ in range(NUM_PLAYERS)]
         for i in range(NUM_PLAYERS):
@@ -73,6 +76,7 @@ class GameLogic:
     def get_home_overview(self):
         home_overview = []
         for i in range(NUM_PLAYERS):
+            print(f"HOME {i} : {self.board[i][0]}")
             for _ in range(self.board[i][0]):
                 home_overview.append(i)
         return home_overview
@@ -104,6 +108,7 @@ class GameLogic:
                     else : 
                         indice = ((i*14)+j-1) % 56
                         path_overview[indice].append(i)
+        return path_overview
 
     def get_adversaire_relative_overview(self, player_id):
         board = [0 for _ in range(TOTAL_SIZE)]
@@ -147,20 +152,6 @@ class GameLogic:
             board[1:43] = path_board[14:]
         # TODO print pour etre sur 
         return board
-
-    def print_board_overview(self):
-        for i in range(NUM_PLAYERS):
-            print("HOME : ", self.board[i][0])
-
-        board_path = self.get_path_overview()
-        for i in range(56//14):
-            print(board_path[i*14:(i+1)*14])
-
-        for i in range(NUM_PLAYERS):
-            print("SAFEZONE : ", self.board[i][57:63])
-
-        for i in range(NUM_PLAYERS):
-            print("GOAL : ", self.board[i][-1])
 
     def dice_generator(self):
         return np.random.randint(1, 7)
@@ -248,11 +239,6 @@ class GameLogic:
             self.securise_pion_goal(player_id, old_position, dice_value)
         else:
             raise ValueError("Action non valide")
-        
-
-
-
-
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
@@ -313,3 +299,19 @@ class GameLogic:
 # Un joueur tente de bouger un pion alors que ce dernier est bloqué.
 # Deux pions ennemis entrent en collision sur une même case.
 # Si le jeu doit évoluer, envisager l’utilisation d’une classe dédiée à chaque joueur, encapsulant les informations liées à ses pions et états.
+
+    def print_board_overview(self):
+        for i in range(NUM_PLAYERS):
+            print(f"HOME {i} : {self.board[i][0]}")
+
+        board_path = self.get_path_overview()
+        for i in range(56//14):
+            print(i*14, " -> ", (i+1)*14)
+            print(board_path[i*14:(i+1)*14 - 1])
+
+        for i in range(NUM_PLAYERS):
+            print(f"SAFEZONE {i}: {self.board[i][57:63]}")
+
+        for i in range(NUM_PLAYERS):
+            print(f"GOAL {i} : {self.board[i][-1]}")
+
