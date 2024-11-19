@@ -40,7 +40,8 @@ class LudoEnv(gym.Env):
         self.reset()
 
     def _flatten_observation(self, observation):
-        print(f"my_board: {type(observation['my_board'])}, adversaire_board: {type(observation['adversaire_board'])}")
+        print(f"my_board: \t\t{observation['my_board']}")
+        print(f"adversaire_board: \t{observation['adversaire_board']}")
         my_board = np.array(observation["my_board"]).flatten()
         adversaire_board = np.array(observation["adversaire_board"]).flatten()
         dice_roll = np.array([observation["dice_roll"]])
@@ -78,7 +79,7 @@ class LudoEnv(gym.Env):
 
         pawn_id, action_type = self.game.decode_action(action)
         print("action", action)
-        print(f"pawn_id {pawn_id}, action_type {action_type}")
+        print(f"pawn_id {pawn_id}, action_type {Action(action_type)}")
 
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
