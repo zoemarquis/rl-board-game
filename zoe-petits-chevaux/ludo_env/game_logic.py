@@ -67,6 +67,7 @@ class GameLogic:
         for i in range(NUM_PLAYERS):
             self.board[i] = [0 for _ in range(TOTAL_SIZE)] # tableau de len TOTAL_SIZE
             self.board[i][0] = NB_PAWNS # on met les pions à HOME
+        self.tour = 0
 
     def get_pawns_info(self, player_id):
         pawns_info = []
@@ -353,12 +354,29 @@ class GameLogic:
     def decode_action(self, action):
         if action == 0:
             return 0, Action.NO_ACTION
-        pawn_id, action_type = divmod(action, len(Action))
-        print("pawn_id : ", pawn_id)
-        print("action_type : ", action_type)
-        return pawn_id, Action(action_type)
-
-
+        if action == 1:
+            return 0, Action.MOVE_OUT
+        if action == 2:
+            return 0, Action.MOVE_FORWARD
+        if action == 3:
+            return 0, Action.ENTER_SAFEZONE
+        if action == 4:
+            return 0, Action.MOVE_IN_SAFE_ZONE
+        if action == 5:
+            return 0, Action.REACH_GOAL
+        
+        if action == 6:
+            return 1, Action.MOVE_OUT
+        if action == 7:
+            return 1, Action.MOVE_FORWARD
+        if action == 8:
+            return 1, Action.ENTER_SAFEZONE
+        if action == 9:
+            return 1, Action.MOVE_IN_SAFE_ZONE
+        if action == 10:
+            return 1, Action.REACH_GOAL
+        else :
+            raise ValueError("Action non valide")
 
 # Remarques : 
 # Pense à ajouter des tests unitaires pour couvrir des cas comme :

@@ -36,12 +36,9 @@ class LudoEnv(gym.Env):
             dtype=np.int8
         )
 
-
         self.reset()
 
     def _flatten_observation(self, observation):
-        print(f"my_board: \t\t{observation['my_board']}")
-        print(f"adversaire_board: \t{observation['adversaire_board']}")
         my_board = np.array(observation["my_board"]).flatten()
         adversaire_board = np.array(observation["adversaire_board"]).flatten()
         dice_roll = np.array([observation["dice_roll"]])
@@ -54,6 +51,9 @@ class LudoEnv(gym.Env):
             "adversaire_board": self.game.get_adversaire_relative_overview(self.current_player),
             "dice_roll": self.dice_roll,
         }
+        print("obs[my board]", obs["my_board"])
+        print("obs[adversaire board]", obs["adversaire_board"])
+        print("obs[dice roll]", obs["dice_roll"])
         return  self._flatten_observation(obs) #  obs #
 
     def reset(self, seed=None, options=None):
@@ -73,7 +73,7 @@ class LudoEnv(gym.Env):
     
 
     def step(self, action):
-        print("step : action", action)
+        print(f"STEP - action {action} -- tour {self.game.tour} ")
         info = {}
         reward = 0 # TODO
 
@@ -84,22 +84,28 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
-            print(f"action {action} not in valid_actions {valid_actions}")
-            return self._get_observation(), -10, False, {}
+            print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
+            return self._get_observation(), -10, False, False, {}
 
         # get_pawn position
         pawn_position = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
+        print("pawn_position", pawn_position)
         
         self.game.move_pawn(self.current_player, pawn_position, self.dice_roll, action_type)
+        print("after move pawn", self.game.board)
         # reward = self.game.get_reward(self.current_player) TODO
         done = self.game.is_game_over()
+        print("done", done)
         
         if not done and self.dice_roll != 6: # règle qu'on pourra faire changer
             self.current_player = (self.current_player + 1) % NUM_PLAYERS
+            if self.current_player == 0:
+                self.game.tour += 1
             
         else: 
             info["replay"] = True
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
-        return observation, reward, done, {}   
+        return observation, reward, done, False, {}   
+    
