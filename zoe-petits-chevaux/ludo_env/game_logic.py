@@ -337,7 +337,12 @@ class GameLogic:
     def encode_action(self, pawn_id, action_type):
         if action_type == Action.NO_ACTION:
             return 0
-        return pawn_id * len(Action) + Action(action_type).value
+        print()
+        print("pawn_id : ", pawn_id)
+        print("action_type : ", action_type)
+        print("calcul : ",  pawn_id * len(Action) + Action(action_type).value)
+        print()
+        return pawn_id * (len(Action) - 1) + Action(action_type).value
     
     def encode_valid_actions(self, valid_actions):
         if valid_actions[NB_PAWNS] == Action.NO_ACTION:
