@@ -1,40 +1,47 @@
-import random
-import gymnasium as gym
-from game_logic import GameLogic
-from ludo_env import LudoEnv
+from ludo_env import LudoEnv, Action
+import numpy as np
+from constants import NB_PAWNS
 
-def main():
-    # Créer l'environnement
-    env = LudoEnv()  # Nombre de joueurs
+class RandomAgent:
+    def __init__(self, action_space):
+        self.action_space = action_space
+
+    def choose_action(self, valid_actions_encoded):
+        if 0 in valid_actions_encoded:
+            return 0
+        # sinon random
+        return np.random.choice(valid_actions_encoded)
+
+env = LudoEnv()
+
+def play_game(env, agents):
+    obs, info = env.reset()
     done = False
-    total_rewards = 0
-    
+    turn = 0
+
     while not done:
-        # Choisir aléatoirement un joueur et un lancer de dé
-        player_id = env.current_player
-        dice_value = env.game.dice_generator()
-        print(f"Joueur {player_id} lance le dé : {dice_value}")
+        env.game.print_board_overview()
+        current_agent = agents[env.current_player]
+        valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
+        encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
+        print("main dé : ", env.dice_roll)
+        print("main valid_actions : ", valid_actions)
         
-        # Récupérer les actions valides pour ce joueur avec la valeur du dé
-        valid_actions = env.game.get_valid_actions(player_id, dice_value)
-        if valid_actions:
-            action = random.choice(valid_actions)  # Choisir une action valide au hasard
-            print(f"Joueur {player_id} choisit l'action : {action}")
-        else:
-            print(f"Aucune action valide pour le joueur {player_id}. Passer son tour.")
-            action = None  # Aucun mouvement si aucune action valide
-
-        # Effectuer l'action et obtenir l'observation, récompense, et si le jeu est terminé
-        observation, reward, done, info = env.step(action) if action is not None else env.step(None)
-        total_rewards += reward
+        # L'agent choisit une action
+        action = current_agent.choose_action(encoded_valid_actions)
+        print("main choose action : ", action)
         
-        # Afficher l'état du jeu après chaque tour
-        env.render(mode='human')
-        print(f"Récompense reçue : {reward}")
-        print(f"Total des récompenses : {total_rewards}")
-    
-    print("Jeu terminé!")
+        # Effectue une étape dans l'environnement
+        obs, reward, done, info = env.step(action)
 
-# Appel de la fonction main
-if __name__ == "__main__":
-    main()
+        # Affiche des informations pour vérifier
+        print(f"Tour {turn} - Joueur {env.current_player}: Action {action}, Récompense {reward}")
+        turn += 1
+
+    print("Partie terminée.")
+
+agent1 = RandomAgent(env.action_space)
+agent2 = RandomAgent(env.action_space)
+
+agents = [agent1, agent2]  # Liste des agents
+play_game(env, agents)

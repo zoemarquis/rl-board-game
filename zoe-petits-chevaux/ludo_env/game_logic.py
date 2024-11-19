@@ -21,14 +21,14 @@ class State(Enum):
             return State.GOAL
 
 class Action(Enum):
-    MOVE_OUT = 0  # Sortir de la maison
-    MOVE_FORWARD = 1  # Avancer le long du chemin
-    ENTER_SAFEZONE = 2  # Entrer dans la zone protégée
-    REACH_GOAL = 3  # Atteindre l'objectif final
+    NO_ACTION = 0
+    MOVE_OUT = 1  # Sortir de la maison
+    MOVE_FORWARD = 2  # Avancer le long du chemin
+    ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
+    REACH_GOAL = 4  # Atteindre l'objectif final
     # PROTECT = 4  # Protéger un pion allié
     # KILL = 5  # Tuer un pion adverse
     # DIE = 6  # Se faire tuer
-    NO_ACTION = 4  # Ne rien faire 
 
 action_table = {
     State.HOME: [Action.MOVE_OUT],
@@ -77,7 +77,6 @@ class GameLogic:
     def get_home_overview(self):
         home_overview = []
         for i in range(NUM_PLAYERS):
-            print(f"HOME {i} : {self.board[i][0]}")
             for _ in range(self.board[i][0]):
                 home_overview.append(i)
         return home_overview
@@ -127,6 +126,8 @@ class GameLogic:
         for i in range(NUM_PLAYERS):
             print(f"GOAL {i} : {self.board[i][-1]}")
 
+        print()
+
 
     def get_adversaire_relative_overview(self, player_id):
         board = [0 for _ in range(TOTAL_SIZE)]
@@ -172,7 +173,9 @@ class GameLogic:
         return board
 
     def dice_generator(self):
-        return np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
+        valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
+        print("jeté de dé : ", valeur)
+        return valeur
     
     def get_pawns_on_position(self, player_id, target_position_relative):
         if player_id == 0:
@@ -213,7 +216,7 @@ class GameLogic:
         # TODO pour tous les pions sur la case -> retourne HOME
         pass
     
-    def is_game_over(self):
+    def is_winner(self):
         """
         Vérifie si un joueur a remporté la partie.
         """
@@ -222,6 +225,14 @@ class GameLogic:
             if self.board[player_id][-1] == NB_PAWNS:
                 return player_id
         return -1
+    
+    def is_game_over(self):
+        """
+        Vérifie si la partie est terminée.
+        """
+        if self.is_winner() != -1:
+            return True
+        return False
     
     def sortir_pion(self, player_id, dice_value):
         assert dice_value == 6, "Le dé n'est pas un 6"
@@ -251,6 +262,7 @@ class GameLogic:
         self.board[player_id][-1] += 1
 
     def move_pawn(self, player_id, old_position, dice_value, action):
+        print("move pawn action : ", action)
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
@@ -266,7 +278,7 @@ class GameLogic:
         # PROTECT, KILL, DIE 
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
-        print(state)
+        # print(state)
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
         valid_actions = []
         if state == State.HOME:
@@ -301,7 +313,6 @@ class GameLogic:
         infos = self.get_pawns_info(player_id)
         for i in range(NB_PAWNS):
             tmp = self.get_valid_actions_for_pawns(player_id, infos[i]["position"], infos[i]["state"], dice_value)
-            print(f"pion {i} : {tmp}")
             if tmp != []:
                 all_vide = False
             valid_actions[i] = (tmp)
@@ -312,23 +323,32 @@ class GameLogic:
         return valid_actions
     
 
+    def encode_action(self, pawn_id, action_type):
+        if action_type == Action.NO_ACTION:
+            return 0
+        return pawn_id * len(Action) + Action(action_type).value
+    
+    def encode_valid_actions(self, valid_actions):
+        if valid_actions[NB_PAWNS] == Action.NO_ACTION:
+            return [0]
+        valid_actions = valid_actions[:NB_PAWNS]
+        encoded_actions = []
+        for i, actions in enumerate(valid_actions):
+            for action in actions:
+                encoded_actions.append(self.encode_action(i, action))
+        print("valid actions : ", valid_actions)
+        print("encoded actions : ", encoded_actions)
+        return encoded_actions
 
-    # TODO :
-    # # pour l'env : 
-    # def encode_possible_actions(self, possible_actions):
-    #         action_vector = np.zeros(4, dtype=np.int32)  # Taille fixe pour 4 actions
-    #         action_mapping = {"MOVE_OUT": 0, "MOVE": 1, "REACH_GOAL": 2, "NO_ACTION": 3}
-    #         for action in possible_actions:
-    #             action_vector[action_mapping[action]] = 1
-    #         return action_vector
-    # 
-    # def decode_possible_actions(self, action_vector):
-    # return [Action(i) for i, val in enumerate(action_vector) if val == 1]  
+    def decode_action(self, action):
+        if action == 0:
+            return 0, Action.NO_ACTION
+        pawn_id, action_type = divmod(action, len(Action))
+        print("pawn_id : ", pawn_id)
+        print("action_type : ", action_type)
+        return pawn_id, Action(action_type)
 
-    # # TODO : 
-    # def calculate_relative_index(player_id, position):
-    #     base = 28 if NUM_PLAYERS == 2 else 14
-    #     return ((player_id * base) + position - 1) % 56
+
 
 # Remarques : 
 # Pense à ajouter des tests unitaires pour couvrir des cas comme :

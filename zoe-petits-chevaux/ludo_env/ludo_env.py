@@ -21,7 +21,7 @@ class LudoEnv(gym.Env):
 
         # self.renderer = Renderer()
 
-        self.action_space = Discrete(self.num_pawns * (len(Action) - 1) + 1) # + 1 -> no action
+        self.action_space = Discrete(1 + NUM_PLAYERS * (len(Action) - 1))  # 1 pour NO_ACTION
         self.observation_space = Dict({
             "my_board": Box(low=0, high=NB_PAWNS, shape=(TOTAL_SIZE,), dtype=np.int8),  # État du plateau du joueur courant
             "adversaire_board": Box(low=0, high=NB_PAWNS * (NUM_PLAYERS - 1), shape=(TOTAL_SIZE,), dtype=np.int8),  # Agrégation des autres joueurs
@@ -35,8 +35,8 @@ class LudoEnv(gym.Env):
         self.board = np.full(self.board_size, -1) # TODO : revoir en fonction observation
         self.pawns = np.zeros((self.num_players, self.num_pawns), dtype=np.int8) # # TODO revoir en fonction observation
         self.current_player = 0
-        self.dice_roll = None  # Aucun jet au début
         self.game = GameLogic()
+        self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}    
 
     def render(self, mode='human'):
@@ -50,23 +50,33 @@ class LudoEnv(gym.Env):
             "dice_roll": self.dice_roll,
         }
 
-
     def step(self, action):
-        token_id, action_type = divmod(action, len(Action))
+        info = {}
+        reward = 0 # TODO
 
-        # TODO urgent is valid action
-        # if not self.i__valid_action reward -10
-        # ou alors dire que c'est NO ACTION ? comment faire ça ?
-        # else move + calulate reward
-        # valid_actions = self.game.get_valid_actions(player_id, dice_value)
+        pawn_id, action_type = self.game.decode_action(action)
+        print("action", action)
+        print(f"pawn_id {pawn_id}, action_type {action_type}")
 
+        valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
+        encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
+        if action not in encoded_valid_actions:
+            print(f"action {action} not in valid_actions {valid_actions}")
+            return self._get_observation(), -10, False, {}
+
+        # get_pawn position
+        pawn_position = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
+        
+        self.game.move_pawn(self.current_player, pawn_position, self.dice_roll, action_type)
+        # reward = self.game.get_reward(self.current_player) TODO
         done = self.game.is_game_over()
-
-        # si le dé n'est pas un 6 -> joueur suivant
-        if dice_value != 6:
+        
+        if not done and self.dice_roll != 6: # règle qu'on pourra faire changer
             self.current_player = (self.current_player + 1) % NUM_PLAYERS
+            
+        else: 
+            info["replay"] = True
 
-
-        dice_value = self.game.dice_generator()
+        self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
         return observation, reward, done, {}   

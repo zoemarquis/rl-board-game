@@ -94,3 +94,20 @@ def render_observation(observation):
     print(f"Opponent pawns: {observation['opponent_pawns']}")
     print(f"Board state: {observation['board_state']}")
     print(f"Threats: {observation['threats_and_opportunities']}")
+
+
+
+
+pour entrainer un agent face à un autre joueur random
+
+    for episode in range(num_episodes):
+        obs = env.reset()
+        done = False
+        while not done:
+            if env.current_player == agent_id:
+                action = agent.act(obs)
+            else:
+                action = random.choice(env.game.get_valid_actions(env.current_player, env.dice_roll))
+            
+            obs, reward, done, info = env.step(action)
+
