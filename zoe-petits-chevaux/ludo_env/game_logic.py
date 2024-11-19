@@ -2,6 +2,11 @@ import numpy as np
 from constants import *
 from enum import Enum
 
+# 0 : HOME
+# 1-56 : PATH
+# 57-62 : SAFEZONE
+# 63 : GOAL
+
 class State(Enum):
     HOME = 0  # Le pion est dans sa maison, prêt à partir
     PATH = 1  # Le pion est en chemin
@@ -25,7 +30,8 @@ class Action(Enum):
     MOVE_OUT = 1  # Sortir de la maison
     MOVE_FORWARD = 2  # Avancer le long du chemin
     ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
-    REACH_GOAL = 4  # Atteindre l'objectif final
+    MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
+    REACH_GOAL = 5  # Atteindre l'objectif final
     # PROTECT = 4  # Protéger un pion allié
     # KILL = 5  # Tuer un pion adverse
     # DIE = 6  # Se faire tuer
@@ -117,7 +123,7 @@ class GameLogic:
 
         board_path = self.get_path_overview()
         for i in range(56//14):
-            print(i*14, " -> ", (i+1)*14)
+            print(i*14 + 1, " -> ", (i+1)*14)
             print(board_path[i*14:(i+1)*14 ])
 
         for i in range(NUM_PLAYERS):
@@ -185,13 +191,13 @@ class GameLogic:
                 indice = (target_position_relative - 1+ 14) % 56
                 return self.get_path_overview()[indice]
             else:
-                indice = target_position_relative - 1 + 28
+                indice = (target_position_relative - 1 + 28)%56
                 return self.get_path_overview()[indice]
         elif player_id == 2:
-            indice = target_position_relative - 1 + 28
+            indice = (target_position_relative - 1 + 28)%56
             return self.get_path_overview()[indice]
         elif player_id == 3:
-            indice = target_position_relative - 1 + 42
+            indice = (target_position_relative - 1 + 42)%56
             return self.get_path_overview()[indice]
         # TODO print pour check tout ça
 
@@ -203,18 +209,18 @@ class GameLogic:
                 return True
         return False
 
-    def is_pawn_threatened(player, position): # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
+    def is_pawn_threatened(self,player, position): # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
         # TODO
         # retourne combien de pions sont menacés ?
-        pass
+        return False
 
-    def is_pawn_protected(player, position): # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
+    def is_pawn_protected(self, player, position): # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
         # TODO
-        pass
+        return False
 
     def kill_pawn(self, player_id, position):
         # TODO pour tous les pions sur la case -> retourne HOME
-        pass
+        return False
     
     def is_winner(self):
         """
@@ -241,6 +247,7 @@ class GameLogic:
         self.board[player_id][1] += 1
 
     def avance_pion_path(self, player_id, old_position, dice_value):
+        print(f"débug : avance pion path old_position = {old_position}, dé = {dice_value}")
         assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
@@ -263,11 +270,12 @@ class GameLogic:
 
     def move_pawn(self, player_id, old_position, dice_value, action):
         print("move pawn action : ", action)
+        print("old position : ", old_position)
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
             self.avance_pion_path(player_id, old_position, dice_value)
-        elif action == Action.ENTER_SAFEZONE:
+        elif action == Action.ENTER_SAFEZONE or action == Action.MOVE_IN_SAFE_ZONE:
             self.avance_pion_safe_zone(player_id, old_position, dice_value)
         elif action == Action.REACH_GOAL:
             self.securise_pion_goal(player_id, old_position, dice_value)
@@ -278,7 +286,7 @@ class GameLogic:
         # PROTECT, KILL, DIE 
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
-        # print(state)
+        print(f"state : {state} , position : {position}, dice_value : {dice_value}")
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
         valid_actions = []
         if state == State.HOME:
@@ -287,18 +295,20 @@ class GameLogic:
             # else :
             #     valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
         elif state == State.PATH:
-            if position + dice_value < 56: # limite avant zone protégée
+            if position + dice_value < 57: # limite avant zone protégée
                 valid_actions.append(Action.MOVE_FORWARD)
-            elif position + dice_value >= 56:
+            elif position + dice_value >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
             # est ce que tu tues un pion au passage ? -> alors ajouter kill
-            if self.is_opponent_pawn_on(player_id, position+dice_value):
-                valid_actions.append(Action.KILL)
-            if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
-                valid_actions.append(Action.PROTECT)
+            # TODO ajouter ces moves là
+            # if self.is_opponent_pawn_on(player_id, position+dice_value):
+            #     valid_actions.append(Action.KILL)
+            # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
+            #     valid_actions.append(Action.PROTECT)
         elif state == State.SAFEZONE:
+            print("safe zone state", position, dice_value)
             if position + dice_value <= 62:
-                valid_actions.append(Action.MOVE_FORWARD)
+                valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
             if position + dice_value >= 63:
                 valid_actions.append(Action.REACH_GOAL)
         elif state == State.GOAL:

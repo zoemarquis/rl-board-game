@@ -38,7 +38,7 @@ def play_game(env, agents):
         print(f"Tour {turn} - Joueur {env.current_player}: Action {action}, Récompense {reward}")
         turn += 1
 
-    print("Partie terminée.")
+    print(f"Partie terminée. Joueur {env.current_player} a gagné !")
 
 agent1 = RandomAgent(env.action_space)
 agent2 = RandomAgent(env.action_space)
