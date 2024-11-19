@@ -21,7 +21,7 @@ class LudoEnv(gym.Env):
 
         # self.renderer = Renderer()
 
-        self.action_space = Discrete(self.num_pawns * len(Action))
+        self.action_space = Discrete(self.num_pawns * (len(Action) - 1) + 1) # + 1 -> no action
         self.observation_space = Dict({
             "my_board": Box(low=0, high=NB_PAWNS, shape=(TOTAL_SIZE,), dtype=np.int8),  # État du plateau du joueur courant
             "adversaire_board": Box(low=0, high=NB_PAWNS * (NUM_PLAYERS - 1), shape=(TOTAL_SIZE,), dtype=np.int8),  # Agrégation des autres joueurs
