@@ -111,3 +111,39 @@ pour entrainer un agent face à un autre joueur random
             
             obs, reward, done, info = env.step(action)
 
+
+
+
+
+
+
+
+
+
+ il est possible d'entraîner un agent contre plusieurs autres agents ou configurations dans Stable Baselines3. Voici quelques approches pour entraîner un agent dans différents scénarios comme 1 contre 1, 1 contre 2, ou 1 contre 3, où les autres agents sont contrôlés de manière aléatoire (par exemple avec une politique aléatoire).
+
+ Environnement multi-agents avec un joueur aléatoire
+Dans un jeu multi-agents comme le vôtre, il est possible de configurer un environnement où plusieurs agents interagissent. Pour un entraînement impliquant plusieurs agents (par exemple, un agent face à 1, 2 ou 3 agents contrôlés aléatoirement), vous pouvez procéder comme suit :
+
+Définir les agents dans l'environnement :
+
+Vous aurez un agent principal que vous souhaitez entraîner (par exemple, l'agent PPO dans votre code).
+Les autres agents peuvent être définis pour jouer de manière aléatoire. Cela peut être fait en définissant un agent de type "Random" ou en utilisant une stratégie basique comme un agent qui choisit des actions au hasard.
+
+Modification de la méthode step : Dans votre méthode step, vous devrez gérer l'interaction entre l'agent que vous entraînez et les autres agents. L'idée est de choisir aléatoirement des actions pour les agents adverses et de les intégrer dans le processus de mise à jour du jeu.
+
+Par exemple, dans un environnement avec n joueurs :
+
+L'agent 0 pourrait être l'agent principal qui est entraîné avec Stable Baselines3.
+Les agents 1, 2, 3 (etc.) pourraient être des agents aléatoires qui choisissent leurs actions indépendamment de l'état du jeu.
+Vous mettez à jour l'état du jeu à chaque étape en appliquant les actions des agents (celui de l'agent principal étant choisi par le modèle, et ceux des autres étant choisis aléatoirement).
+
+Entraînement avec des configurations multiples (1 vs 1, 1 vs 2, etc.) : Vous pouvez entraîner votre agent dans plusieurs configurations en modifiant dynamiquement le nombre d'agents adverses :
+
+1v1 : Un agent contre un autre agent (par exemple, un agent PPO contre un agent Random).
+1v2, 1v3, etc. : L'agent principal (par exemple, PPO) contre plusieurs agents jouant aléatoirement. Vous pouvez changer le nombre d'agents dans chaque configuration.
+
+
+
+utilisez notre Random Agent
+
