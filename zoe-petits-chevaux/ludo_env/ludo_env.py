@@ -3,7 +3,7 @@ import numpy as np
 from gymnasium import spaces
 from constants import *
 from game_logic import GameLogic
-# from renderer import Renderer
+from renderer import Renderer
 # from gym.spaces import Discrete, Dict, Box
 from game_logic import Action
 
@@ -37,7 +37,8 @@ class LudoEnv(gym.Env):
         #     shape=(TOTAL_SIZE * NUM_PLAYERS + 1,),  # Taille totale + 1 pour le dé
         #     dtype=np.int8
         # )
-        
+
+        self.renderer = Renderer()  # Créer une instance du Renderer
 
         self.reset()
 
@@ -67,9 +68,8 @@ class LudoEnv(gym.Env):
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}    
 
-    def render(self, mode='human'):
-        # img = self.renderer.render(self.board, self.pieces)
-        return None
+    def render(self, game, mode='human'):
+        self.renderer.render(self.game) 
 
     def step(self, action):
         info = {}

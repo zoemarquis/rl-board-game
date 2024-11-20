@@ -32,19 +32,11 @@ class Action(Enum):
     ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
     MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
     REACH_GOAL = 5  # Atteindre l'objectif final
-    # PROTECT = 4  # Protéger un pion allié
-    # KILL = 5  # Tuer un pion adverse
+    # KILL = 6  # Tuer un pion adverse TODO
+    # PROTECT = 7  # Protéger un pion allié TODO 
     # DIE = 6  # Se faire tuer
 
-action_table = {
-    State.HOME: [Action.MOVE_OUT],
-    State.PATH: [Action.MOVE_FORWARD, Action.ENTER_SAFEZONE],
-    State.SAFEZONE: [Action.REACH_GOAL],
-    State.GOAL: []  # Aucun mouvement autorisé
-}
-
-
-REWARD_TABLE = {
+REWARD_TABLE_MOVE_OUT = {
     Action.NO_ACTION: -1,
     Action.MOVE_OUT: 20,
     Action.MOVE_FORWARD: 5,
@@ -54,8 +46,32 @@ REWARD_TABLE = {
     # Action.PROTECT: 20,
     # Action.KILL: 30,
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
+} # faudrait que les sommes répartis soient égales 
+
+REWARD_TABLE_SECURE = {
+    Action.NO_ACTION: -1,
+    Action.MOVE_OUT: 5,
+    Action.MOVE_FORWARD: 10,
+    Action.ENTER_SAFEZONE: 9,
+    Action.MOVE_IN_SAFE_ZONE: 1,
+    Action.REACH_GOAL: 3,
+    # Action.PROTECT: 20,
+    # Action.KILL: 30,
+    # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 }
-# La table des récompenses est bien définie. 
+
+# REWARD_TABLE_KILLER = {
+#     Action.NO_ACTION: -1,
+#     Action.MOVE_OUT: 5,
+#     Action.MOVE_FORWARD: 10,
+#     Action.ENTER_SAFEZONE: 9,
+#     Action.MOVE_IN_SAFE_ZONE: 1,
+#     Action.REACH_GOAL: 3,
+#     # Action.PROTECT: 20,
+#     # Action.KILL: 30,
+#     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
+# }
+
 # Tu peux envisager d'utiliser une fonction pour calculer les récompenses 
 # dynamiquement selon des critères plus complexes (comme l’état du jeu).
 
