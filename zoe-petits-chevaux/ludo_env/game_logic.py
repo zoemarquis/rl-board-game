@@ -136,54 +136,57 @@ class GameLogic:
         for i in range(NUM_PLAYERS):
             print(f"GOAL {i} : {self.board[i][-1]}")
 
-
-
-    def get_adversaire_relative_overview(self, player_id):
+    def get_overview_of(self, other_player_id):
         board = [0 for _ in range(TOTAL_SIZE)]
         # mettre tous les home ensemble, puis les safe zone, puis les goal
         # ensuite calculer pour les path
         count_all_home = self.get_home_overview()
-        count_self_home = count_all_home.count(player_id)
+        count_self_home = count_all_home.count(other_player_id)
         board[0] = count_self_home
 
         count_all_goal = self.get_goal_overview()
-        count_self_goal = count_all_goal.count(player_id)
+        count_self_goal = count_all_goal.count(other_player_id)
         board[-1] = count_self_goal
 
         safe_zone = self.get_safe_zone_overview()
         for i in range(6):
             count_all_safe = safe_zone[i]
-            count_self_safe = count_all_safe.count(player_id)
+            count_self_safe = count_all_safe.count(other_player_id)
             board[i+57] = count_self_safe
         
         path_zone = self.get_path_overview()
         path_board = [0 for _ in range(56)]
         for i in range(56):
             count_all_path = path_zone[i]
-            count_self_path = count_all_path.count(player_id)
+            count_self_path = count_all_path.count(other_player_id)
             path_board[i] = count_self_path
         # shift path board pour matcher avec le bon joueur
-        if player_id == 0:
+        if other_player_id == 0:
             board[1:57] = path_board
-        elif player_id == 1:
+        elif other_player_id == 1:
             if NUM_PLAYERS != 2:
                 board[15:57] = path_board[:42]
                 board[1:15] = path_board[42:]
             else:
                 board[29:57] = path_board[:28]
                 board[1:29] = path_board[28:]
-        elif player_id == 2:
+        elif other_player_id == 2:
             board[29:57] = path_board[:28]
             board[1:29] = path_board[28:]
-        elif player_id == 3:
+        elif other_player_id == 3:
             board[43:57] = path_board[:14]
             board[1:43] = path_board[14:]
-        # TODO print pour etre sur 
-        return board
+        return board 
+
+    def get_adversaires_relative_overview(self, current_player_id):
+        # result = [] TODO faire pour tous les joueurs
+        for i in range(NUM_PLAYERS):
+            if i != current_player_id:
+                return self.get_overview_of(i)
 
     def dice_generator(self):
         valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
-        # print("lancé de dé : ", valeur)
+        print("lancé de dé : ", valeur)
         return valeur
     
     def get_pawns_on_position(self, player_id, target_position_relative):

@@ -50,7 +50,7 @@ class LudoEnv(gym.Env):
     def _get_observation(self):
         obs = {
             "my_board": self.game.board[self.current_player], 
-            "adversaire_board": self.game.get_adversaire_relative_overview((self.current_player+1)%2), # ne fonctionne que quand NUM_PLAYERS = 2
+            "adversaire_board": self.game.get_adversaires_relative_overview(self.current_player), # ne fonctionne que quand NUM_PLAYERS = 2
             "dice_roll": self.dice_roll,
         }
         # print("obs[my board]", obs["my_board"])
@@ -81,7 +81,8 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
-            # DECOMMENTER ÇA PENDANT LA PARTIE POUR TESTER : print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
+            # DECOMMENTER ÇA PENDANT LA PARTIE POUR TESTER : 
+            print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
             return self._get_observation(), -10, False, False, {}
 
         pawn_position = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
@@ -93,7 +94,7 @@ class LudoEnv(gym.Env):
         done = self.game.is_game_over()
         # print("done", done)
         
-        if not done and self.dice_roll != 6: # règle qu'on pourra faire changer
+        if not done : # and self.dice_roll != 6: # règle qu'on pourra faire changer
             self.current_player = (self.current_player + 1) % NUM_PLAYERS
             if self.current_player == 0:
                 self.game.tour += 1
