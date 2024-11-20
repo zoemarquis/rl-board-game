@@ -230,7 +230,7 @@ class GameLogic:
         Vérifie si un joueur a remporté la partie.
         """
         for player_id in range(NUM_PLAYERS):
-            print(f"player {player_id} : {self.board[player_id][-1]}")
+            # print(f"player {player_id} : {self.board[player_id][-1]}")
             if self.board[player_id][-1] == NB_PAWNS:
                 return player_id
         return -1
@@ -250,16 +250,16 @@ class GameLogic:
         self.board[player_id][1] += 1
 
     def avance_pion_path(self, player_id, old_position, dice_value):
-        print(f"débug : avance pion path old_position = {old_position}, dé = {dice_value}")
+        # print(f"débug : avance pion path old_position = {old_position}, dé = {dice_value}")
         assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_pion_safe_zone(self, player_id, old_position, dice_value):
-        print("avance pion safe zone")
-        print(f"old position : {old_position}")
-        print(f"dice value : {dice_value}")
+        # print("avance pion safe zone")
+        # print(f"old position : {old_position}")
+        # print(f"dice value : {dice_value}")
         assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
         assert old_position + dice_value < 63, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
@@ -272,8 +272,8 @@ class GameLogic:
         self.board[player_id][-1] += 1
 
     def move_pawn(self, player_id, old_position, dice_value, action):
-        print("move pawn action : ", action)
-        print("old position : ", old_position)
+        # print("move pawn action : ", action)
+        # print("old position : ", old_position)
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
@@ -289,7 +289,7 @@ class GameLogic:
         # PROTECT, KILL, DIE 
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
-        print(f"state : {state} , position : {position}, dice_value : {dice_value}")
+        # print(f"state : {state} , position : {position}, dice_value : {dice_value}")
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
         valid_actions = []
         if state == State.HOME:
@@ -339,11 +339,11 @@ class GameLogic:
     def encode_action(self, pawn_id, action_type):
         if action_type == Action.NO_ACTION:
             return 0
-        print()
-        print("pawn_id : ", pawn_id)
-        print("action_type : ", action_type)
-        print("calcul : ",  pawn_id * len(Action) + Action(action_type).value)
-        print()
+        # print()
+        # print("pawn_id : ", pawn_id)
+        # print("action_type : ", action_type)
+        # print("calcul : ",  pawn_id * len(Action) + Action(action_type).value)
+        # print()
         return pawn_id * (len(Action) - 1) + Action(action_type).value
     
     def encode_valid_actions(self, valid_actions):
@@ -354,8 +354,8 @@ class GameLogic:
         for i, actions in enumerate(valid_actions):
             for action in actions:
                 encoded_actions.append(self.encode_action(i, action))
-        print("valid actions : ", valid_actions)
-        print("encoded actions : ", encoded_actions)
+        # print("valid actions : ", valid_actions)
+        # print("encoded actions : ", encoded_actions)
         return encoded_actions
 
     def decode_action(self, action):
