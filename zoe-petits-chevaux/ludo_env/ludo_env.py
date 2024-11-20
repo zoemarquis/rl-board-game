@@ -79,7 +79,7 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
-            print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
+            # DECOMMENTER ÇA PENDANT LA PARTIE POUR TESTER : print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
             return self._get_observation(), -10, False, False, {}
 
         pawn_position = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]

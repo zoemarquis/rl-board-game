@@ -45,12 +45,12 @@ action_table = {
 
 
 REWARD_TABLE = {
-    Action.NO_ACTION: 0,
-    Action.MOVE_OUT: 50,
+    Action.NO_ACTION: -1,
+    Action.MOVE_OUT: 20,
     Action.MOVE_FORWARD: 5,
-    Action.ENTER_SAFEZONE: 10,
+    Action.ENTER_SAFEZONE: 15,
     Action.MOVE_IN_SAFE_ZONE: 1,
-    Action.REACH_GOAL: 20,
+    Action.REACH_GOAL: 10,
     # Action.PROTECT: 20,
     # Action.KILL: 30,
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour

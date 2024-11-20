@@ -1,3 +1,7 @@
+pour pions déjà entrainées : si ils font une action interdite -> on les fait choisir random une action parmi les actions valides et on compte combien d'actions valides il a essayé de faire au cours d'une partie
+comme ça on pourra aussi faire des stats là dessus, comprendre quels actions il essaye de faire dans quel état -> à modéliser dans nos stats
+
+
 1. États des pions
 Pour chaque pion (le tien et ceux des adversaires), tu peux inclure des informations sur :
 
