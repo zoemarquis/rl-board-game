@@ -48,17 +48,17 @@ class LudoEnv(gym.Env):
     def _get_observation(self):
         obs = {
             "my_board": self.game.board[self.current_player], 
-            "adversaire_board": self.game.get_adversaire_relative_overview(self.current_player),
+            "adversaire_board": self.game.get_adversaire_relative_overview((self.current_player+1)%2), # ne fonctionne que quand NUM_PLAYERS = 2
             "dice_roll": self.dice_roll,
         }
-        print("obs[my board]", obs["my_board"])
-        print("obs[adversaire board]", obs["adversaire_board"])
-        print("obs[dice roll]", obs["dice_roll"])
+        # print("obs[my board]", obs["my_board"])
+        # print("obs[adversaire board]", obs["adversaire_board"])
+        # print("obs[dice roll]", obs["dice_roll"])
         return obs
         # return  self._flatten_observation(obs) #  obs #
 
     def reset(self, seed=None, options=None):
-        print("reset")
+        # print("reset")
         super().reset(seed=seed, options=options)
         self.current_player = 0
         self.game = GameLogic()
@@ -74,7 +74,7 @@ class LudoEnv(gym.Env):
 
         pawn_id, action_type = self.game.decode_action(action)
         # print("action", action)
-        print(f"STEP - action {action} -- tour {self.game.tour} - pawn_id {pawn_id} - action {Action(action_type)} ")
+        # print(f"STEP - action {action} -- tour {self.game.tour} - pawn_id {pawn_id} - action {Action(action_type)} ")
 
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)

@@ -183,7 +183,7 @@ class GameLogic:
 
     def dice_generator(self):
         valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
-        print("lancé de dé : ", valeur)
+        # print("lancé de dé : ", valeur)
         return valeur
     
     def get_pawns_on_position(self, player_id, target_position_relative):
@@ -309,7 +309,7 @@ class GameLogic:
             # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
             #     valid_actions.append(Action.PROTECT)
         elif state == State.SAFEZONE:
-            print("safe zone state", position, dice_value)
+            # print("safe zone state", position, dice_value)
             if position + dice_value <= 62:
                 valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
             if position + dice_value >= 63:
