@@ -28,6 +28,8 @@ class LudoEnv(gym.Env):
             "adversaire_board": gym.spaces.Box(low=0, high=NB_PAWNS * (NUM_PLAYERS - 1), shape=(TOTAL_SIZE,), dtype=np.int8),  # Agrégation des autres joueurs
             "dice_roll": gym.spaces.Discrete(7),  # Résultat du dé (1 à 6)
         })
+        # TODO : faire en sorte d'en plus observer les états des pions sur le plateau, pour mieux connaitre les actions possibles
+
         # 
         # self.observation_space = gym.spaces.Box(
         #     low=0,
