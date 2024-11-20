@@ -45,10 +45,12 @@ action_table = {
 
 
 REWARD_TABLE = {
+    Action.NO_ACTION: 0,
     Action.MOVE_OUT: 50,
     Action.MOVE_FORWARD: 5,
     Action.ENTER_SAFEZONE: 10,
-    Action.REACH_GOAL: 50,
+    Action.MOVE_IN_SAFE_ZONE: 1,
+    Action.REACH_GOAL: 20,
     # Action.PROTECT: 20,
     # Action.KILL: 30,
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
@@ -119,6 +121,7 @@ class GameLogic:
 
 
     def print_board_overview(self):
+        print()
         for i in range(NUM_PLAYERS):
             print(f"HOME {i} : {self.board[i][0]}")
 
@@ -133,7 +136,6 @@ class GameLogic:
         for i in range(NUM_PLAYERS):
             print(f"GOAL {i} : {self.board[i][-1]}")
 
-        print()
 
 
     def get_adversaire_relative_overview(self, player_id):
@@ -181,7 +183,7 @@ class GameLogic:
 
     def dice_generator(self):
         valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
-        print("jeté de dé : ", valeur)
+        print("lancé de dé : ", valeur)
         return valeur
     
     def get_pawns_on_position(self, player_id, target_position_relative):
@@ -382,6 +384,9 @@ class GameLogic:
             return 1, Action.REACH_GOAL
         else :
             raise ValueError("Action non valide")
+        
+    def get_reward(self, action):
+        return REWARD_TABLE[action]
 
 # Remarques : 
 # Pense à ajouter des tests unitaires pour couvrir des cas comme :

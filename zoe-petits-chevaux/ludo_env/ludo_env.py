@@ -35,6 +35,8 @@ class LudoEnv(gym.Env):
             shape=(TOTAL_SIZE * NUM_PLAYERS + 1,),  # Taille totale + 1 pour le dé
             dtype=np.int8
         )
+        # self.observation_space = spaces.Box(low=0, high=100, shape=(4, 4), dtype=np.int32)
+        
 
         self.reset()
 
@@ -54,6 +56,9 @@ class LudoEnv(gym.Env):
         print("obs[my board]", obs["my_board"])
         print("obs[adversaire board]", obs["adversaire_board"])
         print("obs[dice roll]", obs["dice_roll"])
+
+        print()
+        print(self.observation_space)
         return  self._flatten_observation(obs) #  obs #
 
     def reset(self, seed=None, options=None):
@@ -75,7 +80,6 @@ class LudoEnv(gym.Env):
     def step(self, action):
         print(f"STEP - action {action} -- tour {self.game.tour} ")
         info = {}
-        reward = 0 # TODO
 
         pawn_id, action_type = self.game.decode_action(action)
         print("action", action)
@@ -93,7 +97,7 @@ class LudoEnv(gym.Env):
         
         self.game.move_pawn(self.current_player, pawn_position, self.dice_roll, action_type)
         print("after move pawn", self.game.board)
-        # reward = self.game.get_reward(self.current_player) TODO
+        reward = self.game.get_reward(action_type) 
         done = self.game.is_game_over()
         print("done", done)
         
