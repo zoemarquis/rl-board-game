@@ -7,10 +7,6 @@ from renderer import Renderer
 # from gym.spaces import Discrete, Dict, Box
 from game_logic import Action
 
-# TODO : Définir correctement
-id_agent = 0
-
-
 
 class LudoEnv(gym.Env):
     def __init__(self, render_mode='rgb_array'): # pas num_players et NUM_PLAYERS
@@ -46,7 +42,6 @@ class LudoEnv(gym.Env):
 
         self.reset()
 
-    # TODO : Simplifier l'espace d'observation
     def _flatten_observation(self, observation):
         my_board = np.array(observation["my_board"]).flatten()
         adversaire_board = np.array(observation["adversaire_board"]).flatten()
@@ -87,26 +82,20 @@ class LudoEnv(gym.Env):
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
             # DECOMMENTER ÇA PENDANT LA PARTIE POUR TESTER : 
-            #print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
-            print("NON VALID ACTION")
+            print(f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
             return self._get_observation(), -10, False, False, {}
-        else:
-            print("VALID ACTION")
 
         pawn_position = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
         # print("pawn_position", pawn_position)
         
         self.game.move_pawn(self.current_player, pawn_position, self.dice_roll, action_type)
         # print("after move pawn", self.game.board)
-
-        type = "move_out" # TODO : Gérer les autres types d'actions
-        reward = self.game.get_reward(action_type, self.current_player, id_agent, type) 
+        reward = self.game.get_reward(action_type) 
         done = self.game.is_game_over()
         # print("done", done)
         
         if not done : # and self.dice_roll != 6: # règle qu'on pourra faire changer
             self.current_player = (self.current_player + 1) % NUM_PLAYERS
-            print("current player", self.current_player)
             if self.current_player == 0:
                 self.game.tour += 1
             
@@ -115,15 +104,5 @@ class LudoEnv(gym.Env):
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
-
-        #if self.current_player != id_agent:
-            #print("not my turn")
-            # Retourne une récompeense nulle à l'agent si ce n'est pas son tour
-            # On pourra retourner qqc de negatif s'il se fait renvoyer dans son écurie
-            # Peut etre ajouter directement dans la fonction get_reward
-            #return self._get_observation(), 0, done, False, {}
-        print("my turn")
-        
-
         return observation, reward, done, False, {}   
     

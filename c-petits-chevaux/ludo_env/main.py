@@ -23,7 +23,7 @@ def play_game(env, agents):
         print("main choose action : ", action)
         
         # Effectue une étape dans l'environnement
-        obs, reward, done, info, info_2 = env.step(action)
+        obs, reward, done, info = env.step(action)
 
         # Affiche des informations pour vérifier
         print(f"Tour {turn} - Joueur {env.current_player}: Action {action}, Récompense {reward}")

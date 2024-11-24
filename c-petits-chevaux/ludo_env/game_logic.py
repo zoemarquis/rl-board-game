@@ -32,7 +32,7 @@ class Action(Enum):
     ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
     MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
     REACH_GOAL = 5  # Atteindre l'objectif final
-    KILL = 6  # Tuer un pion adverse
+    # KILL = 6  # Tuer un pion adverse TODO
     # PROTECT = 7  # Protéger un pion allié TODO 
     # DIE = 6  # Se faire tuer
 
@@ -57,17 +57,6 @@ REWARD_TABLE_SECURE = {
     Action.REACH_GOAL: 3,
     # Action.PROTECT: 20,
     # Action.KILL: 30,
-    # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
-}
-REWARD_TABLE_ADVERSAIRE_MOVE_OUT = {
-    Action.NO_ACTION: 0,
-    Action.MOVE_OUT: 0,
-    Action.MOVE_FORWARD: 0,
-    Action.ENTER_SAFEZONE: 0,
-    Action.MOVE_IN_SAFE_ZONE: 0,
-    Action.REACH_GOAL: 0,
-    # Action.PROTECT: 20,
-    Action.KILL: -20, # Pour l'agent que l'on entraine
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 }
 
@@ -252,24 +241,8 @@ class GameLogic:
         return False
 
     def kill_pawn(self, player_id, position):
-        killed = False
-
-        for other_player_id in range(NUM_PLAYERS):
-            if other_player_id != player_id:
-
-                if self.board[other_player_id][position] > 0:
-                    num_pawns = self.board[other_player_id][position]
-
-                    # Ajouter à HOME et supprimer de la position
-                    self.board[other_player_id][0] += num_pawns
-                    self.board[other_player_id][position] = 0
-                    
-                    killed = True
-
-        return killed
-
-
-
+        # TODO pour tous les pions sur la case -> retourne HOME
+        return False
     
     def is_winner(self):
         """
@@ -320,14 +293,9 @@ class GameLogic:
     def move_pawn(self, player_id, old_position, dice_value, action):
         # print("move pawn action : ", action)
         # print("old position : ", old_position)
-
-        target_position = old_position + dice_value
-
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
-            if self.is_opponent_pawn_on(player_id, target_position):
-                self.kill_pawn(player_id, target_position)
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.ENTER_SAFEZONE or action == Action.MOVE_IN_SAFE_ZONE:
             self.avance_pion_safe_zone(player_id, old_position, dice_value)
@@ -353,8 +321,6 @@ class GameLogic:
                 valid_actions.append(Action.MOVE_FORWARD)
             elif position + dice_value >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
-                if self.is_opponent_pawn_on(player_id, target_position):
-                    valid_actions.append(Action.KILL)
             # est ce que tu tues un pion au passage ? -> alors ajouter kill
             # TODO ajouter ces moves là
             # if self.is_opponent_pawn_on(player_id, position+dice_value):
@@ -437,15 +403,9 @@ class GameLogic:
             return 1, Action.REACH_GOAL
         else :
             raise ValueError("Action non valide")
-    
-    # TODO : Retourner la bonne table en fonction de l'agent ??
-    def get_reward(self, action, current_player, id_agent, type):
-        if current_player == id_agent and type == "move_out":
-            return REWARD_TABLE_MOVE_OUT[action]
-        elif current_player == id_agent and type == "secure":
-            return REWARD_TABLE_SECURE[action]
-        elif current_player != id_agent and type == "move_out":
-            return REWARD_TABLE_ADVERSAIRE_MOVE_OUT[action]
+        
+    def get_reward(self, action):
+        return REWARD_TABLE_MOVE_OUT[action]
 
 # Remarques : 
 # Pense à ajouter des tests unitaires pour couvrir des cas comme :
