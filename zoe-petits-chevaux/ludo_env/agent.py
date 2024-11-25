@@ -1,3 +1,5 @@
+import numpy as np
+
 class RandomAgent:
     def __init__(self, action_space):
         self.action_space = action_space
@@ -7,12 +9,6 @@ class RandomAgent:
             return 0
         # sinon random
         return np.random.choice(valid_actions_encoded)
-
-
-
-import numpy as np
-
-import numpy as np
 
 class QLearningAgent:
     def __init__(self, action_space, state_space, learning_rate=0.1, gamma=0.99, epsilon=0.1):

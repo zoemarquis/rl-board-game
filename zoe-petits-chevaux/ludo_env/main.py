@@ -1,6 +1,6 @@
-from ludo_env import LudoEnv, Action
+from ludo_env.env import LudoEnv, Action
 import numpy as np
-from agent import RandomAgent
+from ludo_env.agent import RandomAgent
 
 env = LudoEnv()
 

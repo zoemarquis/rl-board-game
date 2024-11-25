@@ -251,7 +251,6 @@ class GameLogic:
 
     def dice_generator(self):
         valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
-        print("lancé de dé : ", valeur)
         return valeur
     
     def get_pawns_on_position(self, player_id, target_position_relative):

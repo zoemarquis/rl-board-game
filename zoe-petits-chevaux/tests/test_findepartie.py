@@ -1,4 +1,4 @@
-from ludo_env.game_logic import GameLogic, Action, State
+from ludo_env import GameLogic, Action
 
 # initie un game logic
 game = GameLogic()
