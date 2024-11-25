@@ -1,4 +1,4 @@
-from game_logic import GameLogic, Action, State
+from ludo_env.game_logic import GameLogic, Action, State
 
 # initie un game logic
 game = GameLogic()
@@ -50,8 +50,8 @@ print(f"joueur {game.is_game_over()} a gagné")
 print()
 print("joueur 0")
 print("my board", game.board[0])
-print("adversaire board", game.get_adversaire_relative_overview(1))
+print("adversaire board", game.get_adversaires_relative_overview(1))
 print()
 print("joueur 1")
 print(game.board[1])
-print(game.get_adversaire_relative_overview(0))
+print(game.get_adversaires_relative_overview(0))

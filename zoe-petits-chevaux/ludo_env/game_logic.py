@@ -1,6 +1,11 @@
 import numpy as np
-from constants import *
 from enum import Enum
+
+BOARD_SIZE = 56
+SAFE_ZONE_SIZE = 6
+NUM_PLAYERS = 2 # pour le moment, après il en aura 4
+NB_PAWNS = 2 # idem 
+TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2 # HOME + GOAL
 
 # 0 : HOME
 # 1-56 : PATH
@@ -151,6 +156,18 @@ class GameLogic:
 
         for i in range(NUM_PLAYERS):
             print(f"GOAL {i} : {self.board[i][-1]}")
+
+    def get_board_overview(self):
+        board = []
+        for i in range(NUM_PLAYERS):
+            board_player = {}
+            board_player["player_id"] = i
+            board_player["home"] = self.board[i][0]
+            board_player["goal"] = self.board[i][-1]
+            board_player["safe_zone"] = self.board[i][57:63]
+            board_player["path"] = self.get_path_overview()
+            board.append(board_player)
+        return board
 
     def get_overview_of(self, other_player_id):
         board = [0 for _ in range(TOTAL_SIZE)]
@@ -405,7 +422,7 @@ class GameLogic:
             raise ValueError("Action non valide")
         
     def get_reward(self, action):
-        return REWARD_TABLE[action]
+        return REWARD_TABLE_MOVE_OUT[action]
 
 # Remarques : 
 # Pense à ajouter des tests unitaires pour couvrir des cas comme :

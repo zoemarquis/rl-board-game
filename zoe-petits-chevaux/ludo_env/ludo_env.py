@@ -1,8 +1,7 @@
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
-from constants import *
-from game_logic import GameLogic
+from game_logic import GameLogic, NB_PAWNS, NUM_PLAYERS, TOTAL_SIZE
 from renderer import Renderer
 # from gym.spaces import Discrete, Dict, Box
 from game_logic import Action
@@ -99,8 +98,8 @@ class LudoEnv(gym.Env):
             if self.current_player == 0:
                 self.game.tour += 1
             
-        else: 
-            info["replay"] = True
+        # else: # TODO si 6 on rejoue
+        #     info["replay"] = True
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()

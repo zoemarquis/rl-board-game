@@ -1,6 +1,5 @@
 from ludo_env import LudoEnv, Action
 import numpy as np
-from constants import NB_PAWNS
 from agent import RandomAgent
 
 env = LudoEnv()

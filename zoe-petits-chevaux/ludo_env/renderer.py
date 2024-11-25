@@ -1,6 +1,5 @@
 # renderer.py
 import pygame
-from constants import *
 
 # Configuration de base de pygame
 pygame.init()
@@ -17,6 +16,7 @@ YELLOW = (255, 255, 0)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
+GREY = (128, 128, 128)
 
 class Renderer:
     def __init__(self):
@@ -38,37 +38,46 @@ class Renderer:
         pygame.display.flip()  # Mettre à jour l'affichage
 
     def draw_path(self, game):
-        """Dessiner les cases du parcours"""
-        # Coordonnées des cases 1 à 8
+        """Dessiner les cases du parcours et les pions"""
         positions = [(0, 7), (0, 8), (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8),
-                        # 8
-                        (6,9), (6, 10), (6, 11), (6, 12), (6, 13), (6, 14),
-                        # 15 
-                        (7, 14), (8, 14), (8, 13), (8, 12), (8, 11), (8, 10), (8, 9), (8, 8),
-                        # 23
-                        (9, 8), (10, 8), (11, 8), (12, 8), (13, 8), (14, 8),
-                        # 29
-                        (14, 7), (14, 6), (13, 6), (12, 6), (11, 6), (10, 6), (9, 6), (8, 6),
-                        # 37
-                        (8, 5), (8, 4), (8, 3), (8, 2), (8, 1), (8, 0),
-                        # 43
-                        (7, 0), (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6),
-                        # 51
-                        (5, 6), (4, 6), (3, 6), (2, 6), (1, 6), (0, 6),
-                      ]
+                    (6, 9), (6, 10), (6, 11), (6, 12), (6, 13), (6, 14),
+                    (7, 14), (8, 14), (8, 13), (8, 12), (8, 11), (8, 10), (8, 9), (8, 8),
+                    (9, 8), (10, 8), (11, 8), (12, 8), (13, 8), (14, 8),
+                    (14, 7), (14, 6), (13, 6), (12, 6), (11, 6), (10, 6), (9, 6), (8, 6),
+                    (8, 5), (8, 4), (8, 3), (8, 2), (8, 1), (8, 0),
+                    (7, 0), (6, 0), (6, 1), (6, 2), (6, 3), (6, 4), (6, 5), (6, 6),
+                    (5, 6), (4, 6), (3, 6), (2, 6), (1, 6), (0, 6)]
         
-        # Dessiner les cases du parcours
+        # Get path overview from game
+        path_overview = game.get_path_overview()
+
         for i, (x, y) in enumerate(positions):
-            # Vérifier si la case fait partie de la zone de sécurité du joueur 0
-            if (x, y) not in [(1,7), (2,7), (3,7), (4,7), (5,7), (6,7)]:
-                # Dessiner une case avec contour blanc
-                # pygame.draw.rect(self.window, GREEN, pygame.Rect(y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
-                pygame.draw.rect(self.window, WHITE, pygame.Rect(y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 2)
+            # Draw each square
+            pygame.draw.rect(self.window, WHITE, pygame.Rect(y * SQUARE_SIZE, x * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 2)
             
-            # Ajouter un numéro à chaque case pour l'identification
-            font = pygame.font.Font(None, 16)
-            text = font.render(str(i+1), True, WHITE)
-            self.window.blit(text, (y * SQUARE_SIZE + 12, x * SQUARE_SIZE + 12))
+            # Count the number of pawns in this square
+            pawn_count = len(path_overview[i])
+
+            # Draw the number of pawns as a text inside the square
+            if pawn_count > 0:
+                # Draw a circle for pawns (as many as needed per square)
+                pygame.draw.circle(self.window, GREY, 
+                                (y * SQUARE_SIZE + SQUARE_SIZE // 2, x * SQUARE_SIZE + SQUARE_SIZE // 2), 
+                                SQUARE_SIZE // 3)  # Adjust size of the circle
+                
+                # Create text to represent the pawn count
+                font = pygame.font.Font(None, 24)  # Use a larger font for visibility
+                text = font.render(str(pawn_count), True, BLACK)
+                
+                # Position the text in the center of the circle
+                text_rect = text.get_rect(center=(y * SQUARE_SIZE + SQUARE_SIZE // 2, x * SQUARE_SIZE + SQUARE_SIZE // 2))
+                self.window.blit(text, text_rect)
+
+            # Add the number to each square as a fallback in case no pawns
+            else:
+                font = pygame.font.Font(None, 16)
+                text = font.render(str(i + 1), True, WHITE)
+                self.window.blit(text, (y * SQUARE_SIZE + 12, x * SQUARE_SIZE + 12))
 
     def draw_safe_zone_player_0(self):
         """Dessiner la zone de sécurité du joueur 0"""
