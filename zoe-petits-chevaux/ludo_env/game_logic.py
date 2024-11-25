@@ -61,6 +61,15 @@ REWARD_TABLE_MOVE_OUT = {
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 }  # faudrait que les sommes répartis soient égales
 
+DEFAULT_ACTION_ORDER = {
+    0, # ça veut dire rien de possible
+    1, # d'abord essayer de sortir
+    3, 7, # sauver le pion
+    5, 9, # atteindre l'objectif
+    2, 6, # avancer
+    4, 8, # avancer dans la safezone
+}
+
 
 class GameLogic:
     def __init__(self):
@@ -536,6 +545,12 @@ class GameLogic:
             if i != player_id:
                 str_game_overview += f"JOUEUR {i} : {self.get_overview_of(i)}\n"
         return str_game_overview
+    
+
+    def debug_action(self, encoded_valid_actions):
+        for action in DEFAULT_ACTION_ORDER:
+            if action in encoded_valid_actions:
+                return action
 
     # TODO : ajouter une fonction pour se voir avec son POV + 1 pour ses joueur, 0 pour les autres, 
     # # où du moins avec un plateau sans mes pions mais où je vois où sont tous les autres par rapport à ma vision

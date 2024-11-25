@@ -82,10 +82,9 @@ class LudoEnv(gym.Env):
             if self.print_action_invalide_mode:
                 print(f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
             if self.mode_jeu == "debug":
-                # random action dans les actions valides
-                action = np.random.choice(encoded_valid_actions)
+                action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
-                print("random action : ", action)
+                print("debug : ", action, pawn_id, action_type)
             else : 
                 return self._get_observation(), -10, False, False, {}
 
