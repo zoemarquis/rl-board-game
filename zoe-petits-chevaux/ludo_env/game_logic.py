@@ -1,3 +1,4 @@
+# ce fichier gère toute la logique du jeu / les règles du jeu
 import numpy as np
 from enum import Enum
 
@@ -216,6 +217,37 @@ class GameLogic:
         for i in range(NUM_PLAYERS):
             if i != current_player_id:
                 return self.get_overview_of(i)
+                
+
+    def get_instruction_for_player(self, player_id):
+        # print board propre à chaque joueur
+        print("0 : ne rien faire")
+        # get position des 2 pions 
+        infos = self.get_pawns_info(player_id)
+        print("pion 0 case ", infos[0]["position"])
+        print()
+        print("1 : move out pion 0")
+        print("2 : move forward pion 0")
+        print("3 : enter safezone pion 0")
+        print("4 : move in safe zone pion 0")
+        print("5 : reach goal pion 0")
+        print()
+        print("pion 1 case ", infos[1]["position"])
+        print("6 : move out pion 1")
+        print("7 : move forward pion 1")
+        print("9 : enter safezone pion 1")
+        print("10 : enter_safezone pion 1")
+        print("11 : move in safe zone pion 1")
+        print("12 : reach goal pion 1")
+        print()
+
+    def get_my_board_4_lignes(self, player_id):
+        print("HOME : ", self.board[player_id][0])
+        path = self.board[player_id][1:57]
+        for i in range(0, 56, 14):
+            print(path[i:i+14])
+        print("SAFEZONE : ", self.board[player_id][57:63])
+        print("GOAL : ", self.board[player_id][-1])
 
     def dice_generator(self):
         valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
@@ -397,6 +429,7 @@ class GameLogic:
     def decode_action(self, action):
         if action == 0:
             return 0, Action.NO_ACTION
+        
         if action == 1:
             return 0, Action.MOVE_OUT
         if action == 2:

@@ -1,10 +1,9 @@
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
-from game_logic import GameLogic, NB_PAWNS, NUM_PLAYERS, TOTAL_SIZE
-from renderer import Renderer
-# from gym.spaces import Discrete, Dict, Box
-from game_logic import Action
+from ludo_env.game_logic import GameLogic, NB_PAWNS, NUM_PLAYERS, TOTAL_SIZE
+from ludo_env.renderer import Renderer
+from ludo_env.game_logic import Action
 
 
 class LudoEnv(gym.Env):
@@ -37,7 +36,7 @@ class LudoEnv(gym.Env):
         #     dtype=np.int8
         # )
 
-        self.renderer = Renderer()  # Créer une instance du Renderer
+        # self.renderer = Renderer()  # Créer une instance du Renderer
 
         self.reset()
 
