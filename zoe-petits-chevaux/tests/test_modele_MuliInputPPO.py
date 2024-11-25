@@ -1,17 +1,18 @@
 # test : humain jouer contre modele entrainer
 from stable_baselines3 import PPO
+model = PPO.load("reinforcement_learning/masked_ppo_ludo_model")  # notre modele entrainé
 
-model = PPO.load("notebooks/masked_ppo_ludo_model")  # notre modele entrainé
 
-# Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
 import sys
 from pathlib import Path
-
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 
-env = LudoEnv()
+# Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
+
+
+env = LudoEnv(mode_jeu = "debug", print_action_invalide_mode=True)
 obs = env.reset()
 obs = obs[0]
 done = False
@@ -19,15 +20,16 @@ done = False
 # TODO : à chaque tour : afficher à l'humain la liste des actions valides
 
 while not done:
-    print("current_player : ", env.current_player)
-    if env.current_player == 0:
 
+    print(env.game.get_str_game_overview())
+    print("dé : ", obs["dice_roll"])  # Afficher le dé
+
+    if env.current_player == 0:
         # Afficher l'état actuel du jeu
         print("-" * 50)
         print("TOUR DE L'HUMAIN")
-        print("dé : ", obs["dice_roll"])
-        env.game.get_instruction_for_player(env.current_player)
-        env.game.get_my_board_4_lignes(env.current_player)
+        # print(env.game.get_instruction_for_player(env.current_player))
+        # TODO : afficher le plateau global (vu par ce joueur) env.game.get_my_board_4_lignes(env.current_player)
 
         action_humain = int(
             input("Choisissez une action : ")
@@ -38,10 +40,8 @@ while not done:
 
     elif env.current_player == 1:
         print()
+        print("-" * 50)
         print("TOUR DE L'AGENT")
-        print("board agent : ", obs["my_board"])
-        print("dé : ", obs["dice_roll"])  # Afficher le dé
-        print("current_player : ", env.current_player)  # Afficher le joueur actuel
         # L'agent choisit une action via son modèle
         action_agent = model.predict(obs, deterministic=True)[0]
         pawn_id, action_type = env.game.decode_action(action_agent)

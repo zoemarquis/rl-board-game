@@ -17,23 +17,23 @@ TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 class State(Enum):
     ECURIE = 0
     CHEMIN = 1
-    PIED_ESCALIER = 2
-    ESCALIER = 3
-    CENTRE = 4
+    # PIED_ESCALIER = 2
+    ESCALIER = 2
+    OBJECTIF = 3
 
     @staticmethod
     def get_state_from_position(relative_position: int):
         assert 0 <= relative_position <= 63, "Position invalide"
         if relative_position == 0:
             return State.ECURIE
-        elif relative_position < 56:
+        elif relative_position < 57:
             return State.CHEMIN
-        elif relative_position == 56:
-            return State.PIED_ESCALIER
+        # elif relative_position == 57:
+        #     return State.PIED_ESCALIER
         elif relative_position < 63:
             return State.ESCALIER
         else:
-            return State.CENTRE
+            return State.OBJECTIF
 
 
 class Action(Enum):
@@ -43,9 +43,10 @@ class Action(Enum):
     ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
     MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
     REACH_GOAL = 5  # Atteindre l'objectif final
+    # TODO :
     # KILL = 6  # Tuer un pion adverse TODO
-    # PROTECT = 7  # Protéger un pion allié TODO
-    # DIE = 6  # Se faire tuer
+    # REACH PIED ESCALIER
+    # ESCALADER ou ESCALADER_1, ESCALADER_2 ... ?
 
 
 REWARD_TABLE_MOVE_OUT = {
@@ -60,43 +61,18 @@ REWARD_TABLE_MOVE_OUT = {
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 }  # faudrait que les sommes répartis soient égales
 
-REWARD_TABLE_SECURE = {
-    Action.NO_ACTION: -1,
-    Action.MOVE_OUT: 5,
-    Action.MOVE_FORWARD: 10,
-    Action.ENTER_SAFEZONE: 9,
-    Action.MOVE_IN_SAFE_ZONE: 1,
-    Action.REACH_GOAL: 3,
-    # Action.PROTECT: 20,
-    # Action.KILL: 30,
-    # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
-}
-
-# REWARD_TABLE_KILLER = {
-#     Action.NO_ACTION: -1,
-#     Action.MOVE_OUT: 5,
-#     Action.MOVE_FORWARD: 10,
-#     Action.ENTER_SAFEZONE: 9,
-#     Action.MOVE_IN_SAFE_ZONE: 1,
-#     Action.REACH_GOAL: 3,
-#     # Action.PROTECT: 20,
-#     # Action.KILL: 30,
-#     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
-# }
-
-# Tu peux envisager d'utiliser une fonction pour calculer les récompenses
-# dynamiquement selon des critères plus complexes (comme l’état du jeu).
-
 
 class GameLogic:
     def __init__(self):
         self.init_board()
 
     def init_board(self):
-        self.board = [[] for _ in range(NUM_PLAYERS)]
+        self.board = [
+            [] for _ in range(NUM_PLAYERS)
+        ]  # chaque joueur à son propre board de 0 (home) à 63 (goal)
         for i in range(NUM_PLAYERS):
-            self.board[i] = [0 for _ in range(TOTAL_SIZE)]  # tableau de len TOTAL_SIZE
-            self.board[i][0] = NB_CHEVAUX  # on met les pions à HOME
+            self.board[i] = [0 for _ in range(TOTAL_SIZE)]
+            self.board[i][0] = NB_CHEVAUX  # on met les pions dans l'écurie
         self.tour = 0
 
     def get_pawns_info(self, player_id):
@@ -110,89 +86,116 @@ class GameLogic:
         assert len(pawns_info) == NB_CHEVAUX, "Nombre de pions incorrect"
         return pawns_info
 
-    def get_home_overview(self):
-        home_overview = []
+    def get_ecurie_overview(self):
+        """
+        retourne une liste contenant chaque pion dans son écurie
+
+        exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur écurie
+        """
+        ecurie_overview = []
         for i in range(NUM_PLAYERS):
             for _ in range(self.board[i][0]):
-                home_overview.append(i)
-        return home_overview
+                ecurie_overview.append(i)
+        return ecurie_overview
 
     def get_goal_overview(self):
+        """
+        retourne une liste contenant chaque pion dans son goal
+
+        exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur goal
+        """
         goal_overview = []
         for i in range(NUM_PLAYERS):
             for _ in range(self.board[i][-1]):
                 goal_overview.append(i)
         return goal_overview
-
-    def get_safe_zone_overview(self):
-        safe_zone_overview = [[] for _ in range(6)]
+    def get_escalier_overview(self):
+        """
+        retourne une liste contenant chaque pion dans sa safezone
+        """
+        escalier_overview = [[] for _ in range(6)]
         for i in range(NUM_PLAYERS):
             for j in range(57, 63):
                 for _ in range(self.board[i][j]):
-                    safe_zone_overview[j - 57].append(i)
-        return safe_zone_overview
+                    escalier_overview[j - 57].append(i)
+        return escalier_overview
 
-    def get_path_overview(self):
-        # tout rabattre sur plateau du pion 0 pour "affichage"
-        path_overview = [[] for _ in range(56)]
+    def get_str_game_overview(self):
+        """
+        affiche le plateau de jeu avec les pions de chaque joueur dans leur écurie, sur le chemin (vu par le joueur 0), leur escalier, leur goal
+        """
+        str_game_overview = ""
         for i in range(NUM_PLAYERS):
-            for j in range(1, 57):
-                for _ in range(self.board[i][j]):
-                    if NUM_PLAYERS == 2:
-                        indice = ((i * 28) + j - 1) % 56
-                        path_overview[indice].append(i)
-                    else:
-                        indice = ((i * 14) + j - 1) % 56
-                        path_overview[indice].append(i)
-        return path_overview
+            str_game_overview += f"ECURIE {i} : {self.board[i][0]}\n"
 
-    def print_board_overview(self):
-        print()
-        for i in range(NUM_PLAYERS):
-            print(f"HOME {i} : {self.board[i][0]}")
-
-        board_path = self.get_path_overview()
+        str_game_overview += "chemin vu par joueur 0 : \n"
+        chemin = self.get_chemin_pdv_2_joueurs(0) if NUM_PLAYERS == 2 else self.get_chemin_pdv(0)
         for i in range(56 // 14):
-            print(i * 14 + 1, " -> ", (i + 1) * 14)
-            print(board_path[i * 14 : (i + 1) * 14])
+            # print(i * 14 + 1, " -> ", (i + 1) * 14)
+            str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
 
         for i in range(NUM_PLAYERS):
-            print(f"SAFEZONE {i}: {self.board[i][57:63]}")
+            str_game_overview += f"ESCALIER {i} : {self.board[i][57:63]}\n"
 
         for i in range(NUM_PLAYERS):
-            print(f"GOAL {i} : {self.board[i][-1]}")
+            str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
 
-    def get_board_overview(self):
-        board = []
+        return str_game_overview
+
+    
+    
+    def get_board_pour_voir_ou_sont_adversaires_sur_mon_plateau(self, player_id):
+        assert NUM_PLAYERS == 2, "fonction pas implémenté pour plus de joueur"
+        # plateau = [-1 for _ in range(TOTAL_SIZE)] # -1 mais j'ai mis 0 pour low... donc le modele n'apprend pas
+        chemin = self.get_chemin_pdv_2_joueurs(player_id) 
+        chemin_len = [len(lst) for lst in chemin]
+        chemin_my = [lst.count(player_id) for lst in chemin]
+        chemin_cpt = [a - b for a, b in zip(chemin_len, chemin_my)]
+        return chemin_cpt
+    
+    def get_str_player_overview(self, player_id):
+        str_game_overview = ""
         for i in range(NUM_PLAYERS):
-            board_player = {}
-            board_player["player_id"] = i
-            board_player["home"] = self.board[i][0]
-            board_player["goal"] = self.board[i][-1]
-            board_player["safe_zone"] = self.board[i][57:63]
-            board_player["path"] = self.get_path_overview()
-            board.append(board_player)
-        return board
+            str_game_overview += f"ECURIE {i} : {self.board[i][0]}\n"
 
+        str_game_overview += f"chemin vu par joueur {player_id} : \n"
+        chemin = self.get_chemin_pdv_2_joueurs(player_id) if NUM_PLAYERS == 2 else self.get_chemin_pdv(player_id)
+        for i in range(56 // 14):
+            # print(i * 14 + 1, " -> ", (i + 1) * 14)
+            str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
+
+        for i in range(NUM_PLAYERS):
+            str_game_overview += f"ESCALIER {i} : {self.board[i][57:63]}\n"
+
+        for i in range(NUM_PLAYERS):
+            str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
+
+        return str_game_overview
+
+
+
+    
     def get_overview_of(self, other_player_id):
+        # return self.board[other_player_id]
+        # TODO vérifier ce truc là 
         board = [0 for _ in range(TOTAL_SIZE)]
         # mettre tous les home ensemble, puis les safe zone, puis les goal
         # ensuite calculer pour les path
-        count_all_home = self.get_home_overview()
+        count_all_home = self.get_ecurie_overview()
         count_self_home = count_all_home.count(other_player_id)
         board[0] = count_self_home
-
+        
         count_all_goal = self.get_goal_overview()
         count_self_goal = count_all_goal.count(other_player_id)
         board[-1] = count_self_goal
-
-        safe_zone = self.get_safe_zone_overview()
+        
+        safe_zone = self.get_escalier_overview()
         for i in range(6):
             count_all_safe = safe_zone[i]
             count_self_safe = count_all_safe.count(other_player_id)
             board[i + 57] = count_self_safe
-
-        path_zone = self.get_path_overview()
+        
+        path_zone = self.get_chemin_pdv_2_joueurs(other_player_id) if NUM_PLAYERS == 2 else self.get_chemin_pdv(other_player_id)
         path_board = [0 for _ in range(56)]
         for i in range(56):
             count_all_path = path_zone[i]
@@ -216,65 +219,53 @@ class GameLogic:
             board[1:43] = path_board[14:]
         return board
 
-    def get_adversaires_relative_overview(self, current_player_id):
-        # result = [] TODO faire pour tous les joueurs
-        for i in range(NUM_PLAYERS):
-            if i != current_player_id:
-                return self.get_overview_of(i)
 
     def get_instruction_for_player(self, player_id):
-        # print board propre à chaque joueur
-        print("0 : ne rien faire")
-        # get position des 2 pions
+        str_instruction = ""    
+        str_instruction += f"Joueur {player_id} : \n"
+        str_instruction += "0 : ne rien faire\n"
+        str_instruction += "1 : sortir pion\n"
         infos = self.get_pawns_info(player_id)
-        print("pion 0 case ", infos[0]["position"])
-        print()
-        print("1 : move out pion 0")
-        print("2 : move forward pion 0")
-        print("3 : enter safezone pion 0")
-        print("4 : move in safe zone pion 0")
-        print("5 : reach goal pion 0")
-        print()
-        print("pion 1 case ", infos[1]["position"])
-        print("6 : move out pion 1")
-        print("7 : move forward pion 1")
-        print("9 : enter safezone pion 1")
-        print("10 : enter_safezone pion 1")
-        print("11 : move in safe zone pion 1")
-        print("12 : reach goal pion 1")
-        print()
-
-    def get_my_board_4_lignes(self, player_id):
-        print("HOME : ", self.board[player_id][0])
-        path = self.board[player_id][1:57]
-        for i in range(0, 56, 14):
-            print(path[i : i + 14])
-        print("SAFEZONE : ", self.board[player_id][57:63])
-        print("GOAL : ", self.board[player_id][-1])
+        str_instruction += f"pion 0 case {infos[0]['position']}\n"
+        str_instruction += "2 : avancer pion 0\n"
+        str_instruction += "3 : entrer escalier pion 0\n"
+        str_instruction += "4 : avancer dans escalier pion 0\n"
+        str_instruction += "5 : atteindre objectif pion 0\n"
+        str_instruction += f"pion 1 case {infos[1]['position']}\n"
+        str_instruction += "6 : avancer pion 1\n"
+        str_instruction += "7 : entrer escalier pion 1\n"  
+        str_instruction += "8 : avancer dans escalier pion 1\n"
+        str_instruction += "9 : atteindre objectif pion 1\n"
+        return str_instruction
+    
 
     def dice_generator(self):
         valeur = np.random.randint(1, 7)  # TODO : fix avec une seed pour les tests
         return valeur
 
-    def get_pawns_on_position(self, player_id, target_position_relative):
+    def get_pawns_on_position(self, player_id, target_position_relative): # TODO check cette fonction
         if player_id == 0:
-            return self.get_path_overview()[target_position_relative - 1]
-        elif player_id == 1:
-            if NUM_PLAYERS != 2:
-                indice = (target_position_relative - 1 + 14) % 56
-                return self.get_path_overview()[indice]
-            else:
-                indice = (target_position_relative - 1 + 28) % 56
-                return self.get_path_overview()[indice]
+            indice = target_position_relative - 1
         elif player_id == 2:
             indice = (target_position_relative - 1 + 28) % 56
-            return self.get_path_overview()[indice]
         elif player_id == 3:
             indice = (target_position_relative - 1 + 42) % 56
-            return self.get_path_overview()[indice]
-        # TODO print pour check tout ça
+            
+        if NUM_PLAYERS == 2:
+            if player_id == 1:
+                indice = (target_position_relative - 1 + 28) % 56
+            return self.get_chemin_pdv_2_joueurs(player_id)[indice]
+        elif NUM_PLAYERS == 3 or NUM_PLAYERS == 4:  
+            if player_id == 1:     
+                indice = (target_position_relative - 1 + 14) % 56
+            return self.get_chemin_pdv(player_id)[indice]
+        else:
+            raise ValueError(
+                "get_pawns_on_position pas bien implémenté"
+            )
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
+        # TODO : tester tout ça
         case = self.get_pawns_on_position(player_id, target_position_relative)
         # si il y a autre chose que moi meme sur la case return true
         for i in range(NUM_PLAYERS):
@@ -304,7 +295,6 @@ class GameLogic:
         Vérifie si un joueur a remporté la partie.
         """
         for player_id in range(NUM_PLAYERS):
-            # print(f"player {player_id} : {self.board[player_id][-1]}")
             if self.board[player_id][-1] == NB_CHEVAUX:
                 return player_id
         return -1
@@ -324,7 +314,6 @@ class GameLogic:
         self.board[player_id][1] += 1
 
     def avance_pion_path(self, player_id, old_position, dice_value):
-        # print(f"débug : avance pion path old_position = {old_position}, dé = {dice_value}")
         assert (
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
@@ -333,9 +322,6 @@ class GameLogic:
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_pion_safe_zone(self, player_id, old_position, dice_value):
-        # print("avance pion safe zone")
-        # print(f"old position : {old_position}")
-        # print(f"dice value : {dice_value}")
         assert (
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
@@ -352,8 +338,6 @@ class GameLogic:
         self.board[player_id][-1] += 1
 
     def move_pawn(self, player_id, old_position, dice_value, action):
-        # print("move pawn action : ", action)
-        # print("old position : ", old_position)
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
@@ -366,17 +350,13 @@ class GameLogic:
             pass
         else:
             raise ValueError("Action non valide")
-        # PROTECT, KILL, DIE
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
-        # print(f"state : {state} , position : {position}, dice_value : {dice_value}")
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
         valid_actions = []
         if state == State.ECURIE:
             if dice_value == 6:
                 valid_actions.append(Action.MOVE_OUT)
-            # else :
-            #     valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
         elif state == State.CHEMIN:
             if position + dice_value < 57:  # limite avant zone protégée
                 valid_actions.append(Action.MOVE_FORWARD)
@@ -389,12 +369,11 @@ class GameLogic:
             # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
             #     valid_actions.append(Action.PROTECT)
         elif state == State.ESCALIER:
-            # print("safe zone state", position, dice_value)
             if position + dice_value <= 62:
                 valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
             if position + dice_value >= 63:
                 valid_actions.append(Action.REACH_GOAL)
-        elif state == State.CENTRE:
+        elif state == State.OBJECTIF:
             pass
             # valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
         return valid_actions
@@ -420,31 +399,29 @@ class GameLogic:
     def encode_action(self, pawn_id, action_type):
         if action_type == Action.NO_ACTION:
             return 0
-        # print()
-        # print("pawn_id : ", pawn_id)
-        # print("action_type : ", action_type)
-        # print("calcul : ",  pawn_id * len(Action) + Action(action_type).value)
-        # print()
-        return pawn_id * (len(Action) - 1) + Action(action_type).value
+        if action_type == Action.MOVE_OUT:
+            return 1
+        # 0 : no action
+        # 1 : sortir pion
+        # 2 ou 6 : move forward
+        return pawn_id * (len(Action) - 2) + action_type.value
 
     def encode_valid_actions(self, valid_actions):
         if valid_actions[NB_CHEVAUX] == Action.NO_ACTION:
             return [0]
-        valid_actions = valid_actions[:NB_CHEVAUX]
+        valid_actions = valid_actions[:NB_CHEVAUX] 
         encoded_actions = []
         for i, actions in enumerate(valid_actions):
             for action in actions:
                 encoded_actions.append(self.encode_action(i, action))
-        # print("valid actions : ", valid_actions)
-        # print("encoded actions : ", encoded_actions)
-        return encoded_actions
+        return list(set(encoded_actions))
 
-    def decode_action(self, action):
+    def decode_action(self, action):  # TODO : adapter à la version du jeu ?
         if action == 0:
             return 0, Action.NO_ACTION
-
         if action == 1:
             return 0, Action.MOVE_OUT
+        
         if action == 2:
             return 0, Action.MOVE_FORWARD
         if action == 3:
@@ -455,24 +432,110 @@ class GameLogic:
             return 0, Action.REACH_GOAL
 
         if action == 6:
-            return 1, Action.MOVE_OUT
-        if action == 7:
             return 1, Action.MOVE_FORWARD
-        if action == 8:
+        if action == 7:
             return 1, Action.ENTER_SAFEZONE
-        if action == 9:
+        if action == 8:
             return 1, Action.MOVE_IN_SAFE_ZONE
-        if action == 10:
+        if action == 9:
             return 1, Action.REACH_GOAL
         else:
             raise ValueError("Action non valide")
 
-    def get_reward(self, action):
+    def get_reward(self, action):  # TODO
         return REWARD_TABLE_MOVE_OUT[action]
 
+    # ------------------ Fonctions d'affichage ------------------
 
-# Remarques :
-# Pense à ajouter des tests unitaires pour couvrir des cas comme :
-# Un joueur tente de bouger un pion alors que ce dernier est bloqué.
-# Deux pions ennemis entrent en collision sur une même case.
-# Si le jeu doit évoluer, envisager l’utilisation d’une classe dédiée à chaque joueur, encapsulant les informations liées à ses pions et états.
+    
+
+    def get_player_order(self, perspective_player):
+        """
+        Retourne l'ordre des joueurs selon la perspective
+        """
+        if NUM_PLAYERS == 2:
+            if perspective_player == 0:
+                return [0, 1]
+            elif perspective_player == 1:
+                return [1, 0]
+
+        elif NUM_PLAYERS == 3:
+            if perspective_player == 0:
+                return [0, 1, 2]
+            elif perspective_player == 1:
+                return [1, 2, 0]
+            elif perspective_player == 2:
+                return [2, 0, 1]
+
+        elif NUM_PLAYERS == 4:
+            if perspective_player == 0:
+                return [0, 1, 2, 3]
+            elif perspective_player == 1:
+                return [1, 2, 3, 0]
+            elif perspective_player == 2:
+                return [2, 3, 0, 1]
+            elif perspective_player == 3:
+                return [3, 0, 1, 2]
+
+        else:
+            raise ValueError("Nombre de joueurs incorrect.")
+
+    def get_chemin_pdv(self, perspective_player):
+        """
+        Retourne un chemin relatif à la perspective d'un joueur donné (le joueur qui regarde)
+        """
+        assert NUM_PLAYERS != 2, "Nombre de joueurs incorrect."
+
+        chemin = [[] for _ in range(56)]
+
+        # Déterminer l'ordre des joueurs selon la perspective
+        player_order = self.get_player_order(perspective_player)
+
+        i = 0
+        for p in player_order:
+            for j in range(1, 57):  # Cases du plateau
+                for _ in range(self.board[p][j]):
+                    # Calcul de l'indice selon l'ordre des joueurs et l'offset
+                    indice = ((i * 14) + j - 1) % 56
+                    chemin[indice].append(p)
+            i = (i + 1) % NUM_PLAYERS
+
+        return chemin
+
+    def get_chemin_pdv_2_joueurs(self, perspective_player):
+        """
+        Retourne un chemin relatif à la perspective d'un joueur donné (le joueur qui regarde)
+        """
+        assert NUM_PLAYERS == 2, "Nombre de joueurs incorrect."
+
+        chemin = [[] for _ in range(56)]
+
+        # Déterminer l'ordre des joueurs selon la perspective
+        player_order = self.get_player_order(perspective_player)
+
+        i = 0
+        for p in player_order:
+            for j in range(1, 57):
+                for _ in range(self.board[p][j]):
+                    # Calcul de l'indice
+                    indice = ((i * 28) + j - 1) % 56
+                    chemin[indice].append(p)
+            i = (i + 1) % NUM_PLAYERS
+
+        return chemin
+
+    def get_adversaires_overview_plateau(self, player_id):
+        assert NUM_PLAYERS == 2, "fonction pas implémenté pour plus de joueur"
+        # result = [] TODO faire pour tous les joueurs
+        other_player_id = 1 if player_id == 0 else 0
+        return self.get_overview_of(other_player_id)
+            
+    def get_str_adversaires_overview_plateau(self, player_id):
+        str_game_overview = ""
+        for i in range(NUM_PLAYERS):
+            if i != player_id:
+                str_game_overview += f"JOUEUR {i} : {self.get_overview_of(i)}\n"
+        return str_game_overview
+
+    # TODO : ajouter une fonction pour se voir avec son POV + 1 pour ses joueur, 0 pour les autres, 
+    # # où du moins avec un plateau sans mes pions mais où je vois où sont tous les autres par rapport à ma vision

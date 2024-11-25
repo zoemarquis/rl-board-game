@@ -2,18 +2,17 @@ import gymnasium as gym
 
 import numpy as np
 
-from ludo_env.game_logic import GameLogic, NB_CHEVAUX, NUM_PLAYERS, TOTAL_SIZE, Action
+from ludo_env.game_logic import GameLogic, NB_CHEVAUX, NUM_PLAYERS, TOTAL_SIZE, Action, BOARD_SIZE
 from ludo_env.renderer import Renderer
 
 
 class LudoEnv(gym.Env):
-    def __init__(
-        self, with_render=False, print_action_invalide_mode=True
-    ):  # pas num_players et NUM_PLAYERS
+    def __init__(self, with_render=False, print_action_invalide_mode=True, mode_jeu="normal"):
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
         self.with_render = with_render
         self.print_action_invalide_mode = print_action_invalide_mode
+        self.mode_jeu = mode_jeu
 
         self.num_players = NUM_PLAYERS
         self.num_pawns = 2
@@ -24,62 +23,45 @@ class LudoEnv(gym.Env):
             self.renderer = Renderer()
 
         self.action_space = gym.spaces.Discrete(
-            1 + NUM_PLAYERS * (len(Action) - 1)
-        )  # 1 pour NO_ACTION
+            2 + NUM_PLAYERS * (len(Action) - 2)
+        )  # 1 pour NO_ACTION + 1 pour sortir un pion
+        # TODO : à modifier quand on ajoute des actions, pour l'instant on a donc 10 actions possibles
 
         self.observation_space = gym.spaces.Dict(
             {
+                # TODO : est ce qu'on garde my board ou alors on fait my home, my chemin, my escalier, my goal ?
                 "my_board": gym.spaces.Box(
                     low=0, high=NB_CHEVAUX, shape=(TOTAL_SIZE,), dtype=np.int8
                 ),  # État du plateau du joueur courant
-                "adversaire_board": gym.spaces.Box(
-                    low=0,
-                    high=NB_CHEVAUX * (NUM_PLAYERS - 1),
-                    shape=(TOTAL_SIZE,),
-                    dtype=np.int8,
-                ),  # Agrégation des autres joueurs
+                # "my_chemin_with_adversaires": gym.spaces.Box(
+                #     low=0,
+                #     high=NB_CHEVAUX * (NUM_PLAYERS - 1),
+                #     shape=(BOARD_SIZE,),
+                #     dtype=np.int8,
+                # ),  # Agrégation des autres joueurs selon quel pdv ? TODO
                 "dice_roll": gym.spaces.Discrete(7),  # Résultat du dé (1 à 6)
+                # TODO : ajouter ici vu global distances ?
+                # TODO : observer aussi les state des pions ?
             }
         )
-        # TODO : faire en sorte d'en plus observer les états des pions sur le plateau, pour mieux connaitre les actions possibles
-
-        #
-        # self.observation_space = gym.spaces.Box(
-        #     low=0,
-        #     high=NB_PAWNS * NUM_PLAYERS,
-        #     shape=(TOTAL_SIZE * NUM_PLAYERS + 1,),  # Taille totale + 1 pour le dé
-        #     dtype=np.int8
-        # )
-
-        # self.renderer = Renderer()  # Créer une instance du Renderer
 
         self.reset()
-
-    def _flatten_observation(self, observation):
-        my_board = np.array(observation["my_board"]).flatten()
-        adversaire_board = np.array(observation["adversaire_board"]).flatten()
-        dice_roll = np.array([observation["dice_roll"]])
-        return np.concatenate([my_board, adversaire_board, dice_roll])
 
     def _get_observation(self):
         obs = {
             "my_board": self.game.board[self.current_player],
-            "adversaire_board": self.game.get_adversaires_relative_overview(
-                self.current_player
-            ),  # ne fonctionne que quand NUM_PLAYERS = 2
+            # "my_chemin_with_adversaires": self.game.get_board_pour_voir_ou_sont_adversaires_sur_mon_plateau(
+            #     self.current_player
+            # ),  # TODO : ici ça ne fonctionne que quand NUM_PLAYERS = 2, on a pas encore testé pour plus
+            # TODO je crois qu'on retournne pas ce qu'il fait pour les plateaux des adversaires : on veut les adversaires sur NOTRE plateau
             "dice_roll": self.dice_roll,
         }
-        # print("obs[my board]", obs["my_board"])
-        # print("obs[adversaire board]", obs["adversaire_board"])
-        # print("obs[dice roll]", obs["dice_roll"])
         return obs
-        # return  self._flatten_observation(obs) #  obs #
 
     def reset(self, seed=None, options=None):
-        # print("reset")
         super().reset(seed=seed, options=options)
         self.current_player = 0
-        self.game = GameLogic()
+        self.game : GameLogic = GameLogic()
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 
@@ -88,41 +70,37 @@ class LudoEnv(gym.Env):
             self.renderer.render(self.game)
 
     def step(self, action):
+        obs = self._get_observation()
+        if self.mode_jeu == "debug":
+            print("dé : ", obs["dice_roll"])
+            print("my board : ", obs["my_board"])
         info = {}
-
         pawn_id, action_type = self.game.decode_action(action)
-        # print("action", action)
-        # print(f"STEP - action {action} -- tour {self.game.tour} - pawn_id {pawn_id} - action {Action(action_type)} ")
-
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
             if self.print_action_invalide_mode:
-                print(
-                    f"action {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
-                )
-            return self._get_observation(), -10, False, False, {}
+                print(f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
+            if self.mode_jeu == "debug":
+                # random action dans les actions valides
+                action = np.random.choice(encoded_valid_actions)
+                pawn_id, action_type = self.game.decode_action(action)
+                print("random action : ", action)
+            else : 
+                return self._get_observation(), -10, False, False, {}
 
-        pawn_position = self.game.get_pawns_info(self.current_player)[pawn_id][
-            "position"
-        ]
-        # print("pawn_position", pawn_position)
+        pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
-        self.game.move_pawn(
-            self.current_player, pawn_position, self.dice_roll, action_type
-        )
-        # print("after move pawn", self.game.board)
+        self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
         reward = self.game.get_reward(action_type)
         done = self.game.is_game_over()
-        # print("done", done)
 
-        if not done:  # and self.dice_roll != 6: # règle qu'on pourra faire changer
+        if not done:
             self.current_player = (self.current_player + 1) % NUM_PLAYERS
             if self.current_player == 0:
                 self.game.tour += 1
 
-        # else: # TODO si 6 on rejoue
-        #     info["replay"] = True
+        # TODO : 6 alors on rejoue
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()

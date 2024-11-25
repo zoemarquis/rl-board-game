@@ -1,10 +1,13 @@
 # ce fichier c'est pour jouer une partie contre un agent random
 # à terme enfaite on aurait un fichier main, on spécifie qui joue contre qui et on lance la partie (Random Agent, PPO ...)
-
-from ludo_env.env import LudoEnv
+import sys
+from pathlib import Path
+project_root = Path(__file__).resolve().parent.parent
+sys.path.append(str(project_root))
+from ludo_env import LudoEnv
 from reinforcement_learning.agent import RandomAgent
 
-env = LudoEnv()
+env : LudoEnv = LudoEnv()
 
 
 def play_game(env, agents):
@@ -13,7 +16,7 @@ def play_game(env, agents):
     turn = 0
 
     while not done:
-        env.game.print_board_overview()
+        print(env.game.get_str_game_overview())
         current_agent = agents[env.current_player]
         valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
         encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
@@ -25,7 +28,7 @@ def play_game(env, agents):
         print("main choose action : ", action)
 
         # Effectue une étape dans l'environnement
-        obs, reward, done, info = env.step(action)
+        obs, reward, done, truncated, info = env.step(action)
 
         # Affiche des informations pour vérifier
         print(
