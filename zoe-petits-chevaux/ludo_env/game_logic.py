@@ -4,32 +4,37 @@ from enum import Enum
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
-NUM_PLAYERS = 2 # pour le moment, après il en aura 4
-NB_PAWNS = 2 # idem 
-TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2 # HOME + GOAL
+NUM_PLAYERS = 2  # pour le moment, après il en aura 4
+NB_CHEVAUX = 2  # idem
+TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 # 0 : HOME
 # 1-56 : PATH
 # 57-62 : SAFEZONE
 # 63 : GOAL
 
+
 class State(Enum):
-    HOME = 0  # Le pion est dans sa maison, prêt à partir
-    PATH = 1  # Le pion est en chemin
-    SAFEZONE = 2  # Le pion est dans la zone protégée avant d'atteindre la destination
-    GOAL = 3  # Le pion a atteint sa destination finale et ne bouge plus
+    ECURIE = 0
+    CHEMIN = 1
+    PIED_ESCALIER = 2
+    ESCALIER = 3
+    CENTRE = 4
 
     @staticmethod
-    def get_state_from_position(relative_position : int):
+    def get_state_from_position(relative_position: int):
         assert 0 <= relative_position <= 63, "Position invalide"
         if relative_position == 0:
-            return State.HOME
-        elif relative_position < 57:
-            return State.PATH
+            return State.ECURIE
+        elif relative_position < 56:
+            return State.CHEMIN
+        elif relative_position == 56:
+            return State.PIED_ESCALIER
         elif relative_position < 63:
-            return State.SAFEZONE
+            return State.ESCALIER
         else:
-            return State.GOAL
+            return State.CENTRE
+
 
 class Action(Enum):
     NO_ACTION = 0
@@ -39,8 +44,9 @@ class Action(Enum):
     MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
     REACH_GOAL = 5  # Atteindre l'objectif final
     # KILL = 6  # Tuer un pion adverse TODO
-    # PROTECT = 7  # Protéger un pion allié TODO 
+    # PROTECT = 7  # Protéger un pion allié TODO
     # DIE = 6  # Se faire tuer
+
 
 REWARD_TABLE_MOVE_OUT = {
     Action.NO_ACTION: -1,
@@ -52,7 +58,7 @@ REWARD_TABLE_MOVE_OUT = {
     # Action.PROTECT: 20,
     # Action.KILL: 30,
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
-} # faudrait que les sommes répartis soient égales 
+}  # faudrait que les sommes répartis soient égales
 
 REWARD_TABLE_SECURE = {
     Action.NO_ACTION: -1,
@@ -78,19 +84,19 @@ REWARD_TABLE_SECURE = {
 #     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 # }
 
-# Tu peux envisager d'utiliser une fonction pour calculer les récompenses 
+# Tu peux envisager d'utiliser une fonction pour calculer les récompenses
 # dynamiquement selon des critères plus complexes (comme l’état du jeu).
 
-class GameLogic:
 
+class GameLogic:
     def __init__(self):
         self.init_board()
 
     def init_board(self):
         self.board = [[] for _ in range(NUM_PLAYERS)]
         for i in range(NUM_PLAYERS):
-            self.board[i] = [0 for _ in range(TOTAL_SIZE)] # tableau de len TOTAL_SIZE
-            self.board[i][0] = NB_PAWNS # on met les pions à HOME
+            self.board[i] = [0 for _ in range(TOTAL_SIZE)]  # tableau de len TOTAL_SIZE
+            self.board[i][0] = NB_CHEVAUX  # on met les pions à HOME
         self.tour = 0
 
     def get_pawns_info(self, player_id):
@@ -98,11 +104,10 @@ class GameLogic:
         for i in range(TOTAL_SIZE):
             count_i = self.board[player_id][i]
             for _ in range(count_i):
-                pawns_info.append({
-                    "position": i,
-                    "state": State.get_state_from_position(i)
-                })  
-        assert len(pawns_info) == NB_PAWNS, "Nombre de pions incorrect"
+                pawns_info.append(
+                    {"position": i, "state": State.get_state_from_position(i)}
+                )
+        assert len(pawns_info) == NB_CHEVAUX, "Nombre de pions incorrect"
         return pawns_info
 
     def get_home_overview(self):
@@ -111,20 +116,20 @@ class GameLogic:
             for _ in range(self.board[i][0]):
                 home_overview.append(i)
         return home_overview
-    
+
     def get_goal_overview(self):
         goal_overview = []
         for i in range(NUM_PLAYERS):
             for _ in range(self.board[i][-1]):
                 goal_overview.append(i)
         return goal_overview
-    
+
     def get_safe_zone_overview(self):
         safe_zone_overview = [[] for _ in range(6)]
         for i in range(NUM_PLAYERS):
             for j in range(57, 63):
                 for _ in range(self.board[i][j]):
-                    safe_zone_overview[j-57].append(i)
+                    safe_zone_overview[j - 57].append(i)
         return safe_zone_overview
 
     def get_path_overview(self):
@@ -134,13 +139,12 @@ class GameLogic:
             for j in range(1, 57):
                 for _ in range(self.board[i][j]):
                     if NUM_PLAYERS == 2:
-                        indice = ((i*28)+j-1) % 56
+                        indice = ((i * 28) + j - 1) % 56
                         path_overview[indice].append(i)
-                    else : 
-                        indice = ((i*14)+j-1) % 56
+                    else:
+                        indice = ((i * 14) + j - 1) % 56
                         path_overview[indice].append(i)
         return path_overview
-
 
     def print_board_overview(self):
         print()
@@ -148,9 +152,9 @@ class GameLogic:
             print(f"HOME {i} : {self.board[i][0]}")
 
         board_path = self.get_path_overview()
-        for i in range(56//14):
-            print(i*14 + 1, " -> ", (i+1)*14)
-            print(board_path[i*14:(i+1)*14 ])
+        for i in range(56 // 14):
+            print(i * 14 + 1, " -> ", (i + 1) * 14)
+            print(board_path[i * 14 : (i + 1) * 14])
 
         for i in range(NUM_PLAYERS):
             print(f"SAFEZONE {i}: {self.board[i][57:63]}")
@@ -186,8 +190,8 @@ class GameLogic:
         for i in range(6):
             count_all_safe = safe_zone[i]
             count_self_safe = count_all_safe.count(other_player_id)
-            board[i+57] = count_self_safe
-        
+            board[i + 57] = count_self_safe
+
         path_zone = self.get_path_overview()
         path_board = [0 for _ in range(56)]
         for i in range(56):
@@ -210,19 +214,18 @@ class GameLogic:
         elif other_player_id == 3:
             board[43:57] = path_board[:14]
             board[1:43] = path_board[14:]
-        return board 
+        return board
 
     def get_adversaires_relative_overview(self, current_player_id):
         # result = [] TODO faire pour tous les joueurs
         for i in range(NUM_PLAYERS):
             if i != current_player_id:
                 return self.get_overview_of(i)
-                
 
     def get_instruction_for_player(self, player_id):
         # print board propre à chaque joueur
         print("0 : ne rien faire")
-        # get position des 2 pions 
+        # get position des 2 pions
         infos = self.get_pawns_info(player_id)
         print("pion 0 case ", infos[0]["position"])
         print()
@@ -245,29 +248,29 @@ class GameLogic:
         print("HOME : ", self.board[player_id][0])
         path = self.board[player_id][1:57]
         for i in range(0, 56, 14):
-            print(path[i:i+14])
+            print(path[i : i + 14])
         print("SAFEZONE : ", self.board[player_id][57:63])
         print("GOAL : ", self.board[player_id][-1])
 
     def dice_generator(self):
-        valeur = np.random.randint(1, 7) # TODO : fix avec une seed pour les tests
+        valeur = np.random.randint(1, 7)  # TODO : fix avec une seed pour les tests
         return valeur
-    
+
     def get_pawns_on_position(self, player_id, target_position_relative):
         if player_id == 0:
             return self.get_path_overview()[target_position_relative - 1]
         elif player_id == 1:
             if NUM_PLAYERS != 2:
-                indice = (target_position_relative - 1+ 14) % 56
+                indice = (target_position_relative - 1 + 14) % 56
                 return self.get_path_overview()[indice]
             else:
-                indice = (target_position_relative - 1 + 28)%56
+                indice = (target_position_relative - 1 + 28) % 56
                 return self.get_path_overview()[indice]
         elif player_id == 2:
-            indice = (target_position_relative - 1 + 28)%56
+            indice = (target_position_relative - 1 + 28) % 56
             return self.get_path_overview()[indice]
         elif player_id == 3:
-            indice = (target_position_relative - 1 + 42)%56
+            indice = (target_position_relative - 1 + 42) % 56
             return self.get_path_overview()[indice]
         # TODO print pour check tout ça
 
@@ -279,29 +282,33 @@ class GameLogic:
                 return True
         return False
 
-    def is_pawn_threatened(self,player, position): # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
+    def is_pawn_threatened(
+        self, player, position
+    ):  # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
         # TODO
         # retourne combien de pions sont menacés ?
         return False
 
-    def is_pawn_protected(self, player, position): # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
+    def is_pawn_protected(
+        self, player, position
+    ):  # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
         # TODO
         return False
 
     def kill_pawn(self, player_id, position):
         # TODO pour tous les pions sur la case -> retourne HOME
         return False
-    
+
     def is_winner(self):
         """
         Vérifie si un joueur a remporté la partie.
         """
         for player_id in range(NUM_PLAYERS):
             # print(f"player {player_id} : {self.board[player_id][-1]}")
-            if self.board[player_id][-1] == NB_PAWNS:
+            if self.board[player_id][-1] == NB_CHEVAUX:
                 return player_id
         return -1
-    
+
     def is_game_over(self):
         """
         Vérifie si la partie est terminée.
@@ -309,7 +316,7 @@ class GameLogic:
         if self.is_winner() != -1:
             return True
         return False
-    
+
     def sortir_pion(self, player_id, dice_value):
         assert dice_value == 6, "Le dé n'est pas un 6"
         assert self.board[player_id][0] > 0, "Pas de pion à sortir"
@@ -318,7 +325,9 @@ class GameLogic:
 
     def avance_pion_path(self, player_id, old_position, dice_value):
         # print(f"débug : avance pion path old_position = {old_position}, dé = {dice_value}")
-        assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
+        assert (
+            self.board[player_id][old_position] > 0
+        ), "Pas de pion à déplacer à cette position"
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
@@ -327,13 +336,17 @@ class GameLogic:
         # print("avance pion safe zone")
         # print(f"old position : {old_position}")
         # print(f"dice value : {dice_value}")
-        assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
+        assert (
+            self.board[player_id][old_position] > 0
+        ), "Pas de pion à déplacer à cette position"
         assert old_position + dice_value < 63, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
     def securise_pion_goal(self, player_id, old_position, dice_value):
-        assert self.board[player_id][old_position] > 0, "Pas de pion à déplacer à cette position"
+        assert (
+            self.board[player_id][old_position] > 0
+        ), "Pas de pion à déplacer à cette position"
         assert old_position + dice_value >= 63, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][-1] += 1
@@ -353,19 +366,19 @@ class GameLogic:
             pass
         else:
             raise ValueError("Action non valide")
-        # PROTECT, KILL, DIE 
+        # PROTECT, KILL, DIE
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
         # print(f"state : {state} , position : {position}, dice_value : {dice_value}")
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
         valid_actions = []
-        if state == State.HOME:
+        if state == State.ECURIE:
             if dice_value == 6:
                 valid_actions.append(Action.MOVE_OUT)
             # else :
             #     valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
-        elif state == State.PATH:
-            if position + dice_value < 57: # limite avant zone protégée
+        elif state == State.CHEMIN:
+            if position + dice_value < 57:  # limite avant zone protégée
                 valid_actions.append(Action.MOVE_FORWARD)
             elif position + dice_value >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
@@ -375,33 +388,34 @@ class GameLogic:
             #     valid_actions.append(Action.KILL)
             # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
             #     valid_actions.append(Action.PROTECT)
-        elif state == State.SAFEZONE:
+        elif state == State.ESCALIER:
             # print("safe zone state", position, dice_value)
             if position + dice_value <= 62:
                 valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
             if position + dice_value >= 63:
                 valid_actions.append(Action.REACH_GOAL)
-        elif state == State.GOAL:
+        elif state == State.CENTRE:
             pass
-            # valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ? 
+            # valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
         return valid_actions
         # TODO : ne pas inclure les no action, seulement au global si toutes les listes sont vides
-    
+
     def get_valid_actions(self, player_id, dice_value):
         all_vide = True
-        valid_actions = [ [] for _ in range(NB_PAWNS)]
+        valid_actions = [[] for _ in range(NB_CHEVAUX)]
         infos = self.get_pawns_info(player_id)
-        for i in range(NB_PAWNS):
-            tmp = self.get_valid_actions_for_pawns(player_id, infos[i]["position"], infos[i]["state"], dice_value)
+        for i in range(NB_CHEVAUX):
+            tmp = self.get_valid_actions_for_pawns(
+                player_id, infos[i]["position"], infos[i]["state"], dice_value
+            )
             if tmp != []:
                 all_vide = False
-            valid_actions[i] = (tmp)
+            valid_actions[i] = tmp
         if all_vide:
             valid_actions.append(Action.NO_ACTION)
-        else: 
-            valid_actions.append(False) # en indice NB_PAWNS 
+        else:
+            valid_actions.append(False)  # en indice NB_PAWNS
         return valid_actions
-    
 
     def encode_action(self, pawn_id, action_type):
         if action_type == Action.NO_ACTION:
@@ -412,11 +426,11 @@ class GameLogic:
         # print("calcul : ",  pawn_id * len(Action) + Action(action_type).value)
         # print()
         return pawn_id * (len(Action) - 1) + Action(action_type).value
-    
+
     def encode_valid_actions(self, valid_actions):
-        if valid_actions[NB_PAWNS] == Action.NO_ACTION:
+        if valid_actions[NB_CHEVAUX] == Action.NO_ACTION:
             return [0]
-        valid_actions = valid_actions[:NB_PAWNS]
+        valid_actions = valid_actions[:NB_CHEVAUX]
         encoded_actions = []
         for i, actions in enumerate(valid_actions):
             for action in actions:
@@ -428,7 +442,7 @@ class GameLogic:
     def decode_action(self, action):
         if action == 0:
             return 0, Action.NO_ACTION
-        
+
         if action == 1:
             return 0, Action.MOVE_OUT
         if action == 2:
@@ -439,7 +453,7 @@ class GameLogic:
             return 0, Action.MOVE_IN_SAFE_ZONE
         if action == 5:
             return 0, Action.REACH_GOAL
-        
+
         if action == 6:
             return 1, Action.MOVE_OUT
         if action == 7:
@@ -450,13 +464,14 @@ class GameLogic:
             return 1, Action.MOVE_IN_SAFE_ZONE
         if action == 10:
             return 1, Action.REACH_GOAL
-        else :
+        else:
             raise ValueError("Action non valide")
-        
+
     def get_reward(self, action):
         return REWARD_TABLE_MOVE_OUT[action]
 
-# Remarques : 
+
+# Remarques :
 # Pense à ajouter des tests unitaires pour couvrir des cas comme :
 # Un joueur tente de bouger un pion alors que ce dernier est bloqué.
 # Deux pions ennemis entrent en collision sur une même case.

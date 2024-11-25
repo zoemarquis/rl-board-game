@@ -1,4 +1,4 @@
-from game_logic import GameLogic, Action, State
+from ludo_env import GameLogic, Action
 
 # initie un game logic
 game = GameLogic()
@@ -36,10 +36,10 @@ print("faire goal pour joueur 0")
 game.move_pawn(0, 57, 6, Action.REACH_GOAL)
 game.print_board_overview()
 print()
-print(game.get_valid_actions(0, 6)) # == [Action.MOVE_OUT])
+print(game.get_valid_actions(0, 6))  # == [Action.MOVE_OUT])
 print()
-print(game.encode_valid_actions(game.get_valid_actions(0, 6))) #
+print(game.encode_valid_actions(game.get_valid_actions(0, 6)))  #
 print()
-print(game.get_valid_actions(0, 3)) # == [Action.NO_ACTION])
+print(game.get_valid_actions(0, 3))  # == [Action.NO_ACTION])
 print()
-print(game.encode_valid_actions(game.get_valid_actions(0, 3))) #
+print(game.encode_valid_actions(game.get_valid_actions(0, 3)))  #

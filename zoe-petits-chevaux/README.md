@@ -1,96 +1,68 @@
-version simplifiée : 
-1 joueur
-2 pions seulement
-si il fait un 6 -> peut sortir un pion mais peut aussi avancer de 6 
+version actuelle du jeu : 
 
-maison = gagner et sécuriser (pas plus compliqué)
+2 joueurs
+2 pions par joueur
+actions : rien, sortir un pion de l'écurie, avancer un pion, entrer dans la safe zone, avancer dans la safe zone, atteindre l'objectif
+(il manque kill surtout)
+
+## TO DO
+
+### écrire les règles du jeu 
+- en dur l'ordre des actions à essayer pour chaque agent si il veut faire un truc interdit
+(donc dupliquer env avec version entrainement et version jouer une partie (ou alors juste un booléen dans le jeu))
+
+### jeu
+- mettre en place 4 pions par joueur
+- mettre en place 2, 3 ou 4 joueurs (au début ça peut etre que des humains puis créer un fichier où on choisit qui sont les agents / humains pour lancer une partie) : attention si 2 joueurs : pion en 1 / 29, mais si + de joueurs : 1/15/29/43
+
+### agents
+rien trop besoin de faire : on va juste mettre des reward différents pour chaque action en fonction de son type (si "max_chevaux", si "avance_rapide" ...)
+et une table en cas d'action invalide de gestion dans l'ordre des coups à essayer
+
+on purrait tenter un player qui se base sur l'observation -> rester grouper ?
+
+### règles
+
+- faire un 6 pour sortir un cheval
+
+#### kill / combien de cheval par case
+- un seul cheval par case : sauf dans écurie : donc retirer des actions possibles le fait d'etre 2 (meme pour meme joueur) dans la meme case (ça c'est une variante) -> meme oueru alors on arrete son pion juste derriere
+(donc en soit on peut pas sortir de petit cheval si )
+- interdiction de doubler : pour tuer il faut tomber exactement sur sa case : idem on pourrait faire une variante avec / sans cette règle
+- ici pareil pour kill on peut faire des variantes
+- ajouter des cases safe (on ne peut pas mourir ici) pour une variantes
+- variante : si pas kill (pas nomnre case exacte) si il rencontre un autre joueur et doit le dépasser -> rebondit et recule,sauf soit meme : juste derriere
+
+#### dé
+- si le dé est un 6 alors le joueur peut rejouer
+- max deux 6 d'affilés (si le joueur fait un troisième 6 alors il n'a pas le droit de faire d'action)
+
+#### safe zone 
+- un cheval doit s'arreter pile à sa case 56 (devant son escalier)
+    - si le dé est trop grand il doit reculer d'autant de cases (donc si il est sur 53 et qu'il fait 5 alors il avance de 3 et recule de 2 -> case 54)
+- doit faire 1 puis 2 puis 3 puis 4 puis 5 puis 6 et de nouveau un 6
+- variante : assouplir regles : il suffit de faire un 6 pour gagner ?
+
+## variantes
+- raccourcir la partie : jouer avec moins de chevaux
+- le premier qui place un cheval au milieu à gagner / tous chevaux au milieu 
+
+
+## organisation du dossier
 
 petits_chevaux/
 │
-├── main.py                # Fichier principal pour exécuter le jeu
-├── environment/
-│   ├── ludo_env.py        # Classe de l'environnement Gymnasium
-│   ├── board.py           # Gestion de la logique et des règles du jeu
-│   ├── player.py          # Modèle pour un joueur (humain ou IA)
-│   └── utils.py           # Fonctions utilitaires (gestion de dés, état, etc.)
-├── training/
-│   ├── train_agent.py     # Script pour entraîner un agent
-│   ├── evaluate_agent.py  # Script pour tester un agent
-│   └── agents/
-│       ├── random_agent.py  # Exemple d'agent aléatoire
-│       └── rl_agent.py      # Agent RL utilisant Stable-Baselines3
-├── data/                  # (optionnel) Sauvegardes ou logs d'entraînement
-└── README.md              # Documentation du projet
+├── ludo_env/
+│   ├── env.py              # Classe de l'environnement Gymnasium
+│   ├── game_logic.py       # Gestion de la logique et des règles du jeu
+│   └── renderer.py         # interface graphique
+├── reinforcement_learning/
+│   ├── agent.py            # Définir des agents (Random par exemple), qlearnin : brouillon
+│   ├── notebook_maskedppo.ipynb    # notebook avec un pseudo masked ppo
+│   ├── notebook_ppo.ipynb          # notebook avec ppo
+│   └── notebook_qlearning.ipynb    # notebook avec qlearning : pas fonctionnel juste un brouillon
+└── tests/
+│   └── TODO
 
 
-ludo_env.py
-La classe principale pour l’environnement, basée sur Gymnasium :
-
-Respecter les méthodes : __init__, reset(), step(action), render().
-Gère l'état du plateau et l'interaction avec les actions des joueurs.
-
-
-board.py
-Gère toute la logique interne du jeu :
-
-Le suivi des positions des pions.
-Les règles de déplacement (sortir un pion, déplacement sécurisé, rentrer à la maison).
-Le calcul des récompenses et la vérification de fin de partie.
-Exemple de fonctions importantes :
-initialize_board(): configure l’état initial.
-move_piece(player_id, piece_id, steps): applique un déplacement.
-is_game_over(): vérifie si la partie est terminée.
-player.py
-Modèle de joueur (humain ou agent) :
-
-Contient les informations sur les pions (positions, état).
-Définit des méthodes comme :
-select_piece(action): permet de choisir un pion.
-evaluate_moves(board_state): logique propre à un joueur IA.
-utils.py
-Fonctions utilitaires :
-
-Simulation de lancer de dés : roll_dice().
-Traduction d'états en observations : state_to_observation(state).
-Normalisation des données (si nécessaire).
-train_agent.py
-Script pour entraîner un agent :
-
-Crée une instance de l’environnement : env = LudoEnv().
-Configure un modèle Stable-Baselines3 (par exemple, PPO, DQN).
-Entraîne l’agent sur plusieurs épisodes.
-Sauvegarde le modèle entraîné.
-Exemple :
-python
-Copier le code
-from stable_baselines3 import PPO
-from environment.ludo_env import LudoEnv
-
-env = LudoEnv()
-model = PPO("MlpPolicy", env, verbose=1)
-model.learn(total_timesteps=50000)
-model.save("ppo_ludo_agent")
-evaluate_agent.py
-Script pour tester un agent déjà entraîné :
-
-Charge le modèle sauvegardé.
-Le fait jouer contre des joueurs aléatoires ou humains.
-3. Étapes de développement
-1. Définir les règles du jeu
-Étape clé : traduisez les règles en logique dans board.py.
-Décidez des récompenses pour les agents : par exemple :
-+10 pour entrer un pion à la maison.
--1 pour un tour sans mouvement.
-2. Créer l’environnement
-ludo_env.py doit respecter l’API Gymnasium.
-Utilisez des espaces Discrete ou Box pour les actions et observations.
-3. Développer un agent basique
-Commencez par un agent aléatoire dans random_agent.py.
-Testez votre environnement avec cet agent pour valider la logique.
-4. Entraîner un agent RL
-Utilisez Stable-Baselines3 pour créer un agent RL dans rl_agent.py.
-Ajustez les hyperparamètres et testez différentes configurations.
-5. Ajouter une interface utilisateur
-Si nécessaire, intégrez une interface graphique pour visualiser les parties (par exemple, avec pygame).
-4. Dépendances requises
-Voici les bibliothèques nécessaires :
+TODO : prendre en compte distance entre toi et sécuriser escalier ?
