@@ -65,10 +65,11 @@ REWARD_TABLE_MOVE_OUT = {
 DEFAULT_ACTION_ORDER = {
     0, # ça veut dire rien de possible
     1, # d'abord essayer de sortir
-    3, 7, # sauver le pion
-    5, 9, # atteindre l'objectif
-    2, 6, # avancer
-    4, 8, # avancer dans la safezone
+    3, 8, # sauver le pion
+    5, 10, # atteindre l'objectif
+    2, 7, # avancer
+    4, 9, # avancer dans la safezone
+    6, 11 # tuer un pion
 }
 
 
@@ -241,11 +242,13 @@ class GameLogic:
         str_instruction += "3 : entrer escalier pion 0\n"
         str_instruction += "4 : avancer dans escalier pion 0\n"
         str_instruction += "5 : atteindre objectif pion 0\n"
+        str_instruction += "6 : tuer adversaire pion 0\n"
         str_instruction += f"pion 1 case {infos[1]['position']}\n"
-        str_instruction += "6 : avancer pion 1\n"
-        str_instruction += "7 : entrer escalier pion 1\n"  
-        str_instruction += "8 : avancer dans escalier pion 1\n"
-        str_instruction += "9 : atteindre objectif pion 1\n"
+        str_instruction += "7 : avancer pion 1\n"
+        str_instruction += "8 : entrer escalier pion 1\n"  
+        str_instruction += "9 : avancer dans escalier pion 1\n"
+        str_instruction += "10 : atteindre objectif pion 1\n"
+        str_instruction += "11 : tuer adversaire pion 1\n"
         return str_instruction
     
 
@@ -461,15 +464,20 @@ class GameLogic:
             return 0, Action.MOVE_IN_SAFE_ZONE
         if action == 5:
             return 0, Action.REACH_GOAL
-
         if action == 6:
-            return 1, Action.MOVE_FORWARD
+            return 0, Action.KILL
+
         if action == 7:
-            return 1, Action.ENTER_SAFEZONE
+            return 1, Action.MOVE_FORWARD
         if action == 8:
-            return 1, Action.MOVE_IN_SAFE_ZONE
+            return 1, Action.ENTER_SAFEZONE
         if action == 9:
+            return 1, Action.MOVE_IN_SAFE_ZONE
+        if action == 10:
             return 1, Action.REACH_GOAL
+        if action == 11:
+            return 1, Action.KILL
+
         else:
             raise ValueError("Action non valide")
 
