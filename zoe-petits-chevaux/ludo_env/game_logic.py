@@ -230,8 +230,43 @@ class GameLogic:
             board[1:43] = path_board[14:]
         return board
 
+    """
+    AFFICHAGE CHARLOTTE (NE PAS EFFACER MERCI)
 
-    def get_instruction_for_player(self, player_id):
+    def get_instruction_for_player(self, player_id, dice_roll):
+        str_instruction = f"Joueur {player_id} : \n"
+
+        valid_actions = self.get_valid_actions(player_id, dice_roll)
+        encoded_valid_actions = self.encode_valid_actions(valid_actions)
+
+        if 0 in encoded_valid_actions:
+            str_instruction += "0 : ne rien faire\n"
+        if 1 in encoded_valid_actions:
+            str_instruction += "1 : sortir pion\n"
+
+        infos = self.get_pawns_info(player_id)
+
+        for i in range(len(infos)):
+            str_instruction += f"pion {i} case {infos[i]['position']}\n"
+            if self.encode_action(i, Action.MOVE_FORWARD) in encoded_valid_actions:
+                str_instruction += f"{2 + i * 5} : avancer pion {i}\n"
+            if self.encode_action(i, Action.ENTER_SAFEZONE) in encoded_valid_actions:
+                str_instruction += f"{3 + i * 5} : entrer escalier pion {i}\n"
+            if self.encode_action(i, Action.MOVE_IN_SAFE_ZONE) in encoded_valid_actions:
+                str_instruction += f"{4 + i * 5} : avancer dans escalier pion {i}\n"
+            if self.encode_action(i, Action.REACH_GOAL) in encoded_valid_actions:
+                str_instruction += f"{5 + i * 5} : atteindre objectif pion {i}\n"
+            if self.encode_action(i, Action.KILL) in encoded_valid_actions:
+                str_instruction += f"{6 + i * 5} : tuer adversaire pion {i}\n"
+
+        return str_instruction
+
+
+
+
+
+    """
+    def get_instruction_for_player(self, player_id, dice_roll):
         str_instruction = ""    
         str_instruction += f"Joueur {player_id} : \n"
         str_instruction += "0 : ne rien faire\n"
@@ -278,13 +313,13 @@ class GameLogic:
             )
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        # TODO : tester tout ça
-        case = self.get_pawns_on_position(player_id, target_position_relative)
-        # si il y a autre chose que moi meme sur la case return true
-        for i in range(NUM_PLAYERS):
-            if i != player_id and case.count(i) > 0:
-                return True
+        for other_player in range(NUM_PLAYERS):
+            if other_player != player_id:
+                relative_position = self.get_relative_position(player_id, other_player, target_position_relative)
+                if self.board[other_player][relative_position] > 0:
+                    return True
         return False
+
 
     def is_pawn_threatened(
         self, player, position

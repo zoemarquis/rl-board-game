@@ -17,7 +17,7 @@ def play_game(env):
         print("dé : ", obs["dice_roll"])
         print()
         print(env.game.get_str_game_overview())
-        print(env.game.get_instruction_for_player(env.current_player))
+        print(env.game.get_instruction_for_player(env.current_player,obs["dice_roll"]))
         print("actions valides : ", env.game.get_valid_actions(env.current_player, obs["dice_roll"]))
         print("encoded valid actions : ", env.game.encode_valid_actions(env.game.get_valid_actions(env.current_player, obs["dice_roll"])))
         # TODO voir tout le plateau : home, chemin selon mon pdv, escalier et goal
