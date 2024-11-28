@@ -441,21 +441,27 @@ class GameLogic:
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
         # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
+        target_position = position + dice_value
+        
         valid_actions = []
         if state == State.ECURIE:
             if dice_value == 6:
-                if self.is_opponent_pawn_on(player_id, 1):
-                    valid_actions.append(Action.KILL)
-                else:
-                    valid_actions.append(Action.MOVE_OUT)
+                # TODO : Bloque la sortie si un pion du joueur
+                if self.board[player_id][1] == 0:
+                    if self.is_opponent_pawn_on(player_id, 1):
+                        valid_actions.append(Action.KILL)
+                    else:
+                        valid_actions.append(Action.MOVE_OUT)
         elif state == State.CHEMIN:
-            if position + dice_value < 57:  # limite avant zone protégée
-                if self.is_opponent_pawn_on(player_id, position + dice_value):
-                    valid_actions.append(Action.KILL)
-                else:
-                    valid_actions.append(Action.MOVE_FORWARD)
+            if target_position < 57:  # limite avant zone protégée
+                # TODO : Bloque un joueur si un de ses pions déjà sur la case
+                if self.board[player_id][target_position] == 0:
+                    if self.is_opponent_pawn_on(player_id, target_position):
+                        valid_actions.append(Action.KILL)
+                    else:
+                        valid_actions.append(Action.MOVE_FORWARD)
 
-            elif position + dice_value >= 57:
+            elif target_position >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
             # est ce que tu tues un pion au passage ? -> alors ajouter kill
             # TODO ajouter ces moves là
@@ -464,9 +470,11 @@ class GameLogic:
             # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
             #     valid_actions.append(Action.PROTECT)
         elif state == State.ESCALIER:
-            if position + dice_value <= 62:
-                valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
-            if position + dice_value >= 63:
+            if target_position <= 62:
+                # TODO : Bloque le joueur si un de ses pions déjà sur la case
+                if self.board[player_id][target_position] == 0:
+                    valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
+            if target_position >= 63:
                 valid_actions.append(Action.REACH_GOAL)
         elif state == State.OBJECTIF:
             pass
