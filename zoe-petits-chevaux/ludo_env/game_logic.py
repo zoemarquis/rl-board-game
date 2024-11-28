@@ -301,7 +301,24 @@ class GameLogic:
 
     # Savoir la position d'un joueur dans la perspective d'un autre joueur
     def get_relative_position(self, from_player, to_player, position):
-        offset = (to_player - from_player) * (56 // NUM_PLAYERS)
+        
+        # TODO : Checker si les pions ne se mange pas entre eux dans l'escalier (normalement non car check < 57 avant)
+        if position == 0 or position >= 57:
+            return position
+
+        # Décalage de 28
+        if NUM_PLAYERS == 2:
+            offset = (to_player - from_player) * 28
+        # Décalage de 14 (pour 3 c'est comme si on avait 4 joueurs et 1 pas utilisé)
+        elif NUM_PLAYERS == 3 or NUM_PLAYERS == 4:
+            offset = (to_player - from_player) * 14
+        else:
+            raise ValueError("Nombre de joueurs non supporté")
+        #print("offset : ", offset)
+        #print("position : ", position)
+        #print("from player : ", from_player)
+        #print("to player : ", to_player)
+        #print("num players : ", NUM_PLAYERS)
         return (position + offset) % 56
 
     # Tuer un pion adverse si on arrive sur sa case
