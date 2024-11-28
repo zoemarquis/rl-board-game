@@ -355,6 +355,10 @@ class GameLogic:
     def sortir_pion(self, player_id, dice_value):
         assert dice_value == 6, "Le dé n'est pas un 6"
         assert self.board[player_id][0] > 0, "Pas de pion à sortir"
+
+        if self.is_opponent_pawn_on(player_id, 1):
+            self.kill_pawn(player_id, 1)
+
         self.board[player_id][0] -= 1
         self.board[player_id][1] += 1
 
@@ -405,7 +409,10 @@ class GameLogic:
         valid_actions = []
         if state == State.ECURIE:
             if dice_value == 6:
-                valid_actions.append(Action.MOVE_OUT)
+                if self.is_opponent_pawn_on(player_id, 1):
+                    valid_actions.append(Action.KILL)
+                else:
+                    valid_actions.append(Action.MOVE_OUT)
         elif state == State.CHEMIN:
             if position + dice_value < 57:  # limite avant zone protégée
                 if self.is_opponent_pawn_on(player_id, position + dice_value):
