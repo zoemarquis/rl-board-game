@@ -65,11 +65,11 @@ REWARD_TABLE_MOVE_OUT = {
 DEFAULT_ACTION_ORDER = {
     0, # ça veut dire rien de possible
     1, # d'abord essayer de sortir
+    6, 11, # tuer un pion
     3, 8, # sauver le pion
     5, 10, # atteindre l'objectif
     2, 7, # avancer
-    4, 9, # avancer dans la safezone
-    6, 11 # tuer un pion
+    4, 9 # avancer dans la safezone
 }
 
 
