@@ -43,8 +43,8 @@ class Action(Enum):
     ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
     MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
     REACH_GOAL = 5  # Atteindre l'objectif final
+    KILL = 6  # Tuer un pion adverse
     # TODO :
-    # KILL = 6  # Tuer un pion adverse TODO
     # REACH PIED ESCALIER
     # ESCALADER ou ESCALADER_1, ESCALADER_2 ... ?
 
@@ -56,18 +56,20 @@ REWARD_TABLE_MOVE_OUT = {
     Action.ENTER_SAFEZONE: 15,
     Action.MOVE_IN_SAFE_ZONE: 1,
     Action.REACH_GOAL: 10,
+    Action.KILL: 30,
     # Action.PROTECT: 20,
-    # Action.KILL: 30,
+    # 
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
 }  # faudrait que les sommes répartis soient égales
 
 DEFAULT_ACTION_ORDER = {
     0, # ça veut dire rien de possible
     1, # d'abord essayer de sortir
-    3, 7, # sauver le pion
-    5, 9, # atteindre l'objectif
-    2, 6, # avancer
-    4, 8, # avancer dans la safezone
+    6, 11, # tuer un pion
+    3, 8, # sauver le pion
+    5, 10, # atteindre l'objectif
+    2, 7, # avancer
+    4, 9 # avancer dans la safezone
 }
 
 
@@ -240,11 +242,13 @@ class GameLogic:
         str_instruction += "3 : entrer escalier pion 0\n"
         str_instruction += "4 : avancer dans escalier pion 0\n"
         str_instruction += "5 : atteindre objectif pion 0\n"
+        str_instruction += "6 : tuer adversaire pion 0\n"
         str_instruction += f"pion 1 case {infos[1]['position']}\n"
-        str_instruction += "6 : avancer pion 1\n"
-        str_instruction += "7 : entrer escalier pion 1\n"  
-        str_instruction += "8 : avancer dans escalier pion 1\n"
-        str_instruction += "9 : atteindre objectif pion 1\n"
+        str_instruction += "7 : avancer pion 1\n"
+        str_instruction += "8 : entrer escalier pion 1\n"  
+        str_instruction += "9 : avancer dans escalier pion 1\n"
+        str_instruction += "10 : atteindre objectif pion 1\n"
+        str_instruction += "11 : tuer adversaire pion 1\n"
         return str_instruction
     
 
@@ -295,9 +299,24 @@ class GameLogic:
         # TODO
         return False
 
+    # Savoir la position d'un joueur dans la perspective d'un autre joueur
+    def get_relative_position(self, from_player, to_player, position):
+        offset = (to_player - from_player) * (56 // NUM_PLAYERS)
+        return (position + offset) % 56
+
+    # Tuer un pion adverse si on arrive sur sa case
+    # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
-        # TODO pour tous les pions sur la case -> retourne HOME
-        return False
+        for other_player in range(NUM_PLAYERS):
+            if other_player != player_id:
+                relative_position = self.get_relative_position(player_id, other_player, position)
+                num_pawns_to_kill = self.board[other_player][relative_position]
+                if num_pawns_to_kill > 0:
+                    self.board[other_player][relative_position] -= num_pawns_to_kill
+                    self.board[other_player][0] += num_pawns_to_kill
+
+
+
 
     def is_winner(self):
         """
@@ -347,6 +366,7 @@ class GameLogic:
         self.board[player_id][-1] += 1
 
     def move_pawn(self, player_id, old_position, dice_value, action):
+        target_position = old_position + dice_value
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
@@ -355,6 +375,9 @@ class GameLogic:
             self.avance_pion_safe_zone(player_id, old_position, dice_value)
         elif action == Action.REACH_GOAL:
             self.securise_pion_goal(player_id, old_position, dice_value)
+        elif action == Action.KILL:
+            self.kill_pawn(player_id, target_position)
+            self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.NO_ACTION:
             pass
         else:
@@ -368,7 +391,11 @@ class GameLogic:
                 valid_actions.append(Action.MOVE_OUT)
         elif state == State.CHEMIN:
             if position + dice_value < 57:  # limite avant zone protégée
-                valid_actions.append(Action.MOVE_FORWARD)
+                if self.is_opponent_pawn_on(player_id, position + dice_value):
+                    valid_actions.append(Action.KILL)
+                else:
+                    valid_actions.append(Action.MOVE_FORWARD)
+
             elif position + dice_value >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
             # est ce que tu tues un pion au passage ? -> alors ajouter kill
@@ -439,15 +466,20 @@ class GameLogic:
             return 0, Action.MOVE_IN_SAFE_ZONE
         if action == 5:
             return 0, Action.REACH_GOAL
-
         if action == 6:
-            return 1, Action.MOVE_FORWARD
+            return 0, Action.KILL
+
         if action == 7:
-            return 1, Action.ENTER_SAFEZONE
+            return 1, Action.MOVE_FORWARD
         if action == 8:
-            return 1, Action.MOVE_IN_SAFE_ZONE
+            return 1, Action.ENTER_SAFEZONE
         if action == 9:
+            return 1, Action.MOVE_IN_SAFE_ZONE
+        if action == 10:
             return 1, Action.REACH_GOAL
+        if action == 11:
+            return 1, Action.KILL
+
         else:
             raise ValueError("Action non valide")
 
