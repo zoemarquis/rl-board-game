@@ -389,11 +389,13 @@ class GameLogic:
         if state == State.ECURIE:
             if dice_value == 6:
                 valid_actions.append(Action.MOVE_OUT)
-        elif state == State.CHEMIN and self.is_opponent_pawn_on(player_id, position + dice_value):
-            valid_actions.append(Action.KILL)
         elif state == State.CHEMIN:
             if position + dice_value < 57:  # limite avant zone protégée
-                valid_actions.append(Action.MOVE_FORWARD)
+                if self.is_opponent_pawn_on(player_id, position + dice_value):
+                    valid_actions.append(Action.KILL)
+                else:
+                    valid_actions.append(Action.MOVE_FORWARD)
+
             elif position + dice_value >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
             # est ce que tu tues un pion au passage ? -> alors ajouter kill
