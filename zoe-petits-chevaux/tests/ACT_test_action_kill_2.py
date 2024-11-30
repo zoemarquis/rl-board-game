@@ -1,6 +1,6 @@
-'''
+"""
 Fichier pour tester les KILL en sortie de pion
-'''
+"""
 
 import unittest
 import sys
@@ -52,7 +52,6 @@ class TestKillAction(unittest.TestCase):
         self.assertEqual(self.game.board[0][1], 1)
         self.assertEqual(self.game.board[0][0], 1)
 
-
         #
         # TEST SANS JOUEUR SUR LA CASE DE SORTIE DE L'ADVERSAIRE
         #
@@ -60,7 +59,6 @@ class TestKillAction(unittest.TestCase):
 
         print("Plateau réinitialisé :")
         print(self.game.get_str_game_overview())
-
 
         valid_actions = self.game.get_valid_actions(player_id=0, dice_value=dice_value)
 
@@ -77,6 +75,7 @@ class TestKillAction(unittest.TestCase):
         # Check que le pion du joueur 0 est bien sur la case 1
         self.assertEqual(self.game.board[0][1], 1)
         self.assertEqual(self.game.board[0][0], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

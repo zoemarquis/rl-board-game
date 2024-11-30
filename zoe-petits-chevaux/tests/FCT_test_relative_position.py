@@ -1,6 +1,6 @@
-'''
+"""
 Fichier pour tester la fonction get_relative_position de la classe GameLogic
-'''
+"""
 
 import unittest
 import sys
@@ -19,7 +19,7 @@ class TestGameLogic(unittest.TestCase):
         self.game_players = GameLogic()
         self.game_3_players = GameLogic()
         self.game_4_players = GameLogic()
-        
+
         self.game_players.init_board()
         self.game_3_players.init_board()
         self.game_4_players.init_board()
@@ -39,6 +39,7 @@ class TestGameLogic(unittest.TestCase):
         self.assertEqual(self.game_4_players.get_relative_position(1, 2, 15), 29)
         self.assertEqual(self.game_4_players.get_relative_position(2, 3, 29), 43)
         self.assertEqual(self.game_4_players.get_relative_position(3, 0, 43), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

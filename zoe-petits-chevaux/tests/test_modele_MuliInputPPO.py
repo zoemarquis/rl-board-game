@@ -1,10 +1,14 @@
 # test : humain jouer contre modele entrainer
 from stable_baselines3 import PPO
-model = PPO.load("reinforcement_learning/masked_ppo_ludo_model")  # notre modele entrainé
+
+model = PPO.load(
+    "reinforcement_learning/masked_ppo_ludo_model"
+)  # notre modele entrainé
 
 
 import sys
 from pathlib import Path
+
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
@@ -12,7 +16,7 @@ from ludo_env import LudoEnv
 # Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
 
 
-env = LudoEnv(mode_jeu = "debug", print_action_invalide_mode=True)
+env = LudoEnv(mode_jeu="debug", print_action_invalide_mode=True)
 obs = env.reset()
 obs = obs[0]
 done = False

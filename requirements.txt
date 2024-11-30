@@ -1,17 +1,16 @@
-gym # to delete
 gymnasium
 
 matplotlib
 numpy
 
 pandas
-plotly 
-psycopg2-binary 
+plotly
 pygame
+pytest
 
 seaborn 
 stable_baselines3
 streamlit
 sqlalchemy 
 
-pytest
+black # formatter

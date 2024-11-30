@@ -1,6 +1,6 @@
-'''
+"""
 Fichier pour tester l'action et la fonction de tuer un pion adverse
-'''
+"""
 
 import unittest
 import sys
@@ -40,7 +40,12 @@ class TestKillAction(unittest.TestCase):
         self.assertEqual(self.game.board[1][10], 1)
 
         # Déplacement sur la case de l'adversaire
-        self.game.move_pawn(player_id=0, old_position=5 + 2 * 14, dice_value=dice_value, action=Action.KILL)
+        self.game.move_pawn(
+            player_id=0,
+            old_position=5 + 2 * 14,
+            dice_value=dice_value,
+            action=Action.KILL,
+        )
 
         print("Plateau après déplacement :")
         print(self.game.get_str_game_overview())
@@ -62,6 +67,7 @@ class TestKillAction(unittest.TestCase):
         # Test total des pions
         self.assertEqual(sum(self.game.board[0]), 2)
         self.assertEqual(sum(self.game.board[1]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

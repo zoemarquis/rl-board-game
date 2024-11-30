@@ -2,12 +2,21 @@ import gymnasium as gym
 
 import numpy as np
 
-from ludo_env.game_logic import GameLogic, NB_CHEVAUX, NUM_PLAYERS, TOTAL_SIZE, Action, BOARD_SIZE
+from ludo_env.game_logic import (
+    GameLogic,
+    NB_CHEVAUX,
+    NUM_PLAYERS,
+    TOTAL_SIZE,
+    Action,
+    BOARD_SIZE,
+)
 from ludo_env.renderer import Renderer
 
 
 class LudoEnv(gym.Env):
-    def __init__(self, with_render=False, print_action_invalide_mode=True, mode_jeu="normal"):
+    def __init__(
+        self, with_render=False, print_action_invalide_mode=True, mode_jeu="normal"
+    ):
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
         self.with_render = with_render
@@ -61,7 +70,7 @@ class LudoEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
         self.current_player = 0
-        self.game : GameLogic = GameLogic()
+        self.game: GameLogic = GameLogic()
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 
@@ -80,12 +89,14 @@ class LudoEnv(gym.Env):
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
             if self.print_action_invalide_mode:
-                print(f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}")
+                print(
+                    f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
+                )
             if self.mode_jeu == "debug":
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
                 print("debug : ", action, pawn_id, action_type)
-            else : 
+            else:
                 return self._get_observation(), -10, False, False, {}
 
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
