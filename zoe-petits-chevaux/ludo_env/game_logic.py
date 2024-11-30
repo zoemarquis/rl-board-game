@@ -1,6 +1,9 @@
 # ce fichier gère toute la logique du jeu / les règles du jeu
 import numpy as np
-from enum import Enum
+
+from action import Action
+from state import State
+from reward import REWARD_TABLE_MOVE_OUT, DEFAULT_ACTION_ORDER
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
@@ -8,88 +11,27 @@ NUM_PLAYERS = 2  # pour le moment, après il en aura 4
 NB_CHEVAUX = 2  # idem
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
-# 0 : HOME
-# 1-56 : PATH
-# 57-62 : SAFEZONE
-# 63 : GOAL
-
-
-class State(Enum):
-    ECURIE = 0
-    CHEMIN = 1
-    # PIED_ESCALIER = 2
-    ESCALIER = 2
-    OBJECTIF = 3
-
-    @staticmethod
-    def get_state_from_position(relative_position: int):
-        assert 0 <= relative_position <= 63, "Position invalide"
-        if relative_position == 0:
-            return State.ECURIE
-        elif relative_position < 57:
-            return State.CHEMIN
-        # elif relative_position == 57:
-        #     return State.PIED_ESCALIER
-        elif relative_position < 63:
-            return State.ESCALIER
-        else:
-            return State.OBJECTIF
-
-
-class Action(Enum):
-    NO_ACTION = 0
-    MOVE_OUT = 1  # Sortir de la maison
-    MOVE_FORWARD = 2  # Avancer le long du chemin
-    ENTER_SAFEZONE = 3  # Entrer dans la zone protégée
-    MOVE_IN_SAFE_ZONE = 4  # Avancer dans la zone protégée
-    REACH_GOAL = 5  # Atteindre l'objectif final
-    KILL = 6  # Tuer un pion adverse
-    # TODO :
-    # REACH PIED ESCALIER
-    # ESCALADER à la place de move in safe zone mais comment faire comprendre si 1 2 3 4 5 ou 6
-
-
-REWARD_TABLE_MOVE_OUT = {
-    Action.NO_ACTION: -1,
-    Action.MOVE_OUT: 20,
-    Action.MOVE_FORWARD: 5,
-    Action.ENTER_SAFEZONE: 15,
-    Action.MOVE_IN_SAFE_ZONE: 1,
-    Action.REACH_GOAL: 10,
-    Action.KILL: 30,
-    # Action.PROTECT: 20,
-    #
-    # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour
-}  # faudrait que les sommes répartis soient égales
-
-DEFAULT_ACTION_ORDER = {
-    0,  # ça veut dire rien de possible
-    1,  # d'abord essayer de sortir
-    6,
-    11,  # tuer un pion
-    3,
-    8,  # sauver le pion
-    5,
-    10,  # atteindre l'objectif
-    2,
-    7,  # avancer
-    4,
-    9,  # avancer dans la safezone
-}
-
 
 class GameLogic:
     def __init__(self):
         self.init_board()
 
     def init_board(self):
-        self.board = [
-            [] for _ in range(NUM_PLAYERS)
-        ]  # chaque joueur à son propre board de 0 (home) à 63 (goal)
+        """
+        Initialisation du plateau de jeu
+
+        Chaque joueur a son propre board de 0 (home) à 63 (goal)
+        Pour chaque joueur :
+            - 0 : HOME
+            - 1-56 : PATH
+            - 57-62 : SAFEZONE
+            - 63 : GOAL
+        """
+        self.board = [[] for _ in range(NUM_PLAYERS)]
         for i in range(NUM_PLAYERS):
             self.board[i] = [0 for _ in range(TOTAL_SIZE)]
             self.board[i][0] = NB_CHEVAUX  # on met les pions dans l'écurie
-        self.tour = 0
+        self.tour = 0  # TODO : compter les tours pour les stats
 
     def get_pawns_info(self, player_id):
         pawns_info = []

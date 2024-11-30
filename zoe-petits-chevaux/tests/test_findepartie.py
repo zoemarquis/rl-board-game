@@ -3,7 +3,7 @@ from pathlib import Path
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
-from ludo_env import GameLogic, Action
+from ludo_env import *
 
 # initie un game logic
 game = GameLogic()

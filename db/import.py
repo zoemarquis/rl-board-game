@@ -1,12 +1,21 @@
 import sys
 import os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from secret.config import DATABASE_URL
 
 import pandas as pd
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
-from schema import Player, Participant, Game, SetOfRules, IsRuleOf, GameRule, create_engine
+from schema import (
+    Player,
+    Participant,
+    Game,
+    SetOfRules,
+    IsRuleOf,
+    GameRule,
+    create_engine,
+)
 
 Session = sessionmaker(bind=create_engine(DATABASE_URL))
 
@@ -38,6 +47,7 @@ def import_players_from_csv(file_path):
     finally:
         session.close()
 
+
 def import_participants_from_csv(file_path):
     session = Session()
     try:
@@ -66,6 +76,7 @@ def import_participants_from_csv(file_path):
     finally:
         session.close()
 
+
 def import_games_from_csv(file_path):
     session = Session()
     try:
@@ -92,6 +103,7 @@ def import_games_from_csv(file_path):
     finally:
         session.close()
 
+
 def import_set_of_rules_from_csv(file_path):
     session = Session()
     try:
@@ -116,6 +128,7 @@ def import_set_of_rules_from_csv(file_path):
         session.rollback()
     finally:
         session.close()
+
 
 def import_is_rule_of_from_csv(file_path):
     session = Session()

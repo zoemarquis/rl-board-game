@@ -9,7 +9,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 
-from ludo_env.game_logic import GameLogic, Action
+from ludo_env import *
 
 
 class TestKillAction(unittest.TestCase):

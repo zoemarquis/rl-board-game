@@ -1,5 +1,4 @@
 import gymnasium as gym
-
 import numpy as np
 
 from ludo_env.game_logic import (
@@ -7,9 +6,9 @@ from ludo_env.game_logic import (
     NB_CHEVAUX,
     NUM_PLAYERS,
     TOTAL_SIZE,
-    Action,
     BOARD_SIZE,
 )
+from action import Action
 from ludo_env.renderer import Renderer
 
 

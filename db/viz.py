@@ -30,5 +30,5 @@ st.pyplot(fig)
 # Graphique Plotly pour des visualisations interactives
 import plotly.express as px
 
-fig = px.bar(df, x='name', y='score', title="Score par Joueur")
+fig = px.bar(df, x="name", y="score", title="Score par Joueur")
 st.plotly_chart(fig)

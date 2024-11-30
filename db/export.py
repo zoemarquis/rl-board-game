@@ -9,7 +9,15 @@ from secret.config import DATABASE_URL
 
 import pandas as pd
 from sqlalchemy.orm import sessionmaker
-from schema import Player, Participant, Game, SetOfRules, IsRuleOf, GameRule, create_engine
+from schema import (
+    Player,
+    Participant,
+    Game,
+    SetOfRules,
+    IsRuleOf,
+    GameRule,
+    create_engine,
+)
 
 # Créez une session
 Session = sessionmaker(bind=create_engine(DATABASE_URL))
@@ -45,6 +53,7 @@ def export_players_to_csv(file_path):
     finally:
         session.close()
 
+
 def export_participants_to_csv(file_path):
     session = Session()
     try:
@@ -74,6 +83,7 @@ def export_participants_to_csv(file_path):
     finally:
         session.close()
 
+
 def export_games_to_csv(file_path):
     session = Session()
     try:
@@ -101,6 +111,7 @@ def export_games_to_csv(file_path):
         print(f"Erreur lors de l'exportation : {e}")
     finally:
         session.close()
+
 
 def export_set_of_rules_to_csv(file_path):
     session = Session()
@@ -189,4 +200,3 @@ export_games_to_csv("data/games.csv")
 export_set_of_rules_to_csv("data/set_of_rules.csv")
 export_is_rule_of_to_csv("data/is_rule_of.csv")
 export_game_rules_to_csv("data/game_rules.csv")
-
