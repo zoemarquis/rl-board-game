@@ -1,3 +1,5 @@
+from interaction import get_human_action
+
 # Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
 import sys
 from pathlib import Path
@@ -6,7 +8,9 @@ project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 
-env = LudoEnv(print_action_invalide_mode=True, mode_jeu="debug")
+env = LudoEnv(
+    num_players=2, nb_chevaux=2, print_action_invalide_mode=True, mode_jeu="debug"
+)
 
 
 def play_game(env):
@@ -24,16 +28,14 @@ def play_game(env):
             "actions valides : ",
             env.game.get_valid_actions(env.current_player, obs["dice_roll"]),
         )
-        print(
-            "encoded valid actions : ",
-            env.game.encode_valid_actions(
-                env.game.get_valid_actions(env.current_player, obs["dice_roll"])
-            ),
+        encoded_valid_actions = env.game.encode_valid_actions(
+            env.game.get_valid_actions(env.current_player, obs["dice_roll"])
         )
+        print("encoded valid actions : ", encoded_valid_actions)
         # TODO voir tout le plateau : home, chemin selon mon pdv, escalier et goal
         # TODO : voir les actions possibles
 
-        action = int(input("Choisissez une action : "))
+        action = int(get_human_action(encoded_valid_actions))
         obs, reward, done, truncated, info = env.step(action)
 
 

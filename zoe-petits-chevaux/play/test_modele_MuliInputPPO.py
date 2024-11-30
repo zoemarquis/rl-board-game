@@ -16,7 +16,9 @@ from ludo_env import LudoEnv
 # Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
 
 
-env = LudoEnv(mode_jeu="debug", print_action_invalide_mode=True)
+env = LudoEnv(
+    num_players=2, nb_chevaux=2, mode_jeu="debug", print_action_invalide_mode=True
+)
 obs = env.reset()
 obs = obs[0]
 done = False

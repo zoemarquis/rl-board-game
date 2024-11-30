@@ -9,8 +9,9 @@ BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
+
 class GameLogic:
-    def __init__(self, num_players, nb_chevaux, mode_fin_partie = "tous_pions"):
+    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous_pions"):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
@@ -61,7 +62,7 @@ class GameLogic:
 
     def get_objectif_overview(self):
         """
-        retourne une liste contenant tous les pions dans leur objectif 
+        retourne une liste contenant tous les pions dans leur objectif
 
         exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur goal
         """
@@ -84,7 +85,7 @@ class GameLogic:
 
     def get_str_game_overview(self):
         """
-        affiche le plateau de jeu avec les pions de chaque joueur dans leur écurie, 
+        affiche le plateau de jeu avec les pions de chaque joueur dans leur écurie,
         sur le chemin (vu par le joueur 0), leur escalier, leur objectif
         """
         str_game_overview = ""
@@ -109,7 +110,9 @@ class GameLogic:
         return str_game_overview
 
     def get_opponent_positions_on_my_board(self, player_id):
-        assert self.num_players == 2, "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
+        assert (
+            self.num_players == 2
+        ), "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
         chemin = self.get_chemin_pdv_2_joueurs(player_id)
         chemin_len = [len(lst) for lst in chemin]
         chemin_my = [lst.count(player_id) for lst in chemin]
@@ -339,7 +342,7 @@ class GameLogic:
             for player_id in range(self.num_players):
                 if self.board[player_id][-1] == 1:
                     return player_id
-        else: 
+        else:
             raise ValueError("Mode de fin de partie non supporté")
         return -1
 
@@ -476,7 +479,7 @@ class GameLogic:
     def encode_valid_actions(self, valid_actions):
         if valid_actions[self.nb_chevaux] == Action.NO_ACTION:
             return [0]
-        valid_actions = valid_actions[:self.nb_chevaux]
+        valid_actions = valid_actions[: self.nb_chevaux]
         encoded_actions = []
         for i, actions in enumerate(valid_actions):
             for action in actions:

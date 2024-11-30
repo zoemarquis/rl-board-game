@@ -6,9 +6,11 @@ from ludo_env.game_logic import *
 def game_2chevaux():
     return GameLogic(num_players=4, nb_chevaux=2)
 
+
 @pytest.fixture
 def game_3chevaux():
     return GameLogic(num_players=4, nb_chevaux=3)
+
 
 @pytest.fixture
 def game_4chevaux():
@@ -49,6 +51,7 @@ def test_initial_board_2pawns(game_2chevaux):
     assert lines[14] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert lines[15] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
     assert lines[16] == "OBJECTIF 3 : 0", "OBJECTIF 3 doit être à 0."
+
 
 def test_initial_board_3pawns(game_3chevaux):
     game_3chevaux.init_board()

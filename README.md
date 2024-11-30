@@ -65,3 +65,24 @@ Pour la base de données :
     sudo apt install postgresql postgresql-contrib
     sudo systemctl start postgresql
     sudo systemctl enable postgresql
+
+
+lancer les tests
+    python3 -m pytest tests_pytest/tests_4_joueurs/test_fin_partie.py
+
+
+Choix entre 2, 3 et 4 joueurs.
+
+Règles qu'on peut faire changer : 
+
+choisir entre 1 et 2 (exclusif, par défaut 1)
+1. tous les chevaux d'un joueur doivent atteindre le centre du plateau pour gagner
+2. le premier cheval au centre du plateau fait gagner son joueur 
+
+choisir entre 2, 3, 4 (exclusif) (voire plus ?) chevaux par joueur
+3. chaque joueur a 2 chevaux
+4. chaque joueur a 3 chevaux
+5. chaque joueur a 4 chevaux
+
+
+

@@ -12,16 +12,20 @@ from ludo_env.renderer import Renderer
 
 class LudoEnv(gym.Env):
     def __init__(
-        self, 
+        self,
         num_players,
         nb_chevaux,
         mode_fin_partie="tous_pions",
-        
-        with_render=False, print_action_invalide_mode=True, mode_jeu="normal"
+        with_render=False,
+        print_action_invalide_mode=True,
+        mode_jeu="normal",
     ):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
         assert nb_chevaux in [2, 3, 4], "Only 2, 3 or 4 pawns are allowed"
-        assert mode_fin_partie in ["tous_pions", "un_pion"], "Only 'tous_pions' or 'un_pion' are allowed"
+        assert mode_fin_partie in [
+            "tous_pions",
+            "un_pion",
+        ], "Only 'tous_pions' or 'un_pion' are allowed"
 
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
@@ -32,9 +36,9 @@ class LudoEnv(gym.Env):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
-        
-        self.board_size = 56 # TODO delete
-        self.safe_zone_size = 6 # TODO delete
+
+        self.board_size = 56  # TODO delete
+        self.safe_zone_size = 6  # TODO delete
 
         if self.with_render:
             self.renderer = Renderer()
@@ -78,7 +82,11 @@ class LudoEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
         self.current_player = 0
-        self.game: GameLogic = GameLogic(num_players=self.num_players, nb_chevaux=self.nb_chevaux, mode_fin_partie=self.mode_fin_partie)
+        self.game: GameLogic = GameLogic(
+            num_players=self.num_players,
+            nb_chevaux=self.nb_chevaux,
+            mode_fin_partie=self.mode_fin_partie,
+        )
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 

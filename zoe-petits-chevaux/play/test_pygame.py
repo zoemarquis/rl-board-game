@@ -12,7 +12,7 @@ import random
 import pygame
 
 # Initialiser la logique du jeu
-game = LudoEnv(with_render=True)
+game = LudoEnv(um_players=2, nb_chevaux=2, with_render=True)
 
 # Boucle de jeu
 running = True

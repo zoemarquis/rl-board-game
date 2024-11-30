@@ -7,6 +7,7 @@ def game():
     """Fixture pour initialiser un objet Game."""
     return GameLogic(num_players=2, nb_chevaux=2)
 
+
 def test_1(game):
     game.init_board()
     game.move_pawn(0, 0, 6, Action.MOVE_OUT)
@@ -36,6 +37,7 @@ def test_1(game):
 
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
+
 
 def test_2(game):
     game.init_board()
@@ -67,7 +69,6 @@ def test_2(game):
 
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
-
 
 
 def test_3(game):
@@ -110,8 +111,8 @@ def test_interdit_1(game):
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
 
-    assert False 
-    # TODO 
+    assert False
+    # TODO
 
 
 def test_interdit_2(game):
@@ -122,5 +123,5 @@ def test_interdit_2(game):
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
 
-    assert False 
-    # TODO 
+    assert False
+    # TODO

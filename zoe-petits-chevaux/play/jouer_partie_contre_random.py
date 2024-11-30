@@ -8,7 +8,7 @@ sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 from reinforcement_learning.agent import RandomAgent
 
-env: LudoEnv = LudoEnv()
+env: LudoEnv = LudoEnv(num_players=2, nb_chevaux=2)
 
 
 def play_game(env, agents):
