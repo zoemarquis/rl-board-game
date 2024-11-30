@@ -66,3 +66,6 @@ petits_chevaux/
 
 
 TODO : prendre en compte distance entre toi et sécuriser escalier ?
+
+
+TODO : plus de pions, dé avec plus de face ?
