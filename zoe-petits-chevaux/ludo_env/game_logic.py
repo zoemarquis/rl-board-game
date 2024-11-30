@@ -472,9 +472,6 @@ class GameLogic:
             return 0
         if action_type == Action.MOVE_OUT:
             return 1
-        # 0 : no action
-        # 1 : sortir pion
-        # 2 ou 6 : move forward
         return pawn_id * (len(Action) - 2) + action_type.value
 
     def encode_valid_actions(self, valid_actions):
@@ -490,8 +487,18 @@ class GameLogic:
     def decode_action(self, action):  # TODO : adapter à la version du jeu ?
         if action == 0:
             return 0, Action.NO_ACTION
-        if action == 1:
+        elif action == 1:
             return 0, Action.MOVE_OUT
+        
+        pawn_id = (action - 2) // (len(Action) - 2)
+        if action < len(Action):    
+            action_type = action
+        else:
+            action_type = (action - 2) % (len(Action) - 2) + 2
+        return pawn_id, Action(action_type)
+
+        
+
 
         if action == 2:
             return 0, Action.MOVE_FORWARD
@@ -515,8 +522,6 @@ class GameLogic:
         if action == 11:
             return 1, Action.KILL
 
-        else:
-            raise ValueError("Action non valide")
 
     def get_reward(self, action):  # TODO
         return REWARD_TABLE_MOVE_OUT[action]
