@@ -390,7 +390,6 @@ class GameLogic:
         self.board[player_id][-1] += 1
 
     def move_pawn(self, player_id, old_position, dice_value, action):
-        target_position = old_position + dice_value
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
@@ -400,7 +399,7 @@ class GameLogic:
         elif action == Action.REACH_GOAL:
             self.securise_pion_goal(player_id, old_position, dice_value)
         elif action == Action.KILL:
-            self.kill_pawn(player_id, target_position)
+            self.kill_pawn(player_id, old_position + dice_value)
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.NO_ACTION:
             pass
@@ -416,7 +415,7 @@ class GameLogic:
             if dice_value == 6:
                 # TODO : Bloque la sortie si un pion du joueur
                 if self.board[player_id][1] == 0:
-                    if self.is_opponent_pawn_on(player_id, 1):
+                    if self.is_opponent_pawn_on(player_id, 1): 
                         valid_actions.append(Action.KILL)
                     else:
                         valid_actions.append(Action.MOVE_OUT)
@@ -472,7 +471,7 @@ class GameLogic:
             return 0
         if action_type == Action.MOVE_OUT:
             return 1
-        return pawn_id * (len(Action) - 2) + action_type.value
+        return pawn_id * (len(Action) - 3) + action_type.value
 
     def encode_valid_actions(self, valid_actions):
         if valid_actions[self.nb_chevaux] == Action.NO_ACTION:
@@ -489,41 +488,18 @@ class GameLogic:
             return 0, Action.NO_ACTION
         elif action == 1:
             return 0, Action.MOVE_OUT
+        elif action == 2:
+            return 0, Action.MOVE_OUT_AND_KILL
         
-        pawn_id = (action - 2) // (len(Action) - 2)
+        pawn_id = (action - 3) // (len(Action) - 3)
         if action < len(Action):    
             action_type = action
         else:
-            action_type = (action - 2) % (len(Action) - 2) + 2
+            action_type = (action - 3) % (len(Action) - 3) + 3
         return pawn_id, Action(action_type)
 
-        
 
-
-        if action == 2:
-            return 0, Action.MOVE_FORWARD
-        if action == 3:
-            return 0, Action.ENTER_SAFEZONE
-        if action == 4:
-            return 0, Action.MOVE_IN_SAFE_ZONE
-        if action == 5:
-            return 0, Action.REACH_GOAL
-        if action == 6:
-            return 0, Action.KILL
-
-        if action == 7:
-            return 1, Action.MOVE_FORWARD
-        if action == 8:
-            return 1, Action.ENTER_SAFEZONE
-        if action == 9:
-            return 1, Action.MOVE_IN_SAFE_ZONE
-        if action == 10:
-            return 1, Action.REACH_GOAL
-        if action == 11:
-            return 1, Action.KILL
-
-
-    def get_reward(self, action):  # TODO
+    def get_reward(self, action):  # TODO : plusieurs agents 
         return REWARD_TABLE_MOVE_OUT[action]
 
     # ------------------ Fonctions d'affichage ------------------

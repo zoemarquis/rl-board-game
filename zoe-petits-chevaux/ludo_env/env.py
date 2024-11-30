@@ -48,7 +48,7 @@ class LudoEnv(gym.Env):
             self.renderer = Renderer()
 
         self.action_space = gym.spaces.Discrete(
-            2 + self.num_players * (len(Action) - 2)
+            3 + self.num_players * (len(Action) - 3)
         )  # 1 pour NO_ACTION + 1 pour sortir un pion
         # TODO : à modifier quand on ajoute des actions, pour l'instant on a donc 10 actions possibles
 

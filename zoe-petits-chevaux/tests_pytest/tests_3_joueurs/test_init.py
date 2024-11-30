@@ -20,13 +20,10 @@ def game_4chevaux():
 def test_initial_board_2pawns(game_2chevaux):
     game_2chevaux.init_board()
     str_to_check = game_2chevaux.get_str_game_overview()
-
     lines = str_to_check.split("\n")
-
     assert lines[0] == "ECURIE 0 : 2", "ECURIE 0 doit avoir 2 pions."
     assert lines[1] == "ECURIE 1 : 2", "ECURIE 1 doit avoir 2 pions."
     assert lines[2] == "ECURIE 2 : 2", "ECURIE 2 doit avoir 2 pions."
-
     assert lines[3] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
     assert (
         lines[4] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
@@ -40,11 +37,9 @@ def test_initial_board_2pawns(game_2chevaux):
     assert (
         lines[7] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
-
     assert lines[8] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
     assert lines[9] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
     assert lines[10] == "ESCALIER 2 : [0, 0, 0, 0, 0, 0]", "ESCALIER 2 incorrecte."
-
     assert lines[11] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[12] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert lines[13] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
