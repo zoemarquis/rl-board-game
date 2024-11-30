@@ -1,16 +1,23 @@
 import pytest
-from ludo_env.game_logic import *
+from ludo_env import GameLogic
 
 
 @pytest.fixture
-def game():
-    """Fixture pour initialiser un objet Game."""
-    return GameLogic(num_players=2)
+def game_2chevaux():
+    return GameLogic(num_players=2, nb_chevaux=2)
+
+@pytest.fixture
+def game_3chevaux():
+    return GameLogic(num_players=2, nb_chevaux=3)
+
+@pytest.fixture
+def game_4chevaux():
+    return GameLogic(num_players=2, nb_chevaux=4)
 
 
-def test_initial_board_2pawns(game):
-    game.init_board()
-    str_to_check = game.get_str_game_overview()
+def test_initial_board_2pawns(game_2chevaux):
+    game_2chevaux.init_board()
+    str_to_check = game_2chevaux.get_str_game_overview()
 
     lines = str_to_check.split("\n")
 
@@ -38,14 +45,14 @@ def test_initial_board_2pawns(game):
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
 
 
-def test_initial_board_3pawns(game):
-    game.init_board()
-    str_to_check = game.get_str_game_overview()
+def test_initial_board_3pawns(game_3chevaux):
+    game_3chevaux.init_board()
+    str_to_check = game_3chevaux.get_str_game_overview()
 
     lines = str_to_check.split("\n")
 
-    assert lines[0] == "ECURIE 0 : 3", "ECURIE 0 doit avoir 2 pions."
-    assert lines[1] == "ECURIE 1 : 3", "ECURIE 1 doit avoir 2 pions."
+    assert lines[0] == "ECURIE 0 : 3", "ECURIE 0 doit avoir 3 pions."
+    assert lines[1] == "ECURIE 1 : 3", "ECURIE 1 doit avoir 3 pions."
 
     assert lines[2] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
     assert (
@@ -67,14 +74,14 @@ def test_initial_board_3pawns(game):
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
 
-def test_initial_board_4pawns(game):
-    game.init_board()
-    str_to_check = game.get_str_game_overview()
+def test_initial_board_4pawns(game_4chevaux):
+    game_4chevaux.init_board()
+    str_to_check = game_4chevaux.get_str_game_overview()
 
     lines = str_to_check.split("\n")
 
-    assert lines[0] == "ECURIE 0 : 4", "ECURIE 0 doit avoir 2 pions."
-    assert lines[1] == "ECURIE 1 : 4", "ECURIE 1 doit avoir 2 pions."
+    assert lines[0] == "ECURIE 0 : 4", "ECURIE 0 doit avoir 4 pions."
+    assert lines[1] == "ECURIE 1 : 4", "ECURIE 1 doit avoir 4 pions."
     assert lines[2] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
     
     assert (

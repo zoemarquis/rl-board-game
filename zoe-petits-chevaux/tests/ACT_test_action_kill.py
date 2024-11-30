@@ -14,7 +14,7 @@ from ludo_env import *
 
 class TestKillAction(unittest.TestCase):
     def setUp(self):
-        self.game = GameLogic(num_players=2)
+        self.game = GameLogic(num_players=2, nb_chevaux=2)
 
     def test_kill_action(self):
         self.game.init_board()

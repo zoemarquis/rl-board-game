@@ -3,11 +3,10 @@ import numpy as np
 
 from ludo_env.game_logic import (
     GameLogic,
-    NB_CHEVAUX,
     TOTAL_SIZE,
     BOARD_SIZE,
 )
-from action import Action
+from ludo_env.action import Action
 from ludo_env.renderer import Renderer
 
 
@@ -15,10 +14,12 @@ class LudoEnv(gym.Env):
     def __init__(
         self, 
         num_players,
+        nb_chevaux,
         
         with_render=False, print_action_invalide_mode=True, mode_jeu="normal"
     ):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
+        assert nb_chevaux in [2, 3, 4], "Only 2, 3 or 4 pawns are allowed"
 
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
@@ -43,11 +44,11 @@ class LudoEnv(gym.Env):
             {
                 # TODO : est ce qu'on garde my board ou alors on fait my home, my chemin, my escalier, my goal ?
                 "my_board": gym.spaces.Box(
-                    low=0, high=NB_CHEVAUX, shape=(TOTAL_SIZE,), dtype=np.int8
+                    low=0, high=self.nb_chevaux, shape=(TOTAL_SIZE,), dtype=np.int8
                 ),  # État du plateau du joueur courant
                 # "my_chemin_with_adversaires": gym.spaces.Box(
                 #     low=0,
-                #     high=NB_CHEVAUX * (self.num_players - 1),
+                #     high=self.nb_chevaux * (self.num_players - 1),
                 #     shape=(BOARD_SIZE,),
                 #     dtype=np.int8,
                 # ),  # Agrégation des autres joueurs selon quel pdv ? TODO
@@ -73,7 +74,7 @@ class LudoEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
         self.current_player = 0
-        self.game: GameLogic = GameLogic(num_players=self.num_players)
+        self.game: GameLogic = GameLogic(num_players=self.num_players, nb_chevaux=self.nb_chevaux)
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 

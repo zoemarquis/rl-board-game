@@ -3,14 +3,21 @@ from ludo_env.game_logic import *
 
 
 @pytest.fixture
-def game():
-    """Fixture pour initialiser un objet Game."""
-    return GameLogic(num_players=4)
+def game_2chevaux():
+    return GameLogic(num_players=4, nb_chevaux=2)
+
+@pytest.fixture
+def game_3chevaux():
+    return GameLogic(num_players=4, nb_chevaux=3)
+
+@pytest.fixture
+def game_4chevaux():
+    return GameLogic(num_players=4, nb_chevaux=4)
 
 
-def test_initial_board_2pawns(game):
-    game.init_board()
-    str_to_check = game.get_str_game_overview()
+def test_initial_board_2pawns(game_2chevaux):
+    game_2chevaux.init_board()
+    str_to_check = game_2chevaux.get_str_game_overview()
 
     lines = str_to_check.split("\n")
 
@@ -19,93 +26,97 @@ def test_initial_board_2pawns(game):
     assert lines[2] == "ECURIE 2 : 2", "ECURIE 2 doit avoir 2 pions."
     assert lines[3] == "ECURIE 3 : 2", "ECURIE 3 doit avoir 2 pions."
 
-    assert False # TODO ZOE
-
-    assert lines[3] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
-    assert (
-        lines[3] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte."
-    assert (
-        lines[4] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte."
+    assert lines[4] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
     assert (
         lines[5] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
     assert (
         lines[6] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[7] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[8] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
 
-    assert lines[7] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
-    assert lines[8] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
+    assert lines[9] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
+    assert lines[10] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
+    assert lines[11] == "ESCALIER 2 : [0, 0, 0, 0, 0, 0]", "ESCALIER 2 incorrecte."
+    assert lines[12] == "ESCALIER 3 : [0, 0, 0, 0, 0, 0]", "ESCALIER 3 incorrecte."
 
-    assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
-    assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
+    assert lines[13] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
+    assert lines[14] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
+    assert lines[15] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
+    assert lines[16] == "OBJECTIF 3 : 0", "OBJECTIF 3 doit être à 0."
 
-def test_initial_board_3pawns(game):
-    game.init_board()
-    str_to_check = game.get_str_game_overview()
+def test_initial_board_3pawns(game_3chevaux):
+    game_3chevaux.init_board()
+    str_to_check = game_3chevaux.get_str_game_overview()
 
     lines = str_to_check.split("\n")
 
-    assert lines[0] == "ECURIE 0 : 3", "ECURIE 0 doit avoir 2 pions."
-    assert lines[1] == "ECURIE 1 : 3", "ECURIE 1 doit avoir 2 pions."
-    assert lines[2] == "ECURIE 2 : 3", "ECURIE 2 doit avoir 2 pions."
-    assert lines[3] == "ECURIE 3 : 3", "ECURIE 3 doit avoir 2 pions."
+    assert lines[0] == "ECURIE 0 : 3", "ECURIE 0 doit avoir 3 pions."
+    assert lines[1] == "ECURIE 1 : 3", "ECURIE 1 doit avoir 3 pions."
+    assert lines[2] == "ECURIE 2 : 3", "ECURIE 2 doit avoir 3 pions."
+    assert lines[3] == "ECURIE 3 : 3", "ECURIE 3 doit avoir 3 pions."
 
-    assert False # TODO ZOE
-
-    assert lines[3] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
-    assert (
-        lines[3] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte."
-    assert (
-        lines[4] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte."
+    assert lines[4] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
     assert (
         lines[5] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
     assert (
         lines[6] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[7] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[8] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
 
-    assert lines[7] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
-    assert lines[8] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
+    assert lines[9] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
+    assert lines[10] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
+    assert lines[11] == "ESCALIER 2 : [0, 0, 0, 0, 0, 0]", "ESCALIER 2 incorrecte."
+    assert lines[12] == "ESCALIER 3 : [0, 0, 0, 0, 0, 0]", "ESCALIER 3 incorrecte."
 
-    assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
-    assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
+    assert lines[13] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
+    assert lines[14] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
+    assert lines[15] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
+    assert lines[16] == "OBJECTIF 3 : 0", "OBJECTIF 3 doit être à 0."
 
 
-
-def test_initial_board_4pawns(game):
-    game.init_board()
-    str_to_check = game.get_str_game_overview()
+def test_initial_board_4pawns(game_4chevaux):
+    game_4chevaux.init_board()
+    str_to_check = game_4chevaux.get_str_game_overview()
 
     lines = str_to_check.split("\n")
 
-    assert lines[0] == "ECURIE 0 : 4", "ECURIE 0 doit avoir 2 pions."
-    assert lines[1] == "ECURIE 1 : 4", "ECURIE 1 doit avoir 2 pions."
-    assert lines[2] == "ECURIE 2 : 4", "ECURIE 2 doit avoir 2 pions."
-    assert lines[3] == "ECURIE 3 : 4", "ECURIE 3 doit avoir 2 pions."
+    assert lines[0] == "ECURIE 0 : 4", "ECURIE 0 doit avoir 4 pions."
+    assert lines[1] == "ECURIE 1 : 4", "ECURIE 1 doit avoir 4 pions."
+    assert lines[2] == "ECURIE 2 : 4", "ECURIE 2 doit avoir 4 pions."
+    assert lines[3] == "ECURIE 3 : 4", "ECURIE 3 doit avoir 4 pions."
 
-    assert False # TODO ZOE
-
-    assert lines[3] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
-    assert (
-        lines[3] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte."
-    assert (
-        lines[4] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte."
+    assert lines[4] == "chemin vu par joueur 0 : ", "ligne 2 incorrecte."
     assert (
         lines[5] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
     assert (
         lines[6] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
     ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[7] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[8] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
 
-    assert lines[7] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
-    assert lines[8] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
+    assert lines[9] == "ESCALIER 0 : [0, 0, 0, 0, 0, 0]", "ESCALIER 0 incorrecte."
+    assert lines[10] == "ESCALIER 1 : [0, 0, 0, 0, 0, 0]", "ESCALIER 1 incorrecte."
+    assert lines[11] == "ESCALIER 2 : [0, 0, 0, 0, 0, 0]", "ESCALIER 2 incorrecte."
+    assert lines[12] == "ESCALIER 3 : [0, 0, 0, 0, 0, 0]", "ESCALIER 3 incorrecte."
 
-    assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
-    assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
-
+    assert lines[13] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
+    assert lines[14] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
+    assert lines[15] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
+    assert lines[16] == "OBJECTIF 3 : 0", "OBJECTIF 3 doit être à 0."

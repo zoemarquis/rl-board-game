@@ -1,18 +1,18 @@
 # ce fichier gère toute la logique du jeu / les règles du jeu
 import numpy as np
 
-from action import Action
-from state import State
-from reward import REWARD_TABLE_MOVE_OUT, DEFAULT_ACTION_ORDER
+from ludo_env.action import Action
+from ludo_env.state import State
+from ludo_env.reward import REWARD_TABLE_MOVE_OUT, DEFAULT_ACTION_ORDER
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
-NB_CHEVAUX = 2  # idem
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 class GameLogic:
-    def __init__(self, num_players):
+    def __init__(self, num_players, nb_chevaux):
         self.num_players = num_players
+        self.nb_chevaux = nb_chevaux
         self.init_board()
 
     def init_board(self):
@@ -29,7 +29,7 @@ class GameLogic:
         self.board = [[] for _ in range(self.num_players)]
         for i in range(self.num_players):
             self.board[i] = [0 for _ in range(TOTAL_SIZE)]
-            self.board[i][0] = NB_CHEVAUX  # on met les pions dans l'écurie
+            self.board[i][0] = self.nb_chevaux  # on met les pions dans l'écurie
         self.tour = 0  # TODO : compter les tours pour les stats
 
     def get_pawns_info(self, player_id):
@@ -43,7 +43,7 @@ class GameLogic:
                 pawns_info.append(
                     {"position": i, "state": State.get_state_from_position(i)}
                 )
-        assert len(pawns_info) == NB_CHEVAUX, "Nombre de pions incorrect"
+        assert len(pawns_info) == self.nb_chevaux, "Nombre de pions incorrect"
         return pawns_info
 
     def get_ecurie_overview(self):
@@ -331,7 +331,7 @@ class GameLogic:
         Vérifie si un joueur a remporté la partie.
         """
         for player_id in range(self.num_players):
-            if self.board[player_id][-1] == NB_CHEVAUX:
+            if self.board[player_id][-1] == self.nb_chevaux:
                 return player_id
         return -1
 
@@ -440,9 +440,9 @@ class GameLogic:
 
     def get_valid_actions(self, player_id, dice_value):
         all_vide = True
-        valid_actions = [[] for _ in range(NB_CHEVAUX)]
+        valid_actions = [[] for _ in range(self.nb_chevaux)]
         infos = self.get_pawns_info(player_id)
-        for i in range(NB_CHEVAUX):
+        for i in range(self.nb_chevaux):
             tmp = self.get_valid_actions_for_pawns(
                 player_id, infos[i]["position"], infos[i]["state"], dice_value
             )
@@ -466,9 +466,9 @@ class GameLogic:
         return pawn_id * (len(Action) - 2) + action_type.value
 
     def encode_valid_actions(self, valid_actions):
-        if valid_actions[NB_CHEVAUX] == Action.NO_ACTION:
+        if valid_actions[self.nb_chevaux] == Action.NO_ACTION:
             return [0]
-        valid_actions = valid_actions[:NB_CHEVAUX]
+        valid_actions = valid_actions[:self.nb_chevaux]
         encoded_actions = []
         for i, actions in enumerate(valid_actions):
             for action in actions:
