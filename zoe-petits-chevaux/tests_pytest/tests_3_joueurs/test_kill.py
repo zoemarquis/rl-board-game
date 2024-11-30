@@ -39,7 +39,7 @@ def test_kill_move_out_2chevaux(game_2chevaux):
     print(game_2chevaux.get_valid_actions(1, 6))
 
     assert game_2chevaux.get_valid_actions(0, 6) == [[Action.MOVE_OUT], [Action.MOVE_FORWARD], False]
-    assert game_2chevaux.get_valid_actions(1, 6) == [[Action.KILL], [Action.KILL], False]
+    assert game_2chevaux.get_valid_actions(1, 6) == [[Action.MOVE_OUT_AND_KILL], [Action.MOVE_OUT_AND_KILL], False]
 
 
 def test_kill_2chevaux(game_2chevaux):

@@ -279,6 +279,7 @@ class GameLogic:
                 relative_position = self.get_relative_position(
                     player_id, other_player, target_position_relative
                 )
+                print(f"other player : {other_player} relative position : {relative_position}")
                 if self.board[other_player][relative_position] > 0:
                     return True
         return False
@@ -308,7 +309,7 @@ class GameLogic:
             offset = (to_player - from_player) * 28
         # Décalage de 14 (pour 3 c'est comme si on avait 4 joueurs et 1 pas utilisé)
         elif self.num_players == 3 or self.num_players == 4:
-            offset = (to_player - from_player) * 14
+            offset = (from_player - to_player) * 14
         else:
             raise ValueError("Nombre de joueurs non supporté")
         # print("offset : ", offset)
@@ -392,6 +393,10 @@ class GameLogic:
     def move_pawn(self, player_id, old_position, dice_value, action):
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
+        elif action == Action.MOVE_OUT_AND_KILL:
+            # TODO ZOE : verifier ça ok 
+            self.kill_pawn(player_id, 1)
+            self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.ENTER_SAFEZONE or action == Action.MOVE_IN_SAFE_ZONE:
@@ -399,6 +404,7 @@ class GameLogic:
         elif action == Action.REACH_GOAL:
             self.securise_pion_goal(player_id, old_position, dice_value)
         elif action == Action.KILL:
+            # TODO ZOE : verifier ça ok (en mulitjoueur aussi)
             self.kill_pawn(player_id, old_position + dice_value)
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.NO_ACTION:
@@ -413,41 +419,42 @@ class GameLogic:
         valid_actions = []
         if state == State.ECURIE:
             if dice_value == 6:
-                # TODO : Bloque la sortie si un pion du joueur
-                if self.board[player_id][1] == 0:
-                    if self.is_opponent_pawn_on(player_id, 1): 
-                        valid_actions.append(Action.KILL)
-                    else:
+                if self.is_opponent_pawn_on(player_id, 1): 
+                    valid_actions.append(Action.MOVE_OUT_AND_KILL)
+                else: 
+                    if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
                         valid_actions.append(Action.MOVE_OUT)
+
         elif state == State.CHEMIN:
             if target_position < 57:  # limite avant zone protégée
-                # TODO : Bloque un joueur si un de ses pions déjà sur la case
-                if self.board[player_id][target_position] == 0:
-                    if self.is_opponent_pawn_on(player_id, target_position):
-                        valid_actions.append(Action.KILL)
-                    else:
+                if self.is_opponent_pawn_on(player_id, target_position):
+                    valid_actions.append(Action.KILL)
+                else:
+                    if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
                         valid_actions.append(Action.MOVE_FORWARD)
 
             elif target_position >= 57:
                 valid_actions.append(Action.ENTER_SAFEZONE)
-            # est ce que tu tues un pion au passage ? -> alors ajouter kill
+            
+            # TODO : empecher de doubler 
             # TODO ajouter ces moves là
             # if self.is_opponent_pawn_on(player_id, position+dice_value):
             #     valid_actions.append(Action.KILL)
             # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
             #     valid_actions.append(Action.PROTECT)
+            # TODO faire changer la regle : je peux avoir moi plusieurs fois sur la meme case : PROTECT 
+
         elif state == State.ESCALIER:
             if target_position <= 62:
-                # TODO : Bloque le joueur si un de ses pions déjà sur la case
-                if self.board[player_id][target_position] == 0:
+                if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
                     valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
             if target_position >= 63:
                 valid_actions.append(Action.REACH_GOAL)
+                
         elif state == State.OBJECTIF:
             pass
-            # valid_actions.append(Action.NO_ACTION) # est ce qu'on peut ne rien faire ?
+
         return valid_actions
-        # TODO : ne pas inclure les no action, seulement au global si toutes les listes sont vides
 
     def get_valid_actions(self, player_id, dice_value):
         all_vide = True
@@ -469,8 +476,10 @@ class GameLogic:
     def encode_action(self, pawn_id, action_type):
         if action_type == Action.NO_ACTION:
             return 0
-        if action_type == Action.MOVE_OUT:
+        elif action_type == Action.MOVE_OUT:
             return 1
+        elif action_type == Action.MOVE_OUT_AND_KILL:
+            return 2
         return pawn_id * (len(Action) - 3) + action_type.value
 
     def encode_valid_actions(self, valid_actions):
