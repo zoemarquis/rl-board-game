@@ -279,7 +279,6 @@ class GameLogic:
                 relative_position = self.get_relative_position(
                     player_id, other_player, target_position_relative
                 )
-                print(f"other player : {other_player} relative position : {relative_position}")
                 if self.board[other_player][relative_position] > 0:
                     return True
         return False

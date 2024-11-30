@@ -74,3 +74,24 @@ def test_kill_2chevaux(game_2chevaux):
     
     assert game_2chevaux.get_valid_actions(0, 1) == [[], [Action.KILL], False]
 
+    game_2chevaux.move_pawn(2, 0, 6, Action.MOVE_OUT)
+    assert game_2chevaux.get_valid_actions(2, 6) == [[], [], Action.NO_ACTION]
+
+    game_2chevaux.move_pawn(2, 1, 35, Action.MOVE_FORWARD)
+    str_to_check = game_2chevaux.get_str_game_overview()
+    lines = str_to_check.split("\n")
+    assert (
+        lines[4] == "[[], [], [], [], [], [], [], [2], [], [], [], [], [], [0]]"
+    ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[5] == "[[1], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[6] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte."
+    assert (
+        lines[7] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
+    ), "CHEMIN 0 incorrecte." 
+
+    assert game_2chevaux.get_valid_actions(2, 6) == [[Action.MOVE_OUT], [Action.KILL], False]
+
