@@ -103,10 +103,10 @@ def test_3(game):
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
 
-
+# TODO pour raise 
 def test_interdit_1(game):
     game.init_board()
-    game.move_pawn(0, 0, 5, Action.MOVE_OUT)
+    game.move_pawn(0, 0, , Action.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -114,7 +114,7 @@ def test_interdit_1(game):
     assert False
     # TODO
 
-
+# TODO pour raise 
 def test_interdit_2(game):
     game.init_board()
     game.move_pawn(0, 0, 6, Action.MOVE_OUT)

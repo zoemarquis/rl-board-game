@@ -16,9 +16,10 @@ class LudoEnv(gym.Env):
         num_players,
         nb_chevaux,
         mode_fin_partie="tous_pions",
+
+        mode_gym="entrainement",
+
         with_render=False,
-        print_action_invalide_mode=True,
-        mode_jeu="normal",
     ):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
         assert nb_chevaux in [2, 3, 4], "Only 2, 3 or 4 pawns are allowed"
@@ -26,12 +27,15 @@ class LudoEnv(gym.Env):
             "tous_pions",
             "un_pion",
         ], "Only 'tous_pions' or 'un_pion' are allowed"
+        assert mode_gym in [
+            "entrainement",
+            "jeu",
+        ], "Only 'entrainement' or 'jeu' are allowed"
 
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
         self.with_render = with_render
-        self.print_action_invalide_mode = print_action_invalide_mode
-        self.mode_jeu = mode_jeu
+        self.mode_gym = mode_gym
 
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
@@ -96,7 +100,7 @@ class LudoEnv(gym.Env):
 
     def step(self, action):
         obs = self._get_observation()
-        if self.mode_jeu == "debug":
+        if self.mode_gym == "jeu":
             print("dé : ", obs["dice_roll"])
             print("my board : ", obs["my_board"])
         info = {}
@@ -104,11 +108,10 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
-            if self.print_action_invalide_mode:
+            if self.mode_gym == "jeu":
                 print(
-                    f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
+                        f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                 )
-            if self.mode_jeu == "debug":
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
                 print("debug : ", action, pawn_id, action_type)

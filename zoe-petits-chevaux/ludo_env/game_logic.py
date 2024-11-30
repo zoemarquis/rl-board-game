@@ -110,6 +110,7 @@ class GameLogic:
         return str_game_overview
 
     def get_opponent_positions_on_my_board(self, player_id):
+        # TODO : multi joueurs
         assert (
             self.num_players == 2
         ), "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
@@ -253,7 +254,7 @@ class GameLogic:
 
     def get_pawns_on_position(
         self, player_id, target_position_relative
-    ):  # TODO check cette fonction
+    ):  # TODO check cette fonction pour multi joueurs
         if player_id == 0:
             indice = target_position_relative - 1
         elif player_id == 2:
