@@ -58,7 +58,7 @@ class LudoEnv(gym.Env):
     def _get_observation(self):
         obs = {
             "my_board": self.game.board[self.current_player],
-            # "my_chemin_with_adversaires": self.game.get_board_pour_voir_ou_sont_adversaires_sur_mon_plateau(
+            # "my_chemin_with_adversaires": self.game.get_opponent_positions_on_my_board(
             #     self.current_player
             # ),  # TODO : ici ça ne fonctionne que quand NUM_PLAYERS = 2, on a pas encore testé pour plus
             # TODO je crois qu'on retournne pas ce qu'il fait pour les plateaux des adversaires : on veut les adversaires sur NOTRE plateau

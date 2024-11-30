@@ -11,7 +11,6 @@ NUM_PLAYERS = 2  # pour le moment, après il en aura 4
 NB_CHEVAUX = 2  # idem
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
-
 class GameLogic:
     def __init__(self):
         self.init_board()
@@ -20,12 +19,12 @@ class GameLogic:
         """
         Initialisation du plateau de jeu
 
-        Chaque joueur a son propre board de 0 (home) à 63 (goal)
+        Chaque joueur a son propre board de 0 (ecurie) à 63 (objectif)
         Pour chaque joueur :
-            - 0 : HOME
-            - 1-56 : PATH
-            - 57-62 : SAFEZONE
-            - 63 : GOAL
+            - 0 : ECURIE
+            - 1-56 : CHEMIN
+            - 57-62 : ESCALIER
+            - 63 : OBJECTIF
         """
         self.board = [[] for _ in range(NUM_PLAYERS)]
         for i in range(NUM_PLAYERS):
@@ -34,6 +33,9 @@ class GameLogic:
         self.tour = 0  # TODO : compter les tours pour les stats
 
     def get_pawns_info(self, player_id):
+        """
+        Retourne une liste : pour chaque pion du joueur retourne un dictionnaire avec sa position et son état
+        """
         pawns_info = []
         for i in range(TOTAL_SIZE):
             count_i = self.board[player_id][i]
@@ -46,7 +48,7 @@ class GameLogic:
 
     def get_ecurie_overview(self):
         """
-        retourne une liste contenant chaque pion dans son écurie
+        Retourne une liste contenant tous les pions dans leur écurieÒ
 
         exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur écurie
         """
@@ -56,9 +58,9 @@ class GameLogic:
                 ecurie_overview.append(i)
         return ecurie_overview
 
-    def get_goal_overview(self):
+    def get_objectif_overview(self):
         """
-        retourne une liste contenant chaque pion dans son goal
+        retourne une liste contenant tous les pions dans leur objectif 
 
         exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur goal
         """
@@ -81,7 +83,8 @@ class GameLogic:
 
     def get_str_game_overview(self):
         """
-        affiche le plateau de jeu avec les pions de chaque joueur dans leur écurie, sur le chemin (vu par le joueur 0), leur escalier, leur goal
+        affiche le plateau de jeu avec les pions de chaque joueur dans leur écurie, 
+        sur le chemin (vu par le joueur 0), leur escalier, leur objectif
         """
         str_game_overview = ""
         for i in range(NUM_PLAYERS):
@@ -94,7 +97,6 @@ class GameLogic:
             else self.get_chemin_pdv(0)
         )
         for i in range(56 // 14):
-            # print(i * 14 + 1, " -> ", (i + 1) * 14)
             str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
 
         for i in range(NUM_PLAYERS):
@@ -105,9 +107,8 @@ class GameLogic:
 
         return str_game_overview
 
-    def get_board_pour_voir_ou_sont_adversaires_sur_mon_plateau(self, player_id):
-        assert NUM_PLAYERS == 2, "fonction pas implémenté pour plus de joueur"
-        # plateau = [-1 for _ in range(TOTAL_SIZE)] # -1 mais j'ai mis 0 pour low... donc le modele n'apprend pas
+    def get_opponent_positions_on_my_board(self, player_id):
+        assert NUM_PLAYERS == 2, "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
         chemin = self.get_chemin_pdv_2_joueurs(player_id)
         chemin_len = [len(lst) for lst in chemin]
         chemin_my = [lst.count(player_id) for lst in chemin]
@@ -147,7 +148,7 @@ class GameLogic:
         count_self_home = count_all_home.count(other_player_id)
         board[0] = count_self_home
 
-        count_all_goal = self.get_goal_overview()
+        count_all_goal = self.get_objectif_overview()
         count_self_goal = count_all_goal.count(other_player_id)
         board[-1] = count_self_goal
 
