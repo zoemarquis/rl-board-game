@@ -10,9 +10,10 @@ SAFE_ZONE_SIZE = 6
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 class GameLogic:
-    def __init__(self, num_players, nb_chevaux):
+    def __init__(self, num_players, nb_chevaux, mode_fin_partie = "tous_pions"):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
+        self.mode_fin_partie = mode_fin_partie
         self.init_board()
 
     def init_board(self):
@@ -330,9 +331,16 @@ class GameLogic:
         """
         Vérifie si un joueur a remporté la partie.
         """
-        for player_id in range(self.num_players):
-            if self.board[player_id][-1] == self.nb_chevaux:
-                return player_id
+        if self.mode_fin_partie == "tous_pions":
+            for player_id in range(self.num_players):
+                if self.board[player_id][-1] == self.nb_chevaux:
+                    return player_id
+        elif self.mode_fin_partie == "un_pion":
+            for player_id in range(self.num_players):
+                if self.board[player_id][-1] == 1:
+                    return player_id
+        else: 
+            raise ValueError("Mode de fin de partie non supporté")
         return -1
 
     def is_game_over(self):
