@@ -4,7 +4,6 @@ import numpy as np
 from ludo_env.game_logic import (
     GameLogic,
     NB_CHEVAUX,
-    NUM_PLAYERS,
     TOTAL_SIZE,
     BOARD_SIZE,
 )
@@ -14,15 +13,20 @@ from ludo_env.renderer import Renderer
 
 class LudoEnv(gym.Env):
     def __init__(
-        self, with_render=False, print_action_invalide_mode=True, mode_jeu="normal"
+        self, 
+        num_players,
+        
+        with_render=False, print_action_invalide_mode=True, mode_jeu="normal"
     ):
+        assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
+
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
         self.with_render = with_render
         self.print_action_invalide_mode = print_action_invalide_mode
         self.mode_jeu = mode_jeu
 
-        self.num_players = NUM_PLAYERS
+        self.num_players = num_players
         self.num_pawns = 2
         self.board_size = 56
         self.safe_zone_size = 6
@@ -31,7 +35,7 @@ class LudoEnv(gym.Env):
             self.renderer = Renderer()
 
         self.action_space = gym.spaces.Discrete(
-            2 + NUM_PLAYERS * (len(Action) - 2)
+            2 + self.num_players * (len(Action) - 2)
         )  # 1 pour NO_ACTION + 1 pour sortir un pion
         # TODO : à modifier quand on ajoute des actions, pour l'instant on a donc 10 actions possibles
 
@@ -43,7 +47,7 @@ class LudoEnv(gym.Env):
                 ),  # État du plateau du joueur courant
                 # "my_chemin_with_adversaires": gym.spaces.Box(
                 #     low=0,
-                #     high=NB_CHEVAUX * (NUM_PLAYERS - 1),
+                #     high=NB_CHEVAUX * (self.num_players - 1),
                 #     shape=(BOARD_SIZE,),
                 #     dtype=np.int8,
                 # ),  # Agrégation des autres joueurs selon quel pdv ? TODO
@@ -60,7 +64,7 @@ class LudoEnv(gym.Env):
             "my_board": self.game.board[self.current_player],
             # "my_chemin_with_adversaires": self.game.get_opponent_positions_on_my_board(
             #     self.current_player
-            # ),  # TODO : ici ça ne fonctionne que quand NUM_PLAYERS = 2, on a pas encore testé pour plus
+            # ),  # TODO : ici ça ne fonctionne que quand self.num_players = 2, on a pas encore testé pour plus
             # TODO je crois qu'on retournne pas ce qu'il fait pour les plateaux des adversaires : on veut les adversaires sur NOTRE plateau
             "dice_roll": self.dice_roll,
         }
@@ -69,7 +73,7 @@ class LudoEnv(gym.Env):
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
         self.current_player = 0
-        self.game: GameLogic = GameLogic()
+        self.game: GameLogic = GameLogic(num_players=self.num_players)
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 
@@ -105,7 +109,7 @@ class LudoEnv(gym.Env):
         done = self.game.is_game_over()
 
         if not done:
-            self.current_player = (self.current_player + 1) % NUM_PLAYERS
+            self.current_player = (self.current_player + 1) % self.num_players
             if self.current_player == 0:
                 self.game.tour += 1
 

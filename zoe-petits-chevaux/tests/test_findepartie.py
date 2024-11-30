@@ -6,7 +6,7 @@ sys.path.append(str(project_root))
 from ludo_env import *
 
 # initie un game logic
-game = GameLogic()
+game = GameLogic(num_players=2)
 game.init_board()
 
 game.move_pawn(0, 0, 6, Action.MOVE_OUT)

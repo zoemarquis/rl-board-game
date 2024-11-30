@@ -6,7 +6,7 @@ sys.path.append(str(project_root))
 from ludo_env import *
 
 # initie un game logic
-game = GameLogic()
+game = GameLogic(num_players=2)
 game.init_board()
 game.get_str_game_overview()
 print()

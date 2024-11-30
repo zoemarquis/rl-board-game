@@ -5,7 +5,7 @@ from ludo_env.game_logic import *
 @pytest.fixture
 def game():
     """Fixture pour initialiser un objet Game."""
-    return GameLogic() 
+    return GameLogic(num_players=2)
 
 def test_1(game):
     game.init_board()

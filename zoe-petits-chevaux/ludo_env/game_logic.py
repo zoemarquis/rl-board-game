@@ -7,12 +7,12 @@ from reward import REWARD_TABLE_MOVE_OUT, DEFAULT_ACTION_ORDER
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
-NUM_PLAYERS = 2  # pour le moment, après il en aura 4
 NB_CHEVAUX = 2  # idem
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 class GameLogic:
-    def __init__(self):
+    def __init__(self, num_players):
+        self.num_players = num_players
         self.init_board()
 
     def init_board(self):
@@ -26,8 +26,8 @@ class GameLogic:
             - 57-62 : ESCALIER
             - 63 : OBJECTIF
         """
-        self.board = [[] for _ in range(NUM_PLAYERS)]
-        for i in range(NUM_PLAYERS):
+        self.board = [[] for _ in range(self.num_players)]
+        for i in range(self.num_players):
             self.board[i] = [0 for _ in range(TOTAL_SIZE)]
             self.board[i][0] = NB_CHEVAUX  # on met les pions dans l'écurie
         self.tour = 0  # TODO : compter les tours pour les stats
@@ -53,7 +53,7 @@ class GameLogic:
         exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur écurie
         """
         ecurie_overview = []
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             for _ in range(self.board[i][0]):
                 ecurie_overview.append(i)
         return ecurie_overview
@@ -65,7 +65,7 @@ class GameLogic:
         exemple: [0, 0, 1, 1] si 2 pions du joueur 0 et du joueur 1 sont dans leur goal
         """
         goal_overview = []
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             for _ in range(self.board[i][-1]):
                 goal_overview.append(i)
         return goal_overview
@@ -75,7 +75,7 @@ class GameLogic:
         retourne une liste contenant chaque pion dans sa safezone
         """
         escalier_overview = [[] for _ in range(6)]
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             for j in range(57, 63):
                 for _ in range(self.board[i][j]):
                     escalier_overview[j - 57].append(i)
@@ -87,28 +87,28 @@ class GameLogic:
         sur le chemin (vu par le joueur 0), leur escalier, leur objectif
         """
         str_game_overview = ""
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             str_game_overview += f"ECURIE {i} : {self.board[i][0]}\n"
 
         str_game_overview += "chemin vu par joueur 0 : \n"
         chemin = (
             self.get_chemin_pdv_2_joueurs(0)
-            if NUM_PLAYERS == 2
+            if self.num_players == 2
             else self.get_chemin_pdv(0)
         )
         for i in range(56 // 14):
             str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
 
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             str_game_overview += f"ESCALIER {i} : {self.board[i][57:63]}\n"
 
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
 
         return str_game_overview
 
     def get_opponent_positions_on_my_board(self, player_id):
-        assert NUM_PLAYERS == 2, "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
+        assert self.num_players == 2, "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
         chemin = self.get_chemin_pdv_2_joueurs(player_id)
         chemin_len = [len(lst) for lst in chemin]
         chemin_my = [lst.count(player_id) for lst in chemin]
@@ -117,23 +117,23 @@ class GameLogic:
 
     def get_str_player_overview(self, player_id):
         str_game_overview = ""
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             str_game_overview += f"ECURIE {i} : {self.board[i][0]}\n"
 
         str_game_overview += f"chemin vu par joueur {player_id} : \n"
         chemin = (
             self.get_chemin_pdv_2_joueurs(player_id)
-            if NUM_PLAYERS == 2
+            if self.num_players == 2
             else self.get_chemin_pdv(player_id)
         )
         for i in range(56 // 14):
             # print(i * 14 + 1, " -> ", (i + 1) * 14)
             str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
 
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             str_game_overview += f"ESCALIER {i} : {self.board[i][57:63]}\n"
 
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
 
         return str_game_overview
@@ -160,7 +160,7 @@ class GameLogic:
 
         path_zone = (
             self.get_chemin_pdv_2_joueurs(other_player_id)
-            if NUM_PLAYERS == 2
+            if self.num_players == 2
             else self.get_chemin_pdv(other_player_id)
         )
         path_board = [0 for _ in range(56)]
@@ -172,7 +172,7 @@ class GameLogic:
         if other_player_id == 0:
             board[1:57] = path_board
         elif other_player_id == 1:
-            if NUM_PLAYERS != 2:
+            if self.num_players != 2:
                 board[15:57] = path_board[:42]
                 board[1:15] = path_board[42:]
             else:
@@ -257,11 +257,11 @@ class GameLogic:
         elif player_id == 3:
             indice = (target_position_relative - 1 + 42) % 56
 
-        if NUM_PLAYERS == 2:
+        if self.num_players == 2:
             if player_id == 1:
                 indice = (target_position_relative - 1 + 28) % 56
             return self.get_chemin_pdv_2_joueurs(player_id)[indice]
-        elif NUM_PLAYERS == 3 or NUM_PLAYERS == 4:
+        elif self.num_players == 3 or self.num_players == 4:
             if player_id == 1:
                 indice = (target_position_relative - 1 + 14) % 56
             return self.get_chemin_pdv(player_id)[indice]
@@ -269,7 +269,7 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        for other_player in range(NUM_PLAYERS):
+        for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
                     player_id, other_player, target_position_relative
@@ -299,10 +299,10 @@ class GameLogic:
             return position
 
         # Décalage de 28
-        if NUM_PLAYERS == 2:
+        if self.num_players == 2:
             offset = (to_player - from_player) * 28
         # Décalage de 14 (pour 3 c'est comme si on avait 4 joueurs et 1 pas utilisé)
-        elif NUM_PLAYERS == 3 or NUM_PLAYERS == 4:
+        elif self.num_players == 3 or self.num_players == 4:
             offset = (to_player - from_player) * 14
         else:
             raise ValueError("Nombre de joueurs non supporté")
@@ -310,13 +310,13 @@ class GameLogic:
         # print("position : ", position)
         # print("from player : ", from_player)
         # print("to player : ", to_player)
-        # print("num players : ", NUM_PLAYERS)
+        # print("num players : ", self.num_players)
         return (position + offset) % 56
 
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
-        for other_player in range(NUM_PLAYERS):
+        for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
                     player_id, other_player, position
@@ -330,7 +330,7 @@ class GameLogic:
         """
         Vérifie si un joueur a remporté la partie.
         """
-        for player_id in range(NUM_PLAYERS):
+        for player_id in range(self.num_players):
             if self.board[player_id][-1] == NB_CHEVAUX:
                 return player_id
         return -1
@@ -515,13 +515,13 @@ class GameLogic:
         """
         Retourne l'ordre des joueurs selon la perspective
         """
-        if NUM_PLAYERS == 2:
+        if self.num_players == 2:
             if perspective_player == 0:
                 return [0, 1]
             elif perspective_player == 1:
                 return [1, 0]
 
-        elif NUM_PLAYERS == 3:
+        elif self.num_players == 3:
             if perspective_player == 0:
                 return [0, 1, 2]
             elif perspective_player == 1:
@@ -529,7 +529,7 @@ class GameLogic:
             elif perspective_player == 2:
                 return [2, 0, 1]
 
-        elif NUM_PLAYERS == 4:
+        elif self.num_players == 4:
             if perspective_player == 0:
                 return [0, 1, 2, 3]
             elif perspective_player == 1:
@@ -546,7 +546,7 @@ class GameLogic:
         """
         Retourne un chemin relatif à la perspective d'un joueur donné (le joueur qui regarde)
         """
-        assert NUM_PLAYERS != 2, "Nombre de joueurs incorrect."
+        assert self.num_players != 2, "Nombre de joueurs incorrect."
 
         chemin = [[] for _ in range(56)]
 
@@ -560,7 +560,7 @@ class GameLogic:
                     # Calcul de l'indice selon l'ordre des joueurs et l'offset
                     indice = ((i * 14) + j - 1) % 56
                     chemin[indice].append(p)
-            i = (i + 1) % NUM_PLAYERS
+            i = (i + 1) % self.num_players
 
         return chemin
 
@@ -568,7 +568,7 @@ class GameLogic:
         """
         Retourne un chemin relatif à la perspective d'un joueur donné (le joueur qui regarde)
         """
-        assert NUM_PLAYERS == 2, "Nombre de joueurs incorrect."
+        assert self.num_players == 2, "Nombre de joueurs incorrect."
 
         chemin = [[] for _ in range(56)]
 
@@ -582,19 +582,19 @@ class GameLogic:
                     # Calcul de l'indice
                     indice = ((i * 28) + j - 1) % 56
                     chemin[indice].append(p)
-            i = (i + 1) % NUM_PLAYERS
+            i = (i + 1) % self.num_players
 
         return chemin
 
     def get_adversaires_overview_plateau(self, player_id):
-        assert NUM_PLAYERS == 2, "fonction pas implémenté pour plus de joueur"
+        assert self.num_players == 2, "fonction pas implémenté pour plus de joueur"
         # result = [] TODO faire pour tous les joueurs
         other_player_id = 1 if player_id == 0 else 0
         return self.get_overview_of(other_player_id)
 
     def get_str_adversaires_overview_plateau(self, player_id):
         str_game_overview = ""
-        for i in range(NUM_PLAYERS):
+        for i in range(self.num_players):
             if i != player_id:
                 str_game_overview += f"JOUEUR {i} : {self.get_overview_of(i)}\n"
         return str_game_overview
