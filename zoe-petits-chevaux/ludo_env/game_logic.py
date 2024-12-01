@@ -542,7 +542,6 @@ class GameLogic:
         Retourne un chemin relatif à la perspective d'un joueur donné (le joueur qui regarde)
         """
         assert self.num_players > 2, "Nombre de joueurs incorrect."
-        print("perspective_player", perspective_player)
 
         chemin = [[] for _ in range(56)]
 

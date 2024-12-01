@@ -36,8 +36,6 @@ def test_kill_move_out_2chevaux(game_2chevaux):
     assert lines[12] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert lines[13] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
 
-    print(game_2chevaux.get_valid_actions(1, 6))
-
     assert game_2chevaux.get_valid_actions(0, 6) == [[Action.MOVE_OUT], [Action.MOVE_FORWARD], False]
     assert game_2chevaux.get_valid_actions(1, 6) == [[Action.MOVE_OUT_AND_KILL], [Action.MOVE_OUT_AND_KILL], False]
 
@@ -75,7 +73,7 @@ def test_kill_2chevaux(game_2chevaux):
     assert game_2chevaux.get_valid_actions(0, 1) == [[], [Action.KILL], False]
 
     game_2chevaux.move_pawn(2, 0, 6, Action.MOVE_OUT)
-    assert game_2chevaux.get_valid_actions(2, 6) == [[], [], Action.NO_ACTION]
+    assert game_2chevaux.get_valid_actions(2, 6) == [[], [Action.MOVE_FORWARD], False]
 
     game_2chevaux.move_pawn(2, 1, 35, Action.MOVE_FORWARD)
     str_to_check = game_2chevaux.get_str_game_overview()

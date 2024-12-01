@@ -103,25 +103,25 @@ def test_3(game):
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
 
-# TODO pour raise 
+
 def test_interdit_1(game):
     game.init_board()
-    game.move_pawn(0, 0, , Action.MOVE_OUT)
-
-    str_to_check = game.get_str_game_overview()
-    lines = str_to_check.split("\n")
-
-    assert False
-    # TODO
-
-# TODO pour raise 
+    try:
+        game.move_pawn(0, 0, 5, Action.MOVE_OUT)  # Action théoriquement interdite
+    except AssertionError as e:
+        assert "Le dé n'est pas un 6" in str(e), "Le message d'erreur attendu n'est pas levé."
+    else:
+        assert False, "Aucune exception levée pour une action interdite."
+ 
 def test_interdit_2(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(0, 1, 6, Action.MOVE_OUT)
+    try:
+        game.move_pawn(0, 0, 6, Action.MOVE_OUT)
+        game.move_pawn(0, 5, 6, Action.MOVE_FORWARD)
+    except AssertionError as e:
+        assert "Pas de pion à déplacer à cette position" in str(e), "Le message d'erreur attendu n'est pas levé."
+    else:
+        assert False, "Aucune exception levée pour une action interdite."
+ 
+ 
 
-    str_to_check = game.get_str_game_overview()
-    lines = str_to_check.split("\n")
-
-    assert False
-    # TODO

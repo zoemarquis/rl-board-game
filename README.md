@@ -68,7 +68,7 @@ Pour la base de données :
 
 
 lancer les tests
-    python3 -m pytest tests_pytest/tests_4_joueurs/test_fin_partie.py
+    python3 -m pytest tests_pytest
 
 
 Choix entre 2, 3 et 4 joueurs.

@@ -65,17 +65,3 @@ def test_get_adversaires_relative_overview(game):
 
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
-
-
-# test get_overview etc TODO ZOE
-# def test_get_overview_of(game):
-# game.init_board()
-# game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-# game.move_pawn(1, 0, 6, Action.MOVE_OUT)
-# game.move_pawn(1, 0, 6, Action.MOVE_OUT)
-#
-# chemin_1 = game.get_adversaires_overview_plateau(0)
-# print(chemin_1)
-#
-# assert chemin_1 == [[0]], "CHEMIN 1 incorrecte."
-# return True  # TODO
