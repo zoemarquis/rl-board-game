@@ -1,5 +1,6 @@
 import pytest
 from ludo_env import GameLogic, Action
+## TODO ZOE 4 JOUEURS 
 
 
 @pytest.fixture
@@ -52,6 +53,13 @@ def test_get_relative_position_0(game_4chevaux):
     assert game_4chevaux.get_relative_position(0, 2, 29) == 1
     assert game_4chevaux.get_relative_position(0, 2, 42) == 14
     assert game_4chevaux.get_relative_position(0, 2, 56) == 28
+
+    # assert game_4chevaux.get_relative_position(0, 3, 1) == 15
+    # assert game_4chevaux.get_relative_position(0, 3, 15) == 29
+    # assert game_4chevaux.get_relative_position(0, 3, 28) == 42
+    # assert game_4chevaux.get_relative_position(0, 3, 29) == 43
+    # assert game_4chevaux.get_relative_position(0, 3, 42) == 56
+    # assert game_4chevaux.get_relative_position(0, 3, 56) == 14
     
 def test_get_relative_position_1(game_4chevaux):
     assert game_4chevaux.get_relative_position(1, 0, 1) == 15
