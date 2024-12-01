@@ -9,7 +9,7 @@ sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 
 env = LudoEnv(
-    num_players=2, nb_chevaux=2, mode_gym="jeu"
+    num_players=2, nb_chevaux=3, mode_gym="jeu", mode_fin_partie="un_pion"
 )
 
 
@@ -23,7 +23,7 @@ def play_game(env):
         print("dé : ", obs["dice_roll"])
         print()
         print(env.game.get_str_game_overview())
-        print(env.game.get_instruction_for_player(env.current_player, obs["dice_roll"]))
+        # print(env.game.get_instruction_for_player(env.current_player, obs["dice_roll"]))
         print(
             "actions valides : ",
             env.game.get_valid_actions(env.current_player, obs["dice_roll"]),

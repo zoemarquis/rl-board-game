@@ -301,7 +301,7 @@ class GameLogic:
 
         # TODO : Checker si les pions ne se mange pas entre eux dans l'escalier (normalement non car check < 57 avant)
         if position == 0 or position >= 57:
-            return position
+            raise ValueError("Position incorrecte")
 
         # Décalage de 28
         if self.num_players == 2:
@@ -311,12 +311,10 @@ class GameLogic:
             offset = (from_player - to_player) * 14
         else:
             raise ValueError("Nombre de joueurs non supporté")
-        # print("offset : ", offset)
-        # print("position : ", position)
-        # print("from player : ", from_player)
-        # print("to player : ", to_player)
-        # print("num players : ", self.num_players)
-        return (position + offset) % 56
+        result = (position + offset) % 56
+        if result == 0:
+            return 56
+        return result
 
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
@@ -429,7 +427,7 @@ class GameLogic:
                 if self.is_opponent_pawn_on(player_id, target_position):
                     valid_actions.append(Action.KILL)
                 else:
-                    if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                    if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
                         valid_actions.append(Action.MOVE_FORWARD)
 
             elif target_position >= 57:
