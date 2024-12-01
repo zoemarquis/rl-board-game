@@ -111,6 +111,7 @@ class GameLogic:
 
     def get_opponent_positions_on_my_board(self, player_id):
         # TODO : multi joueurs
+        # TODO : tests sur ça en 2 3 et 4 joueurs
         assert (
             self.num_players == 2
         ), "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
@@ -144,11 +145,11 @@ class GameLogic:
         return str_game_overview
 
     def get_overview_of(self, other_player_id):
-        # return self.board[other_player_id]
-        # TODO vérifier ce truc là
-        board = [0 for _ in range(TOTAL_SIZE)]
         # mettre tous les home ensemble, puis les safe zone, puis les goal
         # ensuite calculer pour les path
+
+        # TODO vérifier ce truc là
+        board = [0 for _ in range(TOTAL_SIZE)]
         count_all_home = self.get_ecurie_overview()
         count_self_home = count_all_home.count(other_player_id)
         board[0] = count_self_home
@@ -298,8 +299,6 @@ class GameLogic:
 
     # Savoir la position d'un joueur dans la perspective d'un autre joueur
     def get_relative_position(self, from_player, to_player, position):
-
-        # TODO : Checker si les pions ne se mange pas entre eux dans l'escalier (normalement non car check < 57 avant)
         if position == 0 or position >= 57:
             raise ValueError("Position incorrecte")
 
@@ -391,7 +390,6 @@ class GameLogic:
         if action == Action.MOVE_OUT:
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_OUT_AND_KILL:
-            # TODO ZOE : verifier ça ok 
             self.kill_pawn(player_id, 1)
             self.sortir_pion(player_id, dice_value)
         elif action == Action.MOVE_FORWARD:
@@ -401,7 +399,6 @@ class GameLogic:
         elif action == Action.REACH_GOAL:
             self.securise_pion_goal(player_id, old_position, dice_value)
         elif action == Action.KILL:
-            # TODO ZOE : verifier ça ok (en mulitjoueur aussi)
             self.kill_pawn(player_id, old_position + dice_value)
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.NO_ACTION:
@@ -410,7 +407,6 @@ class GameLogic:
             raise ValueError("Action non valide")
 
     def get_valid_actions_for_pawns(self, player_id, position, state, dice_value):
-        # TODO : si on s'est fait die (au tour précédent : reward négatif ? est ce vrmt utile ?)
         target_position = position + dice_value
 
         valid_actions = []
@@ -489,7 +485,7 @@ class GameLogic:
                 encoded_actions.append(self.encode_action(i, action))
         return list(set(encoded_actions))
 
-    def decode_action(self, action):  # TODO : adapter à la version du jeu ?
+    def decode_action(self, action):  
         if action == 0:
             return 0, Action.NO_ACTION
         elif action == 1:
@@ -505,7 +501,7 @@ class GameLogic:
         return pawn_id, Action(action_type)
 
 
-    def get_reward(self, action):  # TODO : plusieurs agents 
+    def get_reward(self, action): 
         return REWARD_TABLE_MOVE_OUT[action]
 
     # ------------------ Fonctions d'affichage ------------------
@@ -545,7 +541,8 @@ class GameLogic:
         """
         Retourne un chemin relatif à la perspective d'un joueur donné (le joueur qui regarde)
         """
-        assert self.num_players != 2, "Nombre de joueurs incorrect."
+        assert self.num_players > 2, "Nombre de joueurs incorrect."
+        print("perspective_player", perspective_player)
 
         chemin = [[] for _ in range(56)]
 
@@ -556,10 +553,15 @@ class GameLogic:
         for p in player_order:
             for j in range(1, 57):  # Cases du plateau
                 for _ in range(self.board[p][j]):
+                    relative_position = self.get_relative_position(
+                        p, perspective_player, j
+                    ) 
+                    relative_position_chemin = relative_position - 1 # 1 à 56 -> 0 à 55
                     # Calcul de l'indice selon l'ordre des joueurs et l'offset
-                    indice = ((i * 14) + j - 1) % 56
-                    chemin[indice].append(p)
+                    chemin[relative_position_chemin].append(p)
             i = (i + 1) % self.num_players
+
+        # TODO : vérifier ça fonctionnel
 
         return chemin
 
