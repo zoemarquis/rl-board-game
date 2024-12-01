@@ -53,19 +53,32 @@ class LudoEnv(gym.Env):
 
         self.observation_space = gym.spaces.Dict(
             {
-                # TODO : est ce qu'on garde my board ou alors on fait my home, my chemin, my escalier, my goal ?
-                "my_board": gym.spaces.Box(
-                    low=0, high=self.nb_chevaux, shape=(TOTAL_SIZE,), dtype=np.int8
-                ),  # État du plateau du joueur courant
-                # "my_chemin_with_adversaires": gym.spaces.Box(
-                #     low=0,
-                #     high=self.nb_chevaux * (self.num_players - 1),
-                #     shape=(BOARD_SIZE,),
-                #     dtype=np.int8,
-                # ),  # Agrégation des autres joueurs selon quel pdv ? TODO
+                # "my_board": gym.spaces.Box(
+                #     low=0, high=self.nb_chevaux, shape=(TOTAL_SIZE,), dtype=np.int8
+                # ),  # État du plateau du joueur courant
+                # # "my_chemin_with_adversaires": gym.spaces.Box(
+                # #     low=0,
+                # #     high=self.nb_chevaux * (self.num_players - 1),
+                # #     shape=(BOARD_SIZE,),
+                # #     dtype=np.int8,
+                # # ),  # Agrégation des autres joueurs selon quel pdv ? TODO
+                # "dice_roll": gym.spaces.Discrete(7),  # Résultat du dé (1 à 6)
+
+                "my_ecurie" : gym.spaces.Discrete(self.nb_chevaux + 1),
+                # État de l'écurie du joueur courant
+
+                "my_chemin" : gym.spaces.Box(
+                    low=-1, high=1, shape=(self.board_size,), dtype=np.int8
+                ), # État du chemin du joueur courant : -1 = adversaire, 0 = vide, 1 = joueur courant
+
+                "my_escalier" : gym.spaces.Box(
+                    low=0, high=self.nb_chevaux, shape=(self.safe_zone_size,) , dtype=np.int8
+                ), # État de l'escalier du joueur courant
+
+                "my_goal" : gym.spaces.Discrete(self.nb_chevaux + 1),
+                # État du goal du joueur courant
+
                 "dice_roll": gym.spaces.Discrete(7),  # Résultat du dé (1 à 6)
-                # TODO : ajouter ici vu global distances ?
-                # TODO : observer aussi les state des pions ?
             }
         )
 
@@ -73,11 +86,17 @@ class LudoEnv(gym.Env):
 
     def _get_observation(self):
         obs = {
-            "my_board": self.game.board[self.current_player],
-            # "my_chemin_with_adversaires": self.game.get_opponent_positions_on_my_board(
-            #     self.current_player
-            # ),  # TODO : ici ça ne fonctionne que quand self.num_players = 2, on a pas encore testé pour plus
-            # TODO je crois qu'on retournne pas ce qu'il fait pour les plateaux des adversaires : on veut les adversaires sur NOTRE plateau
+            # "my_board": self.game.board[self.current_player],
+            # # "my_chemin_with_adversaires": self.game.get_opponent_positions_on_my_board(
+            # #     self.current_player
+            # # ),  # TODO : ici ça ne fonctionne que quand self.num_players = 2, on a pas encore testé pour plus
+            # # TODO je crois qu'on retournne pas ce qu'il fait pour les plateaux des adversaires : on veut les adversaires sur NOTRE plateau
+            # "dice_roll": self.dice_roll,
+
+            "my_ecurie" : self.game.get_observation_my_ecurie(self.current_player),
+            "my_chemin" : self.game.get_observation_my_chemin(self.current_player),
+            "my_escalier" : self.game.get_observation_my_escalier(self.current_player),
+            "my_goal" : self.game.get_observation_my_goal(self.current_player),
             "dice_roll": self.dice_roll,
         }
         return obs
@@ -100,8 +119,13 @@ class LudoEnv(gym.Env):
     def step(self, action):
         obs = self._get_observation()
         if self.mode_gym == "jeu":
+            print()
+            print("joueur : ", self.current_player)
             print("dé : ", obs["dice_roll"])
-            print("my board : ", obs["my_board"])
+            print("my_ecurie : ", obs["my_ecurie"])
+            print("my_chemin : ", obs["my_chemin"])
+            print("my_escalier : ", obs["my_escalier"])
+            print("my_goal : ", obs["my_goal"])
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)

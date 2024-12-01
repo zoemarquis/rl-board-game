@@ -606,3 +606,31 @@ class GameLogic:
 
     # TODO : ajouter une fonction pour se voir avec son POV + 1 pour ses joueur, 0 pour les autres,
     # # où du moins avec un plateau sans mes pions mais où je vois où sont tous les autres par rapport à ma vision
+
+
+    def get_observation_my_ecurie(self, player_id) -> int:
+        return self.board[player_id][0]
+    
+    def get_observation_my_chemin(self, player_id):
+        chemin = self.get_chemin_pdv(player_id) if self.num_players > 2 else self.get_chemin_pdv_2_joueurs(player_id)
+
+        other_player_ids = [0, 1, 2, 3]
+        other_player_ids.remove(player_id)
+
+        result = [0 for _ in range(56)]
+        for i in range(56):
+            assert len(chemin[i]) <= 1, "Erreur dans la logique du jeu"
+            if player_id in chemin[i]:
+                result[i] = 1
+            else :
+                for other_player_id in other_player_ids:
+                    if other_player_id in chemin[i]:
+                        result[i] = -1
+                        break
+        return result
+    
+    def get_observation_my_escalier(self, player_id):
+        return self.board[player_id][57:63]
+    
+    def get_observation_my_goal(self, player_id) -> int:
+        return self.board[player_id][-1]
