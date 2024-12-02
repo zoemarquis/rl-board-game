@@ -139,6 +139,7 @@ class LudoEnv(gym.Env):
                 pawn_id, action_type = self.game.decode_action(action)
                 print("debug : ", action, pawn_id, action_type)
             else:
+                self.change_player()
                 return self._get_observation(), -10, False, False, {}
 
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
@@ -148,12 +149,15 @@ class LudoEnv(gym.Env):
         done = self.game.is_game_over()
 
         if not done:
-            self.current_player = (self.current_player + 1) % self.num_players
-            if self.current_player == 0:
-                self.game.tour += 1
+            self.change_player()
 
         # TODO : 6 alors on rejoue
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
         return observation, reward, done, False, {}
+
+    def change_player(self):
+        self.current_player = (self.current_player + 1) % self.num_players
+        if self.current_player == 0:
+            self.game.tour += 1
