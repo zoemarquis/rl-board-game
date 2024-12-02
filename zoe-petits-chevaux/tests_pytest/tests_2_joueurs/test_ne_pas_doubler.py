@@ -43,8 +43,6 @@ def test_not_double_opponent_basic(setup_env):
     assert env.game.board[0][9] == 0, "Le pion devrait être bloqué avant la case occupée par un pion adverse."
     assert env.game.board[0][3] == 1, "Le pion devrait avoir reculé du nombre de dé restant."
 
-# TODO : Voir si on garde ce test en fonction de ce que l'on fait dans ce cas
-# Actuellement, le pion ne bouge pas s'il tente de dépasser l'escalier
 def test_blocked_near_escalier_NORMAL_FAILED(setup_env):
     env = setup_env
     env.reset()
@@ -82,7 +80,6 @@ def test_multiple_blocking_pawns(setup_env):
     assert env.game.board[0][3] == 1, "Le pion devrait avoir reculé du nombre de dé restant."
 
 
-# TODO :  Gérer ce cas (ne pas autoriser KILL s'il y a un pion bloquant)
 def test_jump_and_hit_second_opponent(setup_env):
     env = setup_env
     env.reset()

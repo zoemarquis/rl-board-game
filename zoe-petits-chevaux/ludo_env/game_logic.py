@@ -373,7 +373,7 @@ class GameLogic:
         
         # TODO : Mettre un if ici si on veut autoriser le doublement
         # Empêcher de doubler un pion et reculer
-        for position in range(old_position + 1, min(target_position + 1, 56)):
+        for position in range(old_position + 1, min(target_position + 1, 57)):
             #print(f"Position : {position}")
             #print(f"chemin_observation[position] : {chemin_observation[position]}")
             if chemin_observation[position-1] == -1 or chemin_observation[position-1] == 1:
@@ -449,14 +449,36 @@ class GameLogic:
 
         elif state == State.CHEMIN:
             if target_position < 57:  # limite avant zone protégée
-                if self.is_opponent_pawn_on(player_id, target_position):
-                    valid_actions.append(Action.KILL)
+
+                # TODO : mettre un if si on veut autoriser le doublement
+                is_blocked = False
+                for pos in range(position + 1, target_position):
+                    if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0:
+                        is_blocked = True
+                        break
+
+                if is_blocked:
+                    valid_actions.append(Action.MOVE_FORWARD)
                 else:
-                    if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
-                        valid_actions.append(Action.MOVE_FORWARD)
+                    if self.is_opponent_pawn_on(player_id, target_position):
+                        valid_actions.append(Action.KILL)
+                    else:
+                        if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                            valid_actions.append(Action.MOVE_FORWARD)
 
             elif target_position >= 57:
-                valid_actions.append(Action.ENTER_SAFEZONE)
+                #print("DEPASSEMENT DE L'ESCALIER")
+                # TODO : mettre un if si on veut autoriser le doublement
+                is_blocked = False
+                for pos in range(position + 1, min(target_position, 57)):
+                    if self.board[player_id][pos] > 0:
+                        is_blocked = True
+                        break
+
+                if is_blocked:
+                    valid_actions.append(Action.MOVE_FORWARD)
+                else:
+                    valid_actions.append(Action.ENTER_SAFEZONE)
             
             # TODO : empecher de doubler 
             # TODO ajouter ces moves là
