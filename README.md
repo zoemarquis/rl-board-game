@@ -86,3 +86,34 @@ choisir entre 2, 3, 4 (exclusif) (voire plus ?) chevaux par joueur
 
 
 
+
+
+# Règles du jeu fonctionnelles
+
+Qu'un seul pion par case 
+
+## Nombre de pions par joueur 
+- [x] 2 pions
+- [x] 3 pions
+- [x] 4 pions
+- [ ] 5 pions : TODO  
+- [ ] 6 pions : TODO 
+
+## Gagner
+- [x] un pion dans objectif 
+- [x] tous les pions dans objectif 
+
+## Doubler
+- [ ] rester coincé derrière : WIP sur une branche 
+- [x] autoriser
+
+## Pied de l'escalier 
+- [x] il suffit de dépasser pour entrer dans l'escalier
+- [ ] il faut atteindre exactement le pied de l'escalier
+
+## Monter l'escalier 
+- [ ] 
+- [ ]
+
+## Atteindre objectif
+- [ ] 
