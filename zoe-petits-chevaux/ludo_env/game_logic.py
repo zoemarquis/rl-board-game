@@ -292,7 +292,6 @@ class GameLogic:
         return False
     
     def is_there_pawn_to_kill(self, player_id, target_position):
-        # TODO ZOE : tester cette fonction 
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -303,15 +302,24 @@ class GameLogic:
         return False
 
     def is_there_pawn_between_my_position_and_target_position(self, player_id, old_position, target_position):
-        # TODO ZOE : tester cette fonction
         # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
         # TODO le représenter sous une autre forme d'action ?
         for pos in range(old_position + 1, target_position):
             if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
-                return pos
+                return True
         if self.board[player_id][target_position] > 0:
-            return target_position
-        return -1
+            return True
+        return False
+    
+    def get_dice_value_because_of_obstacle(self, player_id, old_position, target_position):
+        dice_value = 0
+        for pos in range(old_position + 1, target_position):
+            if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0:
+                return dice_value
+            dice_value += 1
+        if self.board[player_id][target_position] > 0:
+            return dice_value
+        raise ValueError("Pas d'obstacle")
 
 
     def is_pawn_threatened(
@@ -397,27 +405,33 @@ class GameLogic:
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
 
-        target_position = old_position + dice_value
-        chemin_observation = self.get_observation_my_chemin(player_id)
+        # target_position = old_position + dice_value
+        # chemin_observation = self.get_observation_my_chemin(player_id)
+        # print(f"Chemin observation : {chemin_observation}")
         
-        # TODO : Mettre un if ici si on veut autoriser le doublement
-        for position in range(old_position + 1, min(target_position + 1, 57)):
-            if chemin_observation[position-1] == -1 or chemin_observation[position-1] == 1:
-                new_position = 2*position - dice_value - old_position
+        # # TODO : Mettre un if ici si on veut autoriser le doublement
+        # # Empêcher de doubler un pion et reculer
+        # for position in range(old_position + 1, min(target_position + 1, 57)):
+        #     #print(f"Position : {position}")
+        #     #print(f"chemin_observation[position] : {chemin_observation[position]}")
+        #     if chemin_observation[position-1] == -1 or chemin_observation[position-1] == 1:
+        #         print(f"Target : {target_position}")
+        #         #if position == target_position and other_player != player_id:
+        #         #    print(f"KILL possible à la position {position}")
+        #         #    break
+        #         #else:
+        #         new_position = 2*position - dice_value - old_position
+        #         #print(f"Chemin bloqué par un pion à la position {position}")
+        #         if new_position < 1:
+        #             new_position = 1
 
-                # Ne pas reculer plus que le joueur derrière
-                for backward_pos in range(old_position - 1, max(new_position - 1, 0), -1):
-                    if chemin_observation[backward_pos - 1] == -1 or chemin_observation[backward_pos - 1] == 1:
-                        new_position = backward_pos + 1 
-                        break
+        #         self.board[player_id][old_position] -= 1
+        #         self.board[player_id][new_position] += 1
+        #         return
 
-                # Ne pas reculer plus que la case de départ
-                if new_position < 1:
-                    new_position = 1
-
-                self.board[player_id][old_position] -= 1
-                self.board[player_id][new_position] += 1
-                return
+        # # TODO : Gérer le cas quand un joueur est entre un pion et l'escalier
+        # # et que le pion a un dé le faisant arriver après l'escalier
+        # # --> le code doit être changer dans les actions possibles
 
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
@@ -446,9 +460,8 @@ class GameLogic:
             self.kill_pawn(player_id, 1)
             self.sortir_pion(player_id, dice_value)
         elif action == Action.GET_STUCK_BEHIND:
-            # TODO ZOE : get target position et y avancer 
-            pass
-
+            valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, old_position + dice_value)
+            self.avance_pion_path(player_id, old_position, valeur_de_avec_obstacle)
         elif action == Action.MOVE_FORWARD:
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.ENTER_SAFEZONE or action == Action.MOVE_IN_SAFE_ZONE:
@@ -479,7 +492,7 @@ class GameLogic:
             if target_position < 57:  # limite avant zone protégée
 
                 obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
-                if obstacle != -1:
+                if obstacle:
                     valid_actions.append(Action.GET_STUCK_BEHIND)
                 else: 
                     if self.is_there_pawn_to_kill(player_id, target_position):
@@ -489,15 +502,15 @@ class GameLogic:
 
             elif target_position >= 57:
                 obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
-                if obstacle != -1:
+                if obstacle:
                     valid_actions.append(Action.GET_STUCK_BEHIND)
                 else:
                     valid_actions.append(Action.ENTER_SAFEZONE)
 
         elif state == State.ESCALIER:
             if target_position <= 62:
-                if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
-                    valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
+                # TODO ZOE : mis de coté : if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                valid_actions.append(Action.MOVE_IN_SAFE_ZONE)
             if target_position >= 63:
                 valid_actions.append(Action.REACH_GOAL)
                 
