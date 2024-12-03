@@ -275,6 +275,7 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
+        assert target_position_relative in range(1, 57), "Position incorrecte"
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -285,6 +286,7 @@ class GameLogic:
         return False
     
     def is_there_pawn_to_kill(self, player_id, target_position):
+        assert target_position in range(1, 57), "Position incorrecte"
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -349,6 +351,7 @@ class GameLogic:
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
+        assert position in range(1, 57), "Position incorrecte"
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -494,7 +497,8 @@ class GameLogic:
                         valid_actions.append(Action.MOVE_FORWARD)
 
             elif target_position >= 57:
-                obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
+                obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, 56)
+                # TODO ZOE TESTER LE 56 ICI 
                 if obstacle:
                     valid_actions.append(Action.GET_STUCK_BEHIND)
                 else:

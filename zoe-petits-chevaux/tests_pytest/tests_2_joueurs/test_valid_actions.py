@@ -62,6 +62,7 @@ def test_get_stuck_behind(game_3chevaux):
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 0,
                 0]
+    game_3chevaux.move_pawn(0, 1, 4, Action.GET_STUCK_BEHIND)
     assert game_3chevaux.board[0] == [ 1, 
                 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -77,8 +78,8 @@ def test_get_stuck_behind(game_3chevaux):
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 1,
                 0]
-    game_3chevaux.move_pawn(1, 0, 30, Action.GET_STUCK_BEHIND)
-    game_3chevaux.board[1] = [ 1, 
+    game_3chevaux.move_pawn(1, 30, 6, Action.GET_STUCK_BEHIND)
+    assert game_3chevaux.board[1] == [ 1, 
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
