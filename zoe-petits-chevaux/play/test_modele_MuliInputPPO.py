@@ -2,7 +2,7 @@
 from stable_baselines3 import PPO
 
 model = PPO.load(
-    "reinforcement_learning/masked_ppo_ludo_model"
+    "reinforcement_learning/agent_maskedppo_2joueurs_2chevaux_tous"
 )  # notre modele entrainé
 
 
@@ -17,7 +17,7 @@ from ludo_env import LudoEnv
 
 
 env = LudoEnv(
-    num_players=2, nb_chevaux=2, mode_gym="jeu",
+    num_players=2, nb_chevaux=2, mode_gym="jeu", mode_fin_partie="tous_pions"
 )
 obs = env.reset()
 obs = obs[0]
