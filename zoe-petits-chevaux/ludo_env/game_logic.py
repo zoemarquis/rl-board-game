@@ -369,31 +369,25 @@ class GameLogic:
 
         target_position = old_position + dice_value
         chemin_observation = self.get_observation_my_chemin(player_id)
-        print(f"Chemin observation : {chemin_observation}")
         
         # TODO : Mettre un if ici si on veut autoriser le doublement
-        # Empêcher de doubler un pion et reculer
         for position in range(old_position + 1, min(target_position + 1, 57)):
-            #print(f"Position : {position}")
-            #print(f"chemin_observation[position] : {chemin_observation[position]}")
             if chemin_observation[position-1] == -1 or chemin_observation[position-1] == 1:
-                print(f"Target : {target_position}")
-                #if position == target_position and other_player != player_id:
-                #    print(f"KILL possible à la position {position}")
-                #    break
-                #else:
                 new_position = 2*position - dice_value - old_position
-                #print(f"Chemin bloqué par un pion à la position {position}")
+
+                # Ne pas reculer plus que le joueur derrière
+                for backward_pos in range(old_position - 1, max(new_position - 1, 0), -1):
+                    if chemin_observation[backward_pos - 1] == -1 or chemin_observation[backward_pos - 1] == 1:
+                        new_position = backward_pos + 1 
+                        break
+
+                # Ne pas reculer plus que la case de départ
                 if new_position < 1:
                     new_position = 1
 
                 self.board[player_id][old_position] -= 1
                 self.board[player_id][new_position] += 1
                 return
-
-        # TODO : Gérer le cas quand un joueur est entre un pion et l'escalier
-        # et que le pion a un dé le faisant arriver après l'escalier
-        # --> le code doit être changer dans les actions possibles
 
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
