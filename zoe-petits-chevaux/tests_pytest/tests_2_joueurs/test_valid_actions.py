@@ -86,3 +86,6 @@ def test_get_stuck_behind(game_3chevaux):
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
                 0, 0, 0, 0, 0, 1,
                 0]
+    
+def test_get_dice_value_because_of_obstacle(game_3chevaux):
+    pass 

@@ -275,7 +275,7 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        assert target_position_relative in range(1, 57), "Position incorrecte"
+        assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}"
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -297,6 +297,7 @@ class GameLogic:
         return False
 
     def is_there_pawn_between_my_position_and_target_position(self, player_id, old_position, target_position):
+        assert target_position in range(1, 57), f"Position incorrecte {target_position}"
         # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
         # TODO le représenter sous une autre forme d'action ?
         for pos in range(old_position + 1, target_position):
@@ -307,6 +308,7 @@ class GameLogic:
         return False
     
     def get_dice_value_because_of_obstacle(self, player_id, old_position, target_position):
+        assert target_position in range(1, 57), f"Position incorrecte {target_position}"
         dice_value = 0
         for pos in range(old_position + 1, target_position):
             if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0:
@@ -314,7 +316,8 @@ class GameLogic:
             dice_value += 1
         if self.board[player_id][target_position] > 0:
             return dice_value
-        raise ValueError("Pas d'obstacle")
+        raise ValueError(f"Pas d'obstacle. Player id : {player_id} Old position :{old_position} target position : {target_position} État du plateau : {self.board}")
+
 
 
     def is_pawn_threatened(
@@ -456,7 +459,10 @@ class GameLogic:
             self.kill_pawn(player_id, 1)
             self.sortir_pion(player_id, dice_value)
         elif action == Action.GET_STUCK_BEHIND:
-            valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, old_position + dice_value)
+            target_position = old_position + dice_value
+            if target_position >= 57:
+                target_position = 56
+            valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, target_position  )
             self.avance_pion_path(player_id, old_position, valeur_de_avec_obstacle)
         elif action == Action.MOVE_FORWARD:
             self.avance_pion_path(player_id, old_position, dice_value)

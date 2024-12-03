@@ -5,7 +5,7 @@ REWARD_TABLE_MOVE_OUT = {
     Action.MOVE_OUT: 20,
     Action.MOVE_OUT_AND_KILL: 10,
     Action.MOVE_FORWARD: 5,
-    Action.GET_STUCK_BEHIND: -1,
+    Action.GET_STUCK_BEHIND: -5,
     Action.ENTER_SAFEZONE: 15,
     Action.MOVE_IN_SAFE_ZONE: 1,
     Action.REACH_GOAL: 10,
