@@ -1,10 +1,28 @@
 import pytest
-from ludo_env import LudoEnv
-from ludo_env.action import Action
+from ludo_env import LudoEnv, GameLogic,  Action
 
 @pytest.fixture
 def setup_env():
     return LudoEnv(num_players=2, nb_chevaux=2)
+
+@pytest.fixture
+def game_4chevaux():
+    game = GameLogic(num_players=2, nb_chevaux=4)
+    game.board[0] = [ 0, 
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
+                1, 0, 0, 0, 0, 0,
+                0]
+    game.board[1] = [ 1, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 
+                1, 0, 0, 0, 0, 0,
+                0]
+    return game
 
 def test_not_double_me_basic(setup_env):
     env = setup_env
@@ -121,3 +139,14 @@ def test_recoil_stops_at_start(setup_env):
 
     assert env.game.board[0][1] == 1, "Le pion doit s'arrêter à la case 1."
     assert env.game.board[0][2] == 0, "Le pion doit quitter sa position initiale."
+
+
+def test_no_overtake_8(game_4chevaux):
+    assert game_4chevaux.get_valid_actions(0, 1) == [[Action.MOVE_FORWARD], [Action.MOVE_FORWARD], [Action.KILL], [Action.MOVE_IN_SAFE_ZONE], False]
+    assert game_4chevaux.get_valid_actions(1, 1) == [[], [Action.KILL], [Action.ENTER_SAFEZONE], [Action.MOVE_IN_SAFE_ZONE], False]
+    
+    # assert game_4chevaux.get_valid_actions(0, 2) == [[Action.MOVE_FORWARD], [Action.MOVE_FORWARD], [Action.KILL], [Action.MOVE FORWARD ET BACKWARD NON ?], False]
+    # TODO
+    
+    game_4chevaux.avance_pion_path(1, 28, 2)
+    assert game_4chevaux.board[1][28] == 1
