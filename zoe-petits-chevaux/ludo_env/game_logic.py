@@ -650,6 +650,7 @@ class GameLogic:
         for action in DEFAULT_ACTION_ORDER:
             if action in encoded_valid_actions:
                 return action
+        assert False, "Erreur : Aucune action possible dans la liste d'actions par défaut"
 
     # TODO : ajouter une fonction pour se voir avec son POV + 1 pour ses joueur, 0 pour les autres,
     # # où du moins avec un plateau sans mes pions mais où je vois où sont tous les autres par rapport à ma vision
