@@ -283,6 +283,29 @@ class GameLogic:
                 if self.board[other_player][relative_position] > 0:
                     return True
         return False
+    
+    def is_there_pawn_to_kill(self, player_id, target_position):
+        # TODO ZOE : tester cette fonction 
+        for other_player in range(self.num_players):
+            if other_player != player_id:
+                relative_position = self.get_relative_position(
+                    player_id, other_player, target_position
+                )
+                if self.board[other_player][relative_position] > 0:
+                    return True
+        return False
+
+    def is_there_pawn_between_my_position_and_target_position(self, player_id, old_position, target_position):
+        # TODO ZOE : tester cette fonction
+        # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
+        # TODO le représenter sous une autre forme d'action ?
+        for pos in range(old_position + 1, target_position):
+            if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
+                return pos
+        if self.board[player_id][target_position] > 0:
+            return target_position
+        return -1
+
 
     def is_pawn_threatened(
         self, player, position
@@ -421,6 +444,10 @@ class GameLogic:
         elif action == Action.MOVE_OUT_AND_KILL:
             self.kill_pawn(player_id, 1)
             self.sortir_pion(player_id, dice_value)
+        elif action == Action.GET_STUCK_BEHIND:
+            # TODO ZOE : get target position et y avancer 
+            pass
+
         elif action == Action.MOVE_FORWARD:
             self.avance_pion_path(player_id, old_position, dice_value)
         elif action == Action.ENTER_SAFEZONE or action == Action.MOVE_IN_SAFE_ZONE:
@@ -450,43 +477,21 @@ class GameLogic:
         elif state == State.CHEMIN:
             if target_position < 57:  # limite avant zone protégée
 
-                # TODO : mettre un if si on veut autoriser le doublement
-                is_blocked = False
-                for pos in range(position + 1, target_position):
-                    if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0:
-                        is_blocked = True
-                        break
-
-                if is_blocked:
-                    valid_actions.append(Action.MOVE_FORWARD)
-                else:
-                    if self.is_opponent_pawn_on(player_id, target_position):
+                obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
+                if obstacle != -1:
+                    valid_actions.append(Action.GET_STUCK_BEHIND)
+                else: 
+                    if self.is_there_pawn_to_kill(player_id, target_position):
                         valid_actions.append(Action.KILL)
-                    else:
-                        if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
-                            valid_actions.append(Action.MOVE_FORWARD)
+                    else: 
+                        valid_actions.append(Action.MOVE_FORWARD)
 
             elif target_position >= 57:
-                #print("DEPASSEMENT DE L'ESCALIER")
-                # TODO : mettre un if si on veut autoriser le doublement
-                is_blocked = False
-                for pos in range(position + 1, min(target_position, 57)):
-                    if self.board[player_id][pos] > 0:
-                        is_blocked = True
-                        break
-
-                if is_blocked:
-                    valid_actions.append(Action.MOVE_FORWARD)
+                obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
+                if obstacle != -1:
+                    valid_actions.append(Action.GET_STUCK_BEHIND)
                 else:
                     valid_actions.append(Action.ENTER_SAFEZONE)
-            
-            # TODO : empecher de doubler 
-            # TODO ajouter ces moves là
-            # if self.is_opponent_pawn_on(player_id, position+dice_value):
-            #     valid_actions.append(Action.KILL)
-            # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
-            #     valid_actions.append(Action.PROTECT)
-            # TODO faire changer la regle : je peux avoir moi plusieurs fois sur la meme case : PROTECT 
 
         elif state == State.ESCALIER:
             if target_position <= 62:
