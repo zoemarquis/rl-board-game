@@ -22,7 +22,7 @@ class LudoEnv(gym.Env):
         with_render=False,
     ):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
-        assert nb_chevaux in [2, 3, 4], "Only 2, 3 or 4 pawns are allowed"
+        assert nb_chevaux in [2, 3, 4, 5, 6], "Only 2, 3, 4, 5 or 6 pawns are allowed"
         assert mode_fin_partie in [
             "tous_pions",
             "un_pion",
