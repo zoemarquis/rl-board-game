@@ -7,8 +7,7 @@ from ludo_env.game_logic import (
     BOARD_SIZE,
 )
 from ludo_env.action import Action
-# from ludo_env.renderer import Renderer
-from ludo_env.interface import Interface
+from ludo_env.renderer import Renderer
 
 
 class LudoEnv(gym.Env):
@@ -23,7 +22,7 @@ class LudoEnv(gym.Env):
         with_render=False,
     ):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
-        assert nb_chevaux in [2, 3, 4], "Only 2, 3 or 4 pawns are allowed"
+        assert nb_chevaux in [2, 3, 4, 5, 6], "Only 2, 3, 4, 5 or 6 pawns are allowed"
         assert mode_fin_partie in [
             "tous_pions",
             "un_pion",
@@ -46,8 +45,7 @@ class LudoEnv(gym.Env):
         self.safe_zone_size = 6  # TODO delete
 
         if self.with_render:
-            #  self.renderer = Renderer()
-            self.renderer = Interface()
+            self.renderer = Renderer()
 
         self.action_space = gym.spaces.Discrete(
             3 + self.nb_chevaux * (len(Action) - 3)
@@ -116,11 +114,12 @@ class LudoEnv(gym.Env):
 
     def render(self, game, mode="human"):
         if self.with_render:
-            self.renderer.render(self.game, 
-                                 self.current_player, 
-                                 self.dice_roll,
-                                 self.game.encode_valid_actions(self.game.get_valid_actions(self.current_player, self.dice_roll)),
-                                 self.game.get_pawns_info(self.current_player))
+            self.renderer.render(
+                self.game, 
+                self.current_player, 
+                self.dice_roll,
+                self.game.encode_valid_actions(self.game.get_valid_actions(self.current_player, self.dice_roll)),
+                self.game.get_pawns_info(self.current_player))
 
     def step(self, action):
         obs = self._get_observation()
