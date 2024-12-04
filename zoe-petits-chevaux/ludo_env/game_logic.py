@@ -369,31 +369,25 @@ class GameLogic:
 
         target_position = old_position + dice_value
         chemin_observation = self.get_observation_my_chemin(player_id)
-        print(f"Chemin observation : {chemin_observation}")
         
         # TODO : Mettre un if ici si on veut autoriser le doublement
-        # Empêcher de doubler un pion et reculer
         for position in range(old_position + 1, min(target_position + 1, 57)):
-            #print(f"Position : {position}")
-            #print(f"chemin_observation[position] : {chemin_observation[position]}")
             if chemin_observation[position-1] == -1 or chemin_observation[position-1] == 1:
-                print(f"Target : {target_position}")
-                #if position == target_position and other_player != player_id:
-                #    print(f"KILL possible à la position {position}")
-                #    break
-                #else:
                 new_position = 2*position - dice_value - old_position
-                #print(f"Chemin bloqué par un pion à la position {position}")
+
+                # Ne pas reculer plus que le joueur derrière
+                for backward_pos in range(old_position - 1, max(new_position - 1, 0), -1):
+                    if chemin_observation[backward_pos - 1] == -1 or chemin_observation[backward_pos - 1] == 1:
+                        new_position = backward_pos + 1 
+                        break
+
+                # Ne pas reculer plus que la case de départ
                 if new_position < 1:
                     new_position = 1
 
                 self.board[player_id][old_position] -= 1
                 self.board[player_id][new_position] += 1
                 return
-
-        # TODO : Gérer le cas quand un joueur est entre un pion et l'escalier
-        # et que le pion a un dé le faisant arriver après l'escalier
-        # --> le code doit être changer dans les actions possibles
 
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
@@ -630,9 +624,11 @@ class GameLogic:
         for p in player_order:
             for j in range(1, 57):
                 for _ in range(self.board[p][j]):
-                    # Calcul de l'indice
-                    indice = ((i * 28) + j - 1) % 56
-                    chemin[indice].append(p)
+                    relative_position = self.get_relative_position(
+                        p, perspective_player, j
+                    )
+                    relative_position_chemin = relative_position - 1
+                    chemin[relative_position_chemin].append(p)
             i = (i + 1) % self.num_players
 
         return chemin
@@ -654,6 +650,7 @@ class GameLogic:
         for action in DEFAULT_ACTION_ORDER:
             if action in encoded_valid_actions:
                 return action
+        assert False, "Erreur : Aucune action possible dans la liste d'actions par défaut"
 
     # TODO : ajouter une fonction pour se voir avec son POV + 1 pour ses joueur, 0 pour les autres,
     # # où du moins avec un plateau sans mes pions mais où je vois où sont tous les autres par rapport à ma vision
@@ -664,7 +661,7 @@ class GameLogic:
     
     def get_observation_my_chemin(self, player_id):
         chemin = self.get_chemin_pdv(player_id) if self.num_players > 2 else self.get_chemin_pdv_2_joueurs(player_id)
-
+        
         other_player_ids = [0, 1, 2, 3]
         other_player_ids.remove(player_id)
 
