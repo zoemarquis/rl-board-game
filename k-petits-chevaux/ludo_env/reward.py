@@ -27,6 +27,8 @@ DEFAULT_ACTION_ORDER = {
     7,  # avancer
     4,
     9,  # avancer dans la safezone
+    # TODO :  A mettre dans le bon ordre
+    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22
 }
 
 
