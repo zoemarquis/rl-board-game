@@ -19,7 +19,7 @@ def handle_mouse_click(event, button_mapping):
     return None  # No button was clicked
 
 
-env = LudoEnv(with_render=True, num_players=2, nb_chevaux=3, mode_fin_partie="tous_pions", mode_gym="jeu")
+env = LudoEnv(with_render=True, num_players=4, nb_chevaux=4, mode_fin_partie="tous_pions", mode_gym="jeu")
 
 def play_game(env):
     obs, info = env.reset()
