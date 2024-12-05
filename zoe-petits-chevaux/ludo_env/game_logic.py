@@ -158,7 +158,6 @@ class GameLogic:
             else self.get_chemin_pdv(player_id)
         )
         for i in range(56 // 14):
-            # print(i * 14 + 1, " -> ", (i + 1) * 14)
             str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
 
         for i in range(self.num_players):
@@ -173,7 +172,7 @@ class GameLogic:
         # mettre tous les home ensemble, puis les safe zone, puis les goal
         # ensuite calculer pour les path
 
-        # TODO vérifier ce truc là
+        # TODO TEST
         board = [0 for _ in range(TOTAL_SIZE)]
         count_all_home = self.get_ecurie_overview()
         count_self_home = count_all_home.count(other_player_id)
@@ -243,7 +242,7 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}" # TO CHECK ?
+        assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}" # TODO MERGE 
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -300,7 +299,7 @@ class GameLogic:
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
-        assert position in range(1, 57), "Position incorrecte" # TO CHECK ?
+        assert position in range(1, 57), "Position incorrecte" # TODO MERGE
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -410,7 +409,7 @@ class GameLogic:
         self.board[player_id][-1] += 1
     
     def is_there_pawn_to_kill(self, player_id, target_position):
-        assert target_position in range(1, 57), "Position incorrecte" # TO CHECK ? 
+        assert target_position in range(1, 57), "Position incorrecte" # TODO MERGE
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -423,9 +422,8 @@ class GameLogic:
 
 
     def is_there_pawn_between_my_position_and_target_position(self, player_id, old_position, target_position):
-        assert target_position in range(1, 57), f"Position incorrecte {target_position}" # TODO CHECK ?
+        assert target_position in range(1, 57), f"Position incorrecte {target_position}" # TODO MERGE 
         # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
-        # TODO le représenter sous une autre forme d'action ?
         for pos in range(old_position + 1, target_position):
             if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
                 return True
@@ -458,6 +456,10 @@ class GameLogic:
             elif action == Action_NO_EXACT.NO_ACTION:
                 pass
 
+            else:
+                raise ValueError("Action non valide")
+
+
         elif self.get_action() == Action_EXACT:
             if action == Action_EXACT.MOVE_OUT:
                 self.sortir_pion(player_id, dice_value)
@@ -465,7 +467,7 @@ class GameLogic:
                 self.kill_pawn(player_id, 1)
                 self.sortir_pion(player_id, dice_value)
 
-            elif action == Action_NO_EXACT.GET_STUCK_BEHIND: # TODO TEST 
+            elif action == Action_NO_EXACT.GET_STUCK_BEHIND: # TODO TEST TODO MERGE
                 target_position = old_position + dice_value
                 if target_position >= 57:
                     target_position = 56
@@ -585,7 +587,6 @@ class GameLogic:
                             valid_actions.append(Action_EXACT.MOVE_OUT)
 
             elif state == State_EXACT.CHEMIN:
-                # TODO : append get stuck 
                 # TODO ZOE : si quelquun sur la route alors je suis bloquée dans tous les cas 
                 if target_position < 56: 
                     if self.is_opponent_pawn_on(player_id, target_position):
@@ -629,54 +630,6 @@ class GameLogic:
                     
             elif state == State_EXACT.OBJECTIF:
                 pass
-
-
-
-
-
-
-        if state == State_NO_EXACT.ECURIE:
-            if dice_value == 6:
-                if self.is_opponent_pawn_on(player_id, 1): 
-                    valid_actions.append(Action_NO_EXACT.MOVE_OUT_AND_KILL)
-                else: 
-                    # version où on autorise plusieurs pions du même joueur dans la même case
-                    # if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
-                    valid_actions.append(Action_NO_EXACT.MOVE_OUT)
-
-        elif state == State_NO_EXACT.CHEMIN:
-            if target_position < 57:  # limite avant zone protégée
-
-                obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
-                if obstacle:
-                    nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, target_position)
-                    if nb_cases_avancer > 0:
-                        valid_actions.append(Action_NO_EXACT.GET_STUCK_BEHIND)
-                else: 
-                    if self.is_there_pawn_to_kill(player_id, target_position):
-                        valid_actions.append(Action_NO_EXACT.KILL)
-                    else: 
-                        valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
-
-            elif target_position >= 57:
-                obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, 56)
-                # TODO ZOE TESTER LE 56 ICI 
-                if obstacle:
-                    nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, 56)
-                    if nb_cases_avancer > 0:
-                        valid_actions.append(Action_NO_EXACT.GET_STUCK_BEHIND)
-                else:
-                    valid_actions.append(Action_NO_EXACT.ENTER_SAFEZONE)
-
-        elif state == State_NO_EXACT.ESCALIER:
-            if target_position <= 62:
-                # TODO ZOE : mis de coté : if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
-                valid_actions.append(Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
-            if target_position >= 63:
-                valid_actions.append(Action_NO_EXACT.REACH_GOAL)
-                
-        elif state == State_NO_EXACT.OBJECTIF:
-            pass
 
         return valid_actions
 
@@ -845,7 +798,7 @@ class GameLogic:
                     chemin[relative_position_chemin].append(p)
             i = (i + 1) % self.num_players
 
-        # TODO : vérifier ça fonctionnel
+        # TODO TEST
 
         return chemin
 
@@ -890,7 +843,7 @@ class GameLogic:
         for action in get_default_action_order(self.nb_chevaux, self.mode_pied_escalier):
             if action in encoded_valid_actions:
                 return action
-        assert False, "Erreur : Aucune action possible dans la liste d'actions par défaut"
+        assert False, "Erreur : Aucune action possible dans la liste d'actions par défaut" # TODO MERGE
 
     # TODO : ajouter une fonction pour se voir avec son POV + 1 pour ses joueur, 0 pour les autres,
     # # où du moins avec un plateau sans mes pions mais où je vois où sont tous les autres par rapport à ma vision
