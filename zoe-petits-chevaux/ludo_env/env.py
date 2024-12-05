@@ -7,7 +7,7 @@ from ludo_env.game_logic import (
     BOARD_SIZE,
 )
 from ludo_env.action import Action
-from ludo_env.renderer import Renderer
+# from ludo_env.renderer import Renderer
 
 
 class LudoEnv(gym.Env):
@@ -68,7 +68,7 @@ class LudoEnv(gym.Env):
                 # État de l'écurie du joueur courant
 
                 "my_chemin" : gym.spaces.Box(
-                    low=-1, high=1, shape=(self.board_size,), dtype=np.int8
+                    low=-self.nb_chevaux, high=self.nb_chevaux, shape=(self.board_size,), dtype=np.int8
                 ), # État du chemin du joueur courant : -1 = adversaire, 0 = vide, 1 = joueur courant
 
                 "my_escalier" : gym.spaces.Box(
@@ -86,13 +86,6 @@ class LudoEnv(gym.Env):
 
     def _get_observation(self):
         obs = {
-            # "my_board": self.game.board[self.current_player],
-            # # "my_chemin_with_adversaires": self.game.get_opponent_positions_on_my_board(
-            # #     self.current_player
-            # # ),  # TODO : ici ça ne fonctionne que quand self.num_players = 2, on a pas encore testé pour plus
-            # # TODO je crois qu'on retournne pas ce qu'il fait pour les plateaux des adversaires : on veut les adversaires sur NOTRE plateau
-            # "dice_roll": self.dice_roll,
-
             "my_ecurie" : self.game.get_observation_my_ecurie(self.current_player),
             "my_chemin" : self.game.get_observation_my_chemin(self.current_player),
             "my_escalier" : self.game.get_observation_my_escalier(self.current_player),
