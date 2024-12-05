@@ -2,8 +2,8 @@
 import numpy as np
 
 from ludo_env.action import Action_NO_EXACT, Action_EXACT
-from ludo_env.state import State_NO_EXACT
-from ludo_env.reward import REWARD_TABLE_MOVE_OUT, DEFAULT_ACTION_ORDER
+from ludo_env.state import State_NO_EXACT, State_EXACT
+from ludo_env.reward import get_reward_table, get_default_action_order
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
@@ -11,11 +11,30 @@ TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 
 class GameLogic:
-    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous"):
+    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous", mode_pied_escalier="not_exact"):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
+        self.mode_pied_escalier = mode_pied_escalier
         self.init_board()
+
+    
+    def get_state(self):
+        if self.mode_pied_escalier == "not_exact":
+            return State_NO_EXACT
+        elif self.mode_pied_escalier == "exact":
+            return State_EXACT
+        else:
+            raise ValueError("Mode de pied d'escalier non supporté")
+        
+    def get_action(self):
+        if self.mode_pied_escalier == "not_exact":
+            return Action_NO_EXACT
+        elif self.mode_pied_escalier == "exact":
+            return Action_EXACT
+        else:
+            raise ValueError("Mode de pied d'escalier non supporté")
+
 
     def init_board(self):
         """
@@ -43,7 +62,7 @@ class GameLogic:
             count_i = self.board[player_id][i]
             for _ in range(count_i):
                 pawns_info.append(
-                    {"position": i, "state": State_NO_EXACT.get_state_from_position(i)}
+                    {"position": i, "state": self.get_state().get_state_from_position(i)}
                 )
         assert len(pawns_info) == self.nb_chevaux, "Nombre de pions incorrect"
         return pawns_info
@@ -117,8 +136,7 @@ class GameLogic:
         return str_game_overview
 
     def get_opponent_positions_on_my_board(self, player_id):
-        # TODO : multi joueurs
-        # TODO : tests sur ça en 2 3 et 4 joueurs
+        # TODO TEST 
         assert (
             self.num_players == 2
         ), "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
@@ -199,70 +217,13 @@ class GameLogic:
             board[1:43] = path_board[14:]
         return board
 
-    """
-    AFFICHAGE CHARLOTTE (NE PAS EFFACER MERCI)
-
-    def get_instruction_for_player(self, player_id, dice_roll):
-        str_instruction = f"Joueur {player_id} : \n"
-
-        valid_actions = self.get_valid_actions(player_id, dice_roll)
-        encoded_valid_actions = self.encode_valid_actions(valid_actions)
-
-        if 0 in encoded_valid_actions:
-            str_instruction += "0 : ne rien faire\n"
-        if 1 in encoded_valid_actions:
-            str_instruction += "1 : sortir pion\n"
-
-        infos = self.get_pawns_info(player_id)
-
-        for i in range(len(infos)):
-            str_instruction += f"pion {i} case {infos[i]['position']}\n"
-            if self.encode_action(i, Action.MOVE_FORWARD) in encoded_valid_actions:
-                str_instruction += f"{2 + i * 5} : avancer pion {i}\n"
-            if self.encode_action(i, Action.ENTER_SAFEZONE) in encoded_valid_actions:
-                str_instruction += f"{3 + i * 5} : entrer escalier pion {i}\n"
-            if self.encode_action(i, Action.MOVE_IN_SAFE_ZONE) in encoded_valid_actions:
-                str_instruction += f"{4 + i * 5} : avancer dans escalier pion {i}\n"
-            if self.encode_action(i, Action.REACH_GOAL) in encoded_valid_actions:
-                str_instruction += f"{5 + i * 5} : atteindre objectif pion {i}\n"
-            if self.encode_action(i, Action.KILL) in encoded_valid_actions:
-                str_instruction += f"{6 + i * 5} : tuer adversaire pion {i}\n"
-
-        return str_instruction
-
-
-
-
-
-    """
-
-    def get_instruction_for_player(self, player_id, dice_roll):
-        str_instruction = ""
-        str_instruction += f"Joueur {player_id} : \n"
-        str_instruction += "0 : ne rien faire\n"
-        str_instruction += "1 : sortir pion\n"
-        infos = self.get_pawns_info(player_id)
-        str_instruction += f"pion 0 case {infos[0]['position']}\n"
-        str_instruction += "2 : avancer pion 0\n"
-        str_instruction += "3 : entrer escalier pion 0\n"
-        str_instruction += "4 : avancer dans escalier pion 0\n"
-        str_instruction += "5 : atteindre objectif pion 0\n"
-        str_instruction += "6 : tuer adversaire pion 0\n"
-        str_instruction += f"pion 1 case {infos[1]['position']}\n"
-        str_instruction += "7 : avancer pion 1\n"
-        str_instruction += "8 : entrer escalier pion 1\n"
-        str_instruction += "9 : avancer dans escalier pion 1\n"
-        str_instruction += "10 : atteindre objectif pion 1\n"
-        str_instruction += "11 : tuer adversaire pion 1\n"
-        return str_instruction
-
     def dice_generator(self):
         valeur = np.random.randint(1, 7)  # TODO : fix avec une seed pour les tests
         return valeur
 
     def get_pawns_on_position(
         self, player_id, target_position_relative
-    ):  # TODO check cette fonction pour multi joueurs
+    ):  # TODO TEST multijoueurs 3 4 
         if player_id == 0:
             indice = target_position_relative - 1
         elif player_id == 2:
@@ -282,7 +243,7 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}"
+        assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}" # TO CHECK ?
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -290,28 +251,6 @@ class GameLogic:
                 )
                 if self.board[other_player][relative_position] > 0:
                     return True
-        return False
-    
-    def is_there_pawn_to_kill(self, player_id, target_position):
-        assert target_position in range(1, 57), "Position incorrecte"
-        for other_player in range(self.num_players):
-            if other_player != player_id:
-                relative_position = self.get_relative_position(
-                    player_id, other_player, target_position
-                )
-                if self.board[other_player][relative_position] > 0:
-                    return True
-        return False
-
-    def is_there_pawn_between_my_position_and_target_position(self, player_id, old_position, target_position):
-        assert target_position in range(1, 57), f"Position incorrecte {target_position}"
-        # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
-        # TODO le représenter sous une autre forme d'action ?
-        for pos in range(old_position + 1, target_position):
-            if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
-                return True
-        # if self.board[player_id][target_position] > 0:
-        #     return True
         return False
     
     def get_dice_value_because_of_obstacle(self, player_id, old_position, target_position):
@@ -327,18 +266,18 @@ class GameLogic:
 
 
 
-    def is_pawn_threatened(
-        self, player, position
-    ):  # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
-        # TODO
-        # retourne combien de pions sont menacés ?
-        return False
+    # def is_pawn_threatened(
+    #     self, player, position
+    # ):  # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
+    #     # TODO
+    #     # retourne combien de pions sont menacés ?
+    #     return False
 
-    def is_pawn_protected(
-        self, player, position
-    ):  # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
-        # TODO
-        return False
+    # def is_pawn_protected(
+    #     self, player, position
+    # ):  # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
+    #     # TODO
+    #     return False
 
     # Savoir la position d'un joueur dans la perspective d'un autre joueur
     def get_relative_position(self, from_player, to_player, position):
@@ -361,7 +300,7 @@ class GameLogic:
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
-        assert position in range(1, 57), "Position incorrecte"
+        assert position in range(1, 57), "Position incorrecte" # TO CHECK ?
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -443,6 +382,17 @@ class GameLogic:
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
+    def avance_recule(self, player_id, old_position, dice_value):
+        # TODO : assert personne sur le chemin devant moi 
+        assert old_position + dice_value > 56, "Déplacement pas conforme à la position"
+        get_distance_avant = 56 - old_position
+        recule_de = dice_value - get_distance_avant
+        get_position_apres = 56 - recule_de
+        assert old_position < get_position_apres, f"Déplacement pas conforme à la position, {old_position} < {get_position_apres}, dice_value : {dice_value}"
+        # TODO ZOE TEST il manque des assert + mettre des tests sur les actions possibles 
+        self.board[player_id][old_position] -= 1
+        self.board[player_id][get_position_apres] += 1
+
     def avance_pion_safe_zone(self, player_id, old_position, dice_value):
         assert (
             self.board[player_id][old_position] > 0
@@ -458,30 +408,92 @@ class GameLogic:
         assert old_position + dice_value >= 63, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][-1] += 1
+    
+    def is_there_pawn_to_kill(self, player_id, target_position):
+        assert target_position in range(1, 57), "Position incorrecte" # TO CHECK ? 
+        for other_player in range(self.num_players):
+            if other_player != player_id:
+                relative_position = self.get_relative_position(
+                    player_id, other_player, target_position
+                )
+                if self.board[other_player][relative_position] > 0:
+                    return True
+        return False
+
+
+
+    def is_there_pawn_between_my_position_and_target_position(self, player_id, old_position, target_position):
+        assert target_position in range(1, 57), f"Position incorrecte {target_position}" # TODO CHECK ?
+        # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
+        # TODO le représenter sous une autre forme d'action ?
+        for pos in range(old_position + 1, target_position):
+            if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
+                return True
+        return False
+
+
 
     def move_pawn(self, player_id, old_position, dice_value, action):
-        if action == Action_NO_EXACT.MOVE_OUT:
-            self.sortir_pion(player_id, dice_value)
-        elif action == Action_NO_EXACT.MOVE_OUT_AND_KILL:
-            self.kill_pawn(player_id, 1)
-            self.sortir_pion(player_id, dice_value)
-        elif action == Action_NO_EXACT.GET_STUCK_BEHIND:
-            target_position = old_position + dice_value
-            if target_position >= 57:
-                target_position = 56
-            valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, target_position  )
-            self.avance_pion_path(player_id, old_position, valeur_de_avec_obstacle)
-        elif action == Action_NO_EXACT.MOVE_FORWARD:
-            self.avance_pion_path(player_id, old_position, dice_value)
-        elif action == Action_NO_EXACT.ENTER_SAFEZONE or action == Action_NO_EXACT.MOVE_IN_SAFE_ZONE:
-            self.avance_pion_safe_zone(player_id, old_position, dice_value)
-        elif action == Action_NO_EXACT.REACH_GOAL:
-            self.securise_pion_goal(player_id, old_position, dice_value)
-        elif action == Action_NO_EXACT.KILL:
-            self.kill_pawn(player_id, old_position + dice_value)
-            self.avance_pion_path(player_id, old_position, dice_value)
-        elif action == Action_NO_EXACT.NO_ACTION:
-            pass
+        if self.get_action() == Action_NO_EXACT:
+            if action == Action_NO_EXACT.MOVE_OUT:
+                self.sortir_pion(player_id, dice_value)
+            elif action == Action_NO_EXACT.MOVE_OUT_AND_KILL:
+                self.kill_pawn(player_id, 1)
+                self.sortir_pion(player_id, dice_value)
+            elif action == Action_NO_EXACT.GET_STUCK_BEHIND: # TODO TEST 
+                target_position = old_position + dice_value
+                if target_position >= 57:
+                    target_position = 56
+                valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, target_position  )
+                self.avance_pion_path(player_id, old_position, valeur_de_avec_obstacle)
+            elif action == Action_NO_EXACT.MOVE_FORWARD:
+                self.avance_pion_path(player_id, old_position, dice_value)
+            elif action == Action_NO_EXACT.ENTER_SAFEZONE or action == Action_NO_EXACT.MOVE_IN_SAFE_ZONE:
+                self.avance_pion_safe_zone(player_id, old_position, dice_value)
+            elif action == Action_NO_EXACT.REACH_GOAL:
+                self.securise_pion_goal(player_id, old_position, dice_value)
+            elif action == Action_NO_EXACT.KILL:
+                self.kill_pawn(player_id, old_position + dice_value)
+                self.avance_pion_path(player_id, old_position, dice_value)
+            elif action == Action_NO_EXACT.NO_ACTION:
+                pass
+
+        elif self.get_action() == Action_EXACT:
+            if action == Action_EXACT.MOVE_OUT:
+                self.sortir_pion(player_id, dice_value)
+            elif action == Action_EXACT.MOVE_OUT_AND_KILL:
+                self.kill_pawn(player_id, 1)
+                self.sortir_pion(player_id, dice_value)
+
+            elif action == Action_NO_EXACT.GET_STUCK_BEHIND: # TODO TEST 
+                target_position = old_position + dice_value
+                if target_position >= 57:
+                    target_position = 56
+                valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, target_position  )
+                self.avance_pion_path(player_id, old_position, valeur_de_avec_obstacle)
+            
+
+            elif action == Action_EXACT.KILL: 
+                self.kill_pawn(player_id, old_position + dice_value)
+                self.avance_pion_path(player_id, old_position, dice_value)
+            elif action == Action_EXACT.MOVE_FORWARD or action == Action_EXACT.REACH_PIED_ESCALIER:
+                # TODO ZOE : tester si il faut kill parce que c'est une action aussi 
+                self.kill_pawn(player_id, old_position + dice_value)
+
+                self.avance_pion_path(player_id, old_position, dice_value)
+            elif action == Action_EXACT.AVANCE_RECULE_PIED_ESCALIER:
+                self.avance_recule(player_id, old_position, dice_value)
+            elif action == Action_EXACT.MOVE_IN_SAFE_ZONE:
+                self.avance_pion_safe_zone(player_id, old_position, dice_value)
+            elif action == Action_EXACT.REACH_GOAL:
+                self.securise_pion_goal(player_id, old_position, dice_value)
+            elif action == Action_EXACT.NO_ACTION:
+                pass
+            else:
+                raise ValueError("Action non valide")
+            
+            pass 
+
         else:
             raise ValueError("Action non valide")
 
@@ -489,6 +501,140 @@ class GameLogic:
         target_position = position + dice_value
 
         valid_actions = []
+        if self.get_state() == State_NO_EXACT and self.get_action() == Action_NO_EXACT:
+            if state == State_NO_EXACT.ECURIE:
+                if dice_value == 6:
+                    if self.is_opponent_pawn_on(player_id, 1): 
+                        valid_actions.append(Action_NO_EXACT.MOVE_OUT_AND_KILL)
+                    else: 
+                        if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
+                            valid_actions.append(Action_NO_EXACT.MOVE_OUT)
+            
+            elif state == State_NO_EXACT.CHEMIN:
+                if target_position < 57:  # limite avant zone protégée
+                    if self.is_opponent_pawn_on(player_id, target_position):
+                        valid_actions.append(Action_NO_EXACT.KILL)
+                    else:
+                        if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                            valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
+
+                    # # VERSION OÙ ON BOUGE PAS SI Y A QUELQU'UN SUR NOTRE CHEMIN
+                    # obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
+                    # if not obstacle: 
+                    #     valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
+
+                    # # TODO ZOE : VERSION OÙ ON SE MET JUSTE DERRIERE SI Y A UN OBSTACLE 
+
+                    # # TODO : mettre un if si on veut autoriser le doublement
+                    # is_blocked = False
+                    # for pos in range(position + 1, target_position):
+                    #     if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0:
+                    #         is_blocked = True
+                    #         break
+
+                    # if is_blocked:
+                    #     valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
+                    # else:
+                    #     if self.is_opponent_pawn_on(player_id, target_position):
+                    #         valid_actions.append(Action_NO_EXACT.KILL)
+                    #     else:
+                    #         if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                    #             valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
+
+                elif target_position >= 57:
+                    valid_actions.append(Action_NO_EXACT.ENTER_SAFEZONE)
+
+                    # #print("DEPASSEMENT DE L'ESCALIER")
+                        # # TODO : mettre un if si on veut autoriser le doublement
+                        # is_blocked = False
+                        # for pos in range(position + 1, min(target_position, 57)):
+                        #     if self.board[player_id][pos] > 0:
+                        #         is_blocked = True
+                        #         break
+
+                        # if is_blocked:
+                        #     valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
+                        # else:
+                        #     valid_actions.append(Action_NO_EXACT.ENTER_SAFEZONE)
+                    
+                    # TODO : empecher de doubler 
+                    # TODO ajouter ces moves là
+                    # if self.is_opponent_pawn_on(player_id, position+dice_value):
+                    #     valid_actions.append(Action.KILL)
+                    # if self.is_pawn_protected(player_id, position + dice_value): # on peut reward ça aussi
+                    #     valid_actions.append(Action.PROTECT)
+                    # TODO faire changer la regle : je peux avoir moi plusieurs fois sur la meme case : PROTECT 
+
+            elif state == State_NO_EXACT.ESCALIER:
+                if target_position <= 62:
+                    if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                        valid_actions.append(Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
+                if target_position >= 63:
+                    valid_actions.append(Action_NO_EXACT.REACH_GOAL)
+                    
+            elif state == State_NO_EXACT.OBJECTIF:
+                pass
+
+        elif self.get_state() == State_EXACT and self.get_action() == Action_EXACT:
+            if state == State_EXACT.ECURIE:
+                if dice_value == 6:
+                    if self.is_opponent_pawn_on(player_id, 1): 
+                        valid_actions.append(Action_EXACT.MOVE_OUT_AND_KILL)
+                    else: 
+                        if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
+                            valid_actions.append(Action_EXACT.MOVE_OUT)
+
+            elif state == State_EXACT.CHEMIN:
+                # TODO : append get stuck 
+                # TODO ZOE : si quelquun sur la route alors je suis bloquée dans tous les cas 
+                if target_position < 56: 
+                    if self.is_opponent_pawn_on(player_id, target_position):
+                        valid_actions.append(Action_EXACT.KILL)
+                    else:
+                        if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                            valid_actions.append(Action_EXACT.MOVE_FORWARD)
+
+                elif target_position == 56:
+
+                    if self.is_opponent_pawn_on(player_id, target_position):
+                        valid_actions.append(Action_EXACT.KILL)
+                    else:
+                        if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                            valid_actions.append(Action_EXACT.REACH_PIED_ESCALIER)
+
+                else: # > 56 
+                    distance_avant = 56 - position
+                    recule_de = dice_value - distance_avant
+                    position_apres = 56 - recule_de
+                    if position_apres > position:
+                        valid_actions.append(Action_EXACT.AVANCE_RECULE_PIED_ESCALIER)
+                    # pas de kill.... il peut y avoir plusieurs pions sur la même case
+                    # TODO ZOE : regles
+                    # TODO DOUBLE
+
+            elif state == State_EXACT.PIED_ESCALIER:
+                valid_actions.append(Action_EXACT.MOVE_IN_SAFE_ZONE)
+                # on a le droit d'avoir plusieurs pions sur la même case dans l'escalier 
+
+                # TODO DOUBLE 
+                # TODO ZOE ICI MONTER DE L'ESCALIER : ENTER_SAFEZONE FAIRE 1 PUIS 2 3 4 5 6 et enfin re 6 ou peu importe 
+                # OU ALORS : ENTER SAFE ZONE et MOVE IN SAFE ZONE ... -> autres actions 
+
+            elif state == State_EXACT.ESCALIER:
+                if target_position <= 62:
+                    if self.board[player_id][target_position] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas avancer
+                        valid_actions.append(Action_EXACT.MOVE_IN_SAFE_ZONE)
+                if target_position >= 63:
+                    valid_actions.append(Action_EXACT.REACH_GOAL)
+                    
+            elif state == State_EXACT.OBJECTIF:
+                pass
+
+
+
+
+
+
         if state == State_NO_EXACT.ECURIE:
             if dice_value == 6:
                 if self.is_opponent_pawn_on(player_id, 1): 
@@ -546,48 +692,102 @@ class GameLogic:
                 all_vide = False
             valid_actions[i] = tmp
         if all_vide:
-            valid_actions.append(Action_NO_EXACT.NO_ACTION)
+            if self.get_action() == Action_NO_EXACT:
+                valid_actions.append(Action_NO_EXACT.NO_ACTION)
+            elif self.get_action() == Action_EXACT:
+                valid_actions.append(Action_EXACT.NO_ACTION)
+
         else:
             valid_actions.append(False)  # en indice NB_PAWNS
         return valid_actions
 
     def encode_action(self, pawn_id, action_type):
-        if action_type == Action_NO_EXACT.NO_ACTION:
-            return 0
-        elif action_type == Action_NO_EXACT.MOVE_OUT:
-            return 1
-        elif action_type == Action_NO_EXACT.MOVE_OUT_AND_KILL:
-            return 2
-        return pawn_id * (len(Action_NO_EXACT) - 3) + action_type.value
+        if self.get_action() == Action_NO_EXACT:    
+            if action_type == Action_NO_EXACT.NO_ACTION:
+                return 0
+            elif action_type == Action_NO_EXACT.MOVE_OUT:
+                return 1
+            elif action_type == Action_NO_EXACT.MOVE_OUT_AND_KILL:
+                return 2
+            return pawn_id * (len(Action_NO_EXACT) - 3) + action_type.value
+        
+        elif self.get_action() == Action_EXACT:
+            if action_type == Action_EXACT.NO_ACTION:
+                return 0
+            elif action_type == Action_EXACT.MOVE_OUT:
+                return 1
+            elif action_type == Action_EXACT.MOVE_OUT_AND_KILL:
+                return 2
+            return pawn_id * (len(Action_EXACT) - 3) + action_type.value
+        
+        else : 
+            raise ValueError("Action non valide")
+
 
     def encode_valid_actions(self, valid_actions):
-        if valid_actions[self.nb_chevaux] == Action_NO_EXACT.NO_ACTION:
-            return [0]
-        valid_actions = valid_actions[: self.nb_chevaux]
-        encoded_actions = []
-        for i, actions in enumerate(valid_actions):
-            for action in actions:
-                encoded_actions.append(self.encode_action(i, action))
-        return list(set(encoded_actions))
+        if self.get_action() == Action_NO_EXACT:
+            if valid_actions[self.nb_chevaux] == Action_NO_EXACT.NO_ACTION:
+                return [0]
+            valid_actions = valid_actions[: self.nb_chevaux]
+            encoded_actions = []
+            for i, actions in enumerate(valid_actions):
+                for action in actions:
+                    encoded_actions.append(self.encode_action(i, action))
+            return list(set(encoded_actions))
+        
+        elif self.get_action() == Action_EXACT:
+            if valid_actions[self.nb_chevaux] == Action_EXACT.NO_ACTION:
+                return [0]
+            valid_actions = valid_actions[: self.nb_chevaux]
+            encoded_actions = []
+            for i, actions in enumerate(valid_actions):
+                for action in actions:
+                    encoded_actions.append(self.encode_action(i, action))
+            return list(set(encoded_actions))
+        
+        else : 
+            raise ValueError("Action non valide")
+
 
     def decode_action(self, action):  
-        if action == 0:
-            return 0, Action_NO_EXACT.NO_ACTION
-        elif action == 1:
-            return 0, Action_NO_EXACT.MOVE_OUT
-        elif action == 2:
-            return 0, Action_NO_EXACT.MOVE_OUT_AND_KILL
+        if self.get_action() == Action_NO_EXACT:
+            if action == 0:
+                return 0, Action_NO_EXACT.NO_ACTION
+            elif action == 1:
+                return 0, Action_NO_EXACT.MOVE_OUT
+            elif action == 2:
+                return 0, Action_NO_EXACT.MOVE_OUT_AND_KILL
+            
+            pawn_id = (action - 3) // (len(Action_NO_EXACT) - 3)
+            if action < len(Action_NO_EXACT):    
+                action_type = action
+            else:
+                action_type = (action - 3) % (len(Action_NO_EXACT) - 3) + 3
+            return pawn_id, Action_NO_EXACT(action_type)
+        elif self.get_action() == Action_EXACT:
+            if action == 0:
+                return 0, Action_EXACT.NO_ACTION
+            elif action == 1:
+                return 0, Action_EXACT.MOVE_OUT
+            elif action == 2:
+                return 0, Action_EXACT.MOVE_OUT_AND_KILL
+            
+            pawn_id = (action - 3) // (len(Action_EXACT) - 3)
+            if action < len(Action_EXACT):    
+                action_type = action
+            else:
+                action_type = (action - 3) % (len(Action_EXACT) - 3) + 3
+            return pawn_id, Action_EXACT(action_type)
         
-        pawn_id = (action - 3) // (len(Action_NO_EXACT) - 3)
-        if action < len(Action_NO_EXACT):    
-            action_type = action
-        else:
-            action_type = (action - 3) % (len(Action_NO_EXACT) - 3) + 3
-        return pawn_id, Action_NO_EXACT(action_type)
+        else :
+            raise ValueError("Action non valide")
+
 
 
     def get_reward(self, action): 
-        return REWARD_TABLE_MOVE_OUT[action]
+        reward_table = get_reward_table(self.mode_pied_escalier)
+        return reward_table[action]
+
 
     # ------------------ Fonctions d'affichage ------------------
 
@@ -687,7 +887,7 @@ class GameLogic:
         return str_game_overview
 
     def debug_action(self, encoded_valid_actions):
-        for action in DEFAULT_ACTION_ORDER:
+        for action in get_default_action_order(self.nb_chevaux, self.mode_pied_escalier):
             if action in encoded_valid_actions:
                 return action
         assert False, "Erreur : Aucune action possible dans la liste d'actions par défaut"
