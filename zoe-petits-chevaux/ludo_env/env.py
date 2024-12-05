@@ -5,6 +5,7 @@ from ludo_env.game_logic import (
     GameLogic,
     TOTAL_SIZE,
     BOARD_SIZE,
+    SAFE_ZONE_SIZE,
 )
 from ludo_env.action import Action_NO_EXACT, Action_EXACT
 # from ludo_env.renderer import Renderer
@@ -16,6 +17,7 @@ class LudoEnv(gym.Env):
         num_players,
         nb_chevaux,
         mode_fin_partie="tous",
+        mode_pied_escalier= "not_exact",
 
         mode_gym="entrainement",
 
@@ -31,6 +33,11 @@ class LudoEnv(gym.Env):
             "entrainement",
             "jeu",
         ], "Only 'entrainement' or 'jeu' are allowed"
+        assert mode_pied_escalier in [
+            "exact",
+            "not_exact",
+        ], "Only 'exact' or 'not_exact' are allowed"
+
 
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
@@ -40,39 +47,32 @@ class LudoEnv(gym.Env):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
+        self.mode_pied_escalier = mode_pied_escalier
 
-        self.board_size = 56  # TODO delete
-        self.safe_zone_size = 6  # TODO delete
 
         if self.with_render:
             self.renderer = Renderer()
 
-        self.action_space = gym.spaces.Discrete(
-            3 + self.nb_chevaux * (len(Action_NO_EXACT) - 3)
-        )  # 1 NO_ACTION + 1 MOVE_OUT + 1 MOVE_OUT_AND_KILl 
+        if mode_pied_escalier == "not_exact":
+            self.action_space = gym.spaces.Discrete(
+                3 + self.nb_chevaux * (len(Action_NO_EXACT) - 3)
+            )# 1 NO_ACTION + 1 MOVE_OUT + 1 MOVE_OUT_AND_KILl 
+        elif mode_pied_escalier == "exact":
+            self.action_space = gym.spaces.Discrete(
+                3 + self.nb_chevaux * (len(Action_EXACT) - 3)
+            )
 
         self.observation_space = gym.spaces.Dict(
             {
-                # "my_board": gym.spaces.Box(
-                #     low=0, high=self.nb_chevaux, shape=(TOTAL_SIZE,), dtype=np.int8
-                # ),  # État du plateau du joueur courant
-                # # "my_chemin_with_adversaires": gym.spaces.Box(
-                # #     low=0,
-                # #     high=self.nb_chevaux * (self.num_players - 1),
-                # #     shape=(BOARD_SIZE,),
-                # #     dtype=np.int8,
-                # # ),  # Agrégation des autres joueurs selon quel pdv ? TODO
-                # "dice_roll": gym.spaces.Discrete(7),  # Résultat du dé (1 à 6)
-
                 "my_ecurie" : gym.spaces.Discrete(self.nb_chevaux + 1),
                 # État de l'écurie du joueur courant
 
                 "my_chemin" : gym.spaces.Box(
-                    low=-self.nb_chevaux, high=self.nb_chevaux, shape=(self.board_size,), dtype=np.int8
+                    low=-self.nb_chevaux, high=self.nb_chevaux, shape=(BOARD_SIZE,), dtype=np.int8
                 ), # État du chemin du joueur courant : -1 = adversaire, 0 = vide, 1 = joueur courant
 
                 "my_escalier" : gym.spaces.Box(
-                    low=0, high=self.nb_chevaux, shape=(self.safe_zone_size,) , dtype=np.int8
+                    low=0, high=self.nb_chevaux, shape=(SAFE_ZONE_SIZE,) , dtype=np.int8
                 ), # État de l'escalier du joueur courant
 
                 "my_goal" : gym.spaces.Discrete(self.nb_chevaux + 1),
@@ -101,6 +101,7 @@ class LudoEnv(gym.Env):
             num_players=self.num_players,
             nb_chevaux=self.nb_chevaux,
             mode_fin_partie=self.mode_fin_partie,
+            mode_pied_escalier=self.mode_pied_escalier,
         )
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
@@ -131,9 +132,14 @@ class LudoEnv(gym.Env):
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
             if self.mode_gym == "jeu":
-                print(
+                if self.mode_pied_escaler == "exact":
+                    print(
+                        f"ACTION INTERDITE : {Action_EXACT(action%len(Action_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
+                    )
+                elif self.mode_pied_escaler == "not_exact":
+                    print(
                         f"ACTION INTERDITE : {Action_NO_EXACT(action%len(Action_NO_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
-                )
+                    )
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
                 print("debug : ", action, pawn_id, action_type)
