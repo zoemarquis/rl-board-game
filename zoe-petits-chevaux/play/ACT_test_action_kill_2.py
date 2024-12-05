@@ -37,8 +37,8 @@ class TestKillAction(unittest.TestCase):
         valid_actions = self.game.get_valid_actions(player_id=0, dice_value=dice_value)
 
         # Check si KILL est possible et MOVE_OUT non
-        self.assertIn(Action.KILL, valid_actions[0])
-        self.assertNotIn(Action.MOVE_OUT, valid_actions[0])
+        self.assertIn(Action_NO_EXACT.KILL, valid_actions[0])
+        self.assertNotIn(Action_NO_EXACT.MOVE_OUT, valid_actions[0])
 
         # Exécuter l'action KILL
         self.game.sortir_pion(player_id=0, dice_value=dice_value)
@@ -63,8 +63,8 @@ class TestKillAction(unittest.TestCase):
         valid_actions = self.game.get_valid_actions(player_id=0, dice_value=dice_value)
 
         # Check si MOVE_OUT est possible et KILL non
-        self.assertIn(Action.MOVE_OUT, valid_actions[0])
-        self.assertNotIn(Action.KILL, valid_actions[0])
+        self.assertIn(Action_NO_EXACT.MOVE_OUT, valid_actions[0])
+        self.assertNotIn(Action_NO_EXACT.KILL, valid_actions[0])
 
         # Exécuter l'action MOVE_OUT
         self.game.sortir_pion(player_id=0, dice_value=dice_value)

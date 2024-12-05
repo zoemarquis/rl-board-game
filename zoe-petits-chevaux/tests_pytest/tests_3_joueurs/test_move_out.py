@@ -10,7 +10,7 @@ def game():
 
 def test_1(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
+    game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -41,9 +41,9 @@ def test_1(game):
 
 def test_2(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(2, 0, 6, Action.MOVE_OUT)
+    game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(2, 0, 6, Action_NO_EXACT.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -74,9 +74,9 @@ def test_2(game):
 
 def test_3(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(1, 0, 6, Action.MOVE_OUT)
+    game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")

@@ -6,7 +6,7 @@ from ludo_env.game_logic import (
     TOTAL_SIZE,
     BOARD_SIZE,
 )
-from ludo_env.action import Action
+from ludo_env.action import Action_NO_EXACT
 # from ludo_env.renderer import Renderer
 
 
@@ -48,7 +48,7 @@ class LudoEnv(gym.Env):
             self.renderer = Renderer()
 
         self.action_space = gym.spaces.Discrete(
-            3 + self.nb_chevaux * (len(Action) - 3)
+            3 + self.nb_chevaux * (len(Action_NO_EXACT) - 3)
         )  # 1 NO_ACTION + 1 MOVE_OUT + 1 MOVE_OUT_AND_KILl 
 
         self.observation_space = gym.spaces.Dict(
@@ -132,7 +132,7 @@ class LudoEnv(gym.Env):
         if action not in encoded_valid_actions:
             if self.mode_gym == "jeu":
                 print(
-                        f"ACTION INTERDITE : {Action(action%len(Action))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
+                        f"ACTION INTERDITE : {Action_NO_EXACT(action%len(Action_NO_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                 )
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)

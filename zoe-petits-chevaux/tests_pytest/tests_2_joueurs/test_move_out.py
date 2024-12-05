@@ -10,7 +10,7 @@ def game():
 
 def test_1(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
+    game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -41,8 +41,8 @@ def test_1(game):
 
 def test_2(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(1, 0, 6, Action.MOVE_OUT)
+    game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -73,9 +73,9 @@ def test_2(game):
 
 def test_3(game):
     game.init_board()
-    game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game.move_pawn(1, 0, 6, Action.MOVE_OUT)
+    game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
 
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -107,7 +107,7 @@ def test_3(game):
 def test_interdit_1(game):
     game.init_board()
     try:
-        game.move_pawn(0, 0, 5, Action.MOVE_OUT)  # Action théoriquement interdite
+        game.move_pawn(0, 0, 5, Action_NO_EXACT.MOVE_OUT)  # Action théoriquement interdite
     except AssertionError as e:
         assert "Le dé n'est pas un 6" in str(e), "Le message d'erreur attendu n'est pas levé."
     else:
@@ -116,8 +116,8 @@ def test_interdit_1(game):
 def test_interdit_2(game):
     game.init_board()
     try:
-        game.move_pawn(0, 0, 6, Action.MOVE_OUT)
-        game.move_pawn(0, 5, 6, Action.MOVE_FORWARD)
+        game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+        game.move_pawn(0, 5, 6, Action_NO_EXACT.MOVE_FORWARD)
     except AssertionError as e:
         assert "Pas de pion à déplacer à cette position" in str(e), "Le message d'erreur attendu n'est pas levé."
     else:

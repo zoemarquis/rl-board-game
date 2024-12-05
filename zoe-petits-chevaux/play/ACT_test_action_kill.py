@@ -44,7 +44,7 @@ class TestKillAction(unittest.TestCase):
             player_id=0,
             old_position=5 + 2 * 14,
             dice_value=dice_value,
-            action=Action.KILL,
+            action=Action_NO_EXACT.KILL,
         )
 
         print("Plateau après déplacement :")

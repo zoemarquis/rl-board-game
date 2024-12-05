@@ -1,5 +1,5 @@
 import pytest
-from ludo_env import GameLogic, Action
+from ludo_env import GameLogic, Action_NO_EXACT
 
 
 @pytest.fixture
@@ -78,7 +78,7 @@ def test_get_relative_position_2(game_4chevaux):
 
 def test_is_opponent_pawn_on(game_4chevaux):
     assert game_4chevaux.is_opponent_pawn_on(0, 14) == False
-    assert game_4chevaux.get_valid_actions(0, 1) == [[], [], [Action.MOVE_FORWARD], [Action.MOVE_FORWARD], False]
+    assert game_4chevaux.get_valid_actions(0, 1) == [[], [], [Action_NO_EXACT.MOVE_FORWARD], [Action_NO_EXACT.MOVE_FORWARD], False]
 
                               
     

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class Action(Enum):
+class Action_NO_EXACT(Enum):
     NO_ACTION = 0
     MOVE_OUT = 1  # Sortir de la maison
     MOVE_OUT_AND_KILL = 2  # Sortir de la maison et tuer un pion adverse

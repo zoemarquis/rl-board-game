@@ -1,15 +1,15 @@
-from ludo_env.action import Action
+from ludo_env.action import Action_NO_EXACT
 
 REWARD_TABLE_MOVE_OUT = {
-    Action.NO_ACTION: -1,
-    Action.MOVE_OUT: 20,
-    Action.MOVE_OUT_AND_KILL: 10,
-    Action.MOVE_FORWARD: 5,
-    Action.GET_STUCK_BEHIND: -5,
-    Action.ENTER_SAFEZONE: 15,
-    Action.MOVE_IN_SAFE_ZONE: 1,
-    Action.REACH_GOAL: 10,
-    Action.KILL: 30,
+    Action_NO_EXACT.NO_ACTION: -1,
+    Action_NO_EXACT.MOVE_OUT: 20,
+    Action_NO_EXACT.MOVE_OUT_AND_KILL: 10,
+    Action_NO_EXACT.MOVE_FORWARD: 5,
+    Action_NO_EXACT.GET_STUCK_BEHIND: -5,
+    Action_NO_EXACT.ENTER_SAFEZONE: 15,
+    Action_NO_EXACT.MOVE_IN_SAFE_ZONE: 1,
+    Action_NO_EXACT.REACH_GOAL: 10,
+    Action_NO_EXACT.KILL: 30,
     # Action.PROTECT: 20,
     #
     # Action.DIE: -20 # TODO -> reward pas d'action enfaite, on le subit pendant un tour

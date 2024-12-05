@@ -1,5 +1,5 @@
 import pytest
-from ludo_env import GameLogic, Action
+from ludo_env import GameLogic, Action_NO_EXACT
 
 
 @pytest.fixture
@@ -19,10 +19,10 @@ def game_4chevaux():
 
 def test_fin_de_partie_tous_chevaux_2chevaux(game_2chevaux):
     game_2chevaux.init_board()
-    game_2chevaux.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game_2chevaux.move_pawn(0, 1, 55, Action.MOVE_FORWARD)
-    game_2chevaux.move_pawn(0, 56, 1, Action.ENTER_SAFEZONE)
-    game_2chevaux.move_pawn(0, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_2chevaux.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_2chevaux.move_pawn(0, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_2chevaux.move_pawn(0, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_2chevaux.move_pawn(0, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
 
     str_to_check = game_2chevaux.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -46,7 +46,7 @@ def test_fin_de_partie_tous_chevaux_2chevaux(game_2chevaux):
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
 
-    game_2chevaux.move_pawn(0, 62, 1, Action.REACH_GOAL)
+    game_2chevaux.move_pawn(0, 62, 1, Action_NO_EXACT.REACH_GOAL)
 
     str_to_check = game_2chevaux.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -71,10 +71,10 @@ def test_fin_de_partie_tous_chevaux_2chevaux(game_2chevaux):
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert game_2chevaux.is_game_over() == False
 
-    game_2chevaux.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game_2chevaux.move_pawn(0, 1, 55, Action.MOVE_FORWARD)
-    game_2chevaux.move_pawn(0, 56, 1, Action.ENTER_SAFEZONE)
-    game_2chevaux.move_pawn(0, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_2chevaux.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_2chevaux.move_pawn(0, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_2chevaux.move_pawn(0, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_2chevaux.move_pawn(0, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
 
     str_to_check = game_2chevaux.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -98,7 +98,7 @@ def test_fin_de_partie_tous_chevaux_2chevaux(game_2chevaux):
     assert lines[9] == "OBJECTIF 0 : 1", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
 
-    game_2chevaux.move_pawn(0, 62, 1, Action.REACH_GOAL)
+    game_2chevaux.move_pawn(0, 62, 1, Action_NO_EXACT.REACH_GOAL)
 
     str_to_check = game_2chevaux.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -129,10 +129,10 @@ def test_fin_de_partie_tous_chevaux_2chevaux(game_2chevaux):
 def test_fin_de_partie_tous_chevaux_3chevaux(game_3chevaux):
     game_3chevaux.init_board()
 
-    game_3chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_3chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_3chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_3chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_3chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_3chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_3chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_3chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
 
     str_to_check = game_3chevaux.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -145,17 +145,17 @@ def test_fin_de_partie_tous_chevaux_3chevaux(game_3chevaux):
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert game_3chevaux.is_game_over() == False
 
-    game_3chevaux.move_pawn(1, 62, 1, Action.REACH_GOAL)
+    game_3chevaux.move_pawn(1, 62, 1, Action_NO_EXACT.REACH_GOAL)
     assert game_3chevaux.is_game_over() == False
 
-    game_3chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_3chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_3chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_3chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
-    game_3chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_3chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_3chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_3chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_3chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_3chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_3chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_3chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
+    game_3chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_3chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_3chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_3chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
 
     assert game_3chevaux.is_game_over() == False
 
@@ -168,20 +168,20 @@ def test_fin_de_partie_tous_chevaux_3chevaux(game_3chevaux):
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 1", "OBJECTIF 1 doit être à 0."
 
-    game_3chevaux.move_pawn(1, 62, 3, Action.REACH_GOAL)
+    game_3chevaux.move_pawn(1, 62, 3, Action_NO_EXACT.REACH_GOAL)
     assert game_3chevaux.is_game_over() == False
 
-    game_3chevaux.move_pawn(1, 62, 6, Action.REACH_GOAL)
+    game_3chevaux.move_pawn(1, 62, 6, Action_NO_EXACT.REACH_GOAL)
     assert game_3chevaux.is_game_over() == True
 
 
 def test_fin_de_partie_tous_chevaux_4chevaux(game_4chevaux):
     game_4chevaux.init_board()
 
-    game_4chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_4chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_4chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_4chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_4chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_4chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_4chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_4chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
 
     str_to_check = game_4chevaux.get_str_game_overview()
     lines = str_to_check.split("\n")
@@ -194,17 +194,17 @@ def test_fin_de_partie_tous_chevaux_4chevaux(game_4chevaux):
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert game_4chevaux.is_game_over() == False
 
-    game_4chevaux.move_pawn(1, 62, 1, Action.REACH_GOAL)
+    game_4chevaux.move_pawn(1, 62, 1, Action_NO_EXACT.REACH_GOAL)
     assert game_4chevaux.is_game_over() == False
 
-    game_4chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_4chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_4chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_4chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
-    game_4chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_4chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_4chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_4chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_4chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_4chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_4chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_4chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
+    game_4chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_4chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_4chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_4chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
 
     assert game_4chevaux.is_game_over() == False
 
@@ -217,47 +217,47 @@ def test_fin_de_partie_tous_chevaux_4chevaux(game_4chevaux):
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 1", "OBJECTIF 1 doit être à 0."
 
-    game_4chevaux.move_pawn(1, 62, 3, Action.REACH_GOAL)
+    game_4chevaux.move_pawn(1, 62, 3, Action_NO_EXACT.REACH_GOAL)
     assert game_4chevaux.is_game_over() == False
-    game_4chevaux.move_pawn(1, 62, 6, Action.REACH_GOAL)
+    game_4chevaux.move_pawn(1, 62, 6, Action_NO_EXACT.REACH_GOAL)
     assert game_4chevaux.is_game_over() == False
 
-    game_4chevaux.move_pawn(1, 0, 6, Action.MOVE_OUT)
-    game_4chevaux.move_pawn(1, 1, 55, Action.MOVE_FORWARD)
-    game_4chevaux.move_pawn(1, 56, 1, Action.ENTER_SAFEZONE)
-    game_4chevaux.move_pawn(1, 57, 5, Action.MOVE_IN_SAFE_ZONE)
-    game_4chevaux.move_pawn(1, 62, 6, Action.REACH_GOAL)
+    game_4chevaux.move_pawn(1, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_4chevaux.move_pawn(1, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_4chevaux.move_pawn(1, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_4chevaux.move_pawn(1, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
+    game_4chevaux.move_pawn(1, 62, 6, Action_NO_EXACT.REACH_GOAL)
     assert game_4chevaux.is_game_over() == True
 
 
 def test_fin_de_partie_un_cheval_gagne_2chevaux(game_2chevaux):
     game_2chevaux.init_board()
-    game_2chevaux.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game_2chevaux.move_pawn(0, 1, 55, Action.MOVE_FORWARD)
-    game_2chevaux.move_pawn(0, 56, 1, Action.ENTER_SAFEZONE)
-    game_2chevaux.move_pawn(0, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_2chevaux.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_2chevaux.move_pawn(0, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_2chevaux.move_pawn(0, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_2chevaux.move_pawn(0, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
     assert game_2chevaux.is_game_over() == False
-    game_2chevaux.move_pawn(0, 62, 1, Action.REACH_GOAL)
+    game_2chevaux.move_pawn(0, 62, 1, Action_NO_EXACT.REACH_GOAL)
     assert game_2chevaux.is_game_over() == False
 
 
 def test_fin_de_partie_un_cheval_gagne_3chevaux(game_3chevaux):
     game_3chevaux.init_board()
-    game_3chevaux.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game_3chevaux.move_pawn(0, 1, 55, Action.MOVE_FORWARD)
-    game_3chevaux.move_pawn(0, 56, 1, Action.ENTER_SAFEZONE)
-    game_3chevaux.move_pawn(0, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_3chevaux.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_3chevaux.move_pawn(0, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_3chevaux.move_pawn(0, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_3chevaux.move_pawn(0, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
     assert game_3chevaux.is_game_over() == False
-    game_3chevaux.move_pawn(0, 62, 1, Action.REACH_GOAL)
+    game_3chevaux.move_pawn(0, 62, 1, Action_NO_EXACT.REACH_GOAL)
     assert game_3chevaux.is_game_over() == False
 
 
 def test_fin_de_partie_un_cheval_gagne_4chevaux(game_4chevaux):
     game_4chevaux.init_board()
-    game_4chevaux.move_pawn(0, 0, 6, Action.MOVE_OUT)
-    game_4chevaux.move_pawn(0, 1, 55, Action.MOVE_FORWARD)
-    game_4chevaux.move_pawn(0, 56, 1, Action.ENTER_SAFEZONE)
-    game_4chevaux.move_pawn(0, 57, 5, Action.MOVE_IN_SAFE_ZONE)
+    game_4chevaux.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
+    game_4chevaux.move_pawn(0, 1, 55, Action_NO_EXACT.MOVE_FORWARD)
+    game_4chevaux.move_pawn(0, 56, 1, Action_NO_EXACT.ENTER_SAFEZONE)
+    game_4chevaux.move_pawn(0, 57, 5, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
     assert game_4chevaux.is_game_over() == False
-    game_4chevaux.move_pawn(0, 62, 1, Action.REACH_GOAL)
+    game_4chevaux.move_pawn(0, 62, 1, Action_NO_EXACT.REACH_GOAL)
     assert game_4chevaux.is_game_over() == False
