@@ -20,12 +20,13 @@ def handle_mouse_click(event, button_mapping):
 
 
 env = LudoEnv(with_render=True, num_players=2, nb_chevaux=3, mode_fin_partie="tous_pions", mode_gym="jeu")
+players_type = ["human", "human"]
 
 def play_game(env):
     obs, info = env.reset()
     done = False
 
-    env.render(env.game)
+    env.render(env.game, players_type = players_type)
 
     while not done: 
         button_mapping = env.renderer.button_mapping
@@ -38,22 +39,10 @@ def play_game(env):
             # Handle mouse click
             selected_action = handle_mouse_click(event, button_mapping)
             if selected_action is not None:
-                # Perform the action (e.g., update the game state)
-                print("-"*50)
-                print("current_player : ", env.current_player)
-                print("dé : ", obs["dice_roll"])
-                print()
-                print(env.game.get_str_game_overview())
-                # print(env.game.get_instruction_for_player(env.current_player, obs["dice_roll"]))
-                print("actions valides : ", env.game.get_valid_actions(env.current_player, obs["dice_roll"]))
-                # print("encoded valid actions : ", env.game.encode_valid_actions(env.game.get_valid_actions(env.current_player, obs["dice_roll"])))
-                # TODO voir tout le plateau : home, chemin selon mon pdv, escalier et goal
-                # TODO : voir les actions possibles
-
-                # action = int(input("Choisissez une action : "))
+                # Perform the action
                 action = selected_action
                 obs, reward, done, truncated, info = env.step(action)
-                env.render(env.game)
+                env.render(env.game, players_type = players_type)
             else:
                 # Print message that need to click on a button
                 env.renderer.show_click_button_message()

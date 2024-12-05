@@ -1,27 +1,30 @@
-# ce fichier c'est pour jouer une partie contre un agent random
-# à terme enfaite on aurait un fichier main, on spécifie qui joue contre qui et on lance la partie (Random Agent, PPO ...)
+# Ajouter la racine du projet au chemin Python
 import sys
 from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 from reinforcement_learning.agent import RandomAgent
+import pygame
+import time
 
-env : LudoEnv = LudoEnv()
-
+env = LudoEnv(with_render=True, num_players=2, nb_chevaux=2, mode_fin_partie="tous_pions", mode_gym="jeu")
 
 def play_game(env, agents):
     obs, info = env.reset()
     done = False
     turn = 0
 
+    env.render(env.game, players_type = ["ai", "ai"])
+
     while not done:
-        print(env.game.get_str_game_overview())
+        print("-" * 50)
         current_agent = agents[env.current_player]
+        # For humain to be able to see game progress
+        # time.sleep(1)
+
         valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
         encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
-        print("main dé : ", env.dice_roll)
-        print("main valid_actions : ", valid_actions)
 
         # L'agent choisit une action
         action = current_agent.choose_action(encoded_valid_actions)
@@ -36,11 +39,10 @@ def play_game(env, agents):
         )
         turn += 1
 
-    print(f"Partie terminée. Joueur {env.current_player} a gagné !")
-
+        env.render(env.game, players_type = ["ai", "ai"])
 
 agent1 = RandomAgent(env.action_space)
 agent2 = RandomAgent(env.action_space)
 
-agents = [agent1, agent2]  # Liste des agents
-play_game(env, agents)
+play_game(env, [agent1, agent2])
+pygame.quit()

@@ -36,7 +36,7 @@ class Renderer:
         self.window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Petits Chevaux")
 
-        dice_files = [f"k-petits-chevaux/ludo_env/images/dice_face{i}.png" for i in range(1, 7)]
+        dice_files = [f"images/dice_face{i}.png" for i in range(1, 7)]
         self.dice_images = {}
 
         for i, file in enumerate(dice_files, start=1):
@@ -44,7 +44,7 @@ class Renderer:
             resized_image = pygame.transform.scale(image, (3 * SQUARE_SIZE, 3 * SQUARE_SIZE))
             self.dice_images[i] = resized_image
 
-    def render(self, game, current_player, dice_value, valid_actions, infos):
+    def render(self, game, current_player, dice_value, valid_actions, infos, players_type):
         if game.num_players == 2:
             self.colors = PLAYER_2_COLORS
         else:
@@ -66,7 +66,8 @@ class Renderer:
         self.draw_ecurie_player_3(game)
 
         self.show_current_player(game, current_player)
-        self.show_valid_actions(valid_actions, current_player, infos, game.num_players)
+        if players_type[current_player] == "human":
+            self.show_valid_actions(valid_actions, current_player, infos, game.num_players)
         self.show_dice_value(dice_value)
         
         pygame.display.flip()  # Mettre à jour l'affichage
