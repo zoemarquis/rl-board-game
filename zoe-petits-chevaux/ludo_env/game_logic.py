@@ -303,8 +303,8 @@ class GameLogic:
         for pos in range(old_position + 1, target_position):
             if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
                 return True
-        if self.board[player_id][target_position] > 0:
-            return True
+        # if self.board[player_id][target_position] > 0:
+        #     return True
         return False
     
     def get_dice_value_because_of_obstacle(self, player_id, old_position, target_position):
@@ -487,15 +487,18 @@ class GameLogic:
                 if self.is_opponent_pawn_on(player_id, 1): 
                     valid_actions.append(Action.MOVE_OUT_AND_KILL)
                 else: 
-                    if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
-                        valid_actions.append(Action.MOVE_OUT)
+                    # version où on autorise plusieurs pions du même joueur dans la même case
+                    # if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
+                    valid_actions.append(Action.MOVE_OUT)
 
         elif state == State.CHEMIN:
             if target_position < 57:  # limite avant zone protégée
 
                 obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
                 if obstacle:
-                    valid_actions.append(Action.GET_STUCK_BEHIND)
+                    nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, target_position)
+                    if nb_cases_avancer > 0:
+                        valid_actions.append(Action.GET_STUCK_BEHIND)
                 else: 
                     if self.is_there_pawn_to_kill(player_id, target_position):
                         valid_actions.append(Action.KILL)
@@ -506,7 +509,9 @@ class GameLogic:
                 obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, 56)
                 # TODO ZOE TESTER LE 56 ICI 
                 if obstacle:
-                    valid_actions.append(Action.GET_STUCK_BEHIND)
+                    nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, 56)
+                    if nb_cases_avancer > 0:
+                        valid_actions.append(Action.GET_STUCK_BEHIND)
                 else:
                     valid_actions.append(Action.ENTER_SAFEZONE)
 
@@ -661,11 +666,11 @@ class GameLogic:
 
         return chemin
 
-    def get_adversaires_overview_plateau(self, player_id):
-        assert self.num_players == 2, "fonction pas implémenté pour plus de joueur"
-        # result = [] TODO faire pour tous les joueurs
-        other_player_id = 1 if player_id == 0 else 0
-        return self.get_overview_of(other_player_id)
+    # def get_adversaires_overview_plateau(self, player_id):
+    #     assert self.num_players == 2, "fonction pas implémenté pour plus de joueur"
+    #     # result = [] TODO faire pour tous les joueurs
+    #     other_player_id = 1 if player_id == 0 else 0
+    #     return self.get_overview_of(other_player_id)
 
     def get_str_adversaires_overview_plateau(self, player_id):
         str_game_overview = ""
@@ -694,13 +699,15 @@ class GameLogic:
 
         result = [0 for _ in range(56)]
         for i in range(56):
-            assert len(chemin[i]) <= 1, "Erreur dans la logique du jeu"
+            # assert len(chemin[i]) <= 1, "Erreur dans la logique du jeu"
             if player_id in chemin[i]:
-                result[i] = 1
+                assert set(chemin[i]) == {player_id}, "Erreur dans la logique du jeu"
+                result[i] = len(chemin[i])
             else :
                 for other_player_id in other_player_ids:
                     if other_player_id in chemin[i]:
-                        result[i] = -1
+                        assert set(chemin[i]) == {other_player_id}, "Erreur dans la logique du jeu"
+                        result[i] = -(len(chemin[i]))
                         break
         return result
     

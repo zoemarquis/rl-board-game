@@ -12,7 +12,3 @@ class Action(Enum):
     MOVE_IN_SAFE_ZONE = 6  # Avancer dans la zone protégée
     REACH_GOAL = 7  # Atteindre l'objectif final
     KILL = 8  # Tuer un pion adverse
-
-    # TODO :
-    # REACH PIED ESCALIER
-    # ESCALADER à la place de move in safe zone mais comment faire comprendre si 1 2 3 4 5 ou 6
