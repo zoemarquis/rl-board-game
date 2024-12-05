@@ -105,9 +105,15 @@ class LudoEnv(gym.Env):
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 
-    def render(self, game, mode="human"):
+    def render(self, game, mode="human", players_type=["human", "human", "human", "human"]):
         if self.with_render:
-            self.renderer.render(self.game)
+            self.renderer.render(
+                self.game, 
+                self.current_player, 
+                self.dice_roll,
+                self.game.encode_valid_actions(self.game.get_valid_actions(self.current_player, self.dice_roll)),
+                self.game.get_pawns_info(self.current_player),
+                players_type)
 
     def step(self, action):
         obs = self._get_observation()
