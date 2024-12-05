@@ -6,7 +6,7 @@ from ludo_env.game_logic import (
     TOTAL_SIZE,
     BOARD_SIZE,
 )
-from ludo_env.action import Action_NO_EXACT
+from ludo_env.action import Action_NO_EXACT, Action_EXACT
 # from ludo_env.renderer import Renderer
 
 
@@ -15,7 +15,7 @@ class LudoEnv(gym.Env):
         self,
         num_players,
         nb_chevaux,
-        mode_fin_partie="tous_pions",
+        mode_fin_partie="tous",
 
         mode_gym="entrainement",
 
@@ -24,9 +24,9 @@ class LudoEnv(gym.Env):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
         assert nb_chevaux in [2, 3, 4, 5, 6], "Only 2, 3, 4, 5 or 6 pawns are allowed"
         assert mode_fin_partie in [
-            "tous_pions",
-            "un_pion",
-        ], "Only 'tous_pions' or 'un_pion' are allowed"
+            "tous",
+            "un",
+        ], "Only 'tous' or 'un' are allowed"
         assert mode_gym in [
             "entrainement",
             "jeu",

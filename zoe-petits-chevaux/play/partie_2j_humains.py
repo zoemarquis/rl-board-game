@@ -9,7 +9,7 @@ sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 
 env = LudoEnv(
-    num_players=2, nb_chevaux=3, mode_gym="jeu", mode_fin_partie="un_pion"
+    num_players=2, nb_chevaux=3, mode_gym="jeu", mode_fin_partie="un"
 )
 
 

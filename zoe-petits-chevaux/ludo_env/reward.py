@@ -1,4 +1,4 @@
-from ludo_env.action import Action_NO_EXACT
+from ludo_env.action import Action_NO_EXACT, Action_EXACT
 
 REWARD_TABLE_MOVE_OUT = {
     Action_NO_EXACT.NO_ACTION: -1,

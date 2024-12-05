@@ -8,13 +8,13 @@ from stable_baselines3 import PPO
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
-from ludo_env.action import Action_NO_EXACT
+from ludo_env.action import Action_NO_EXACT, Action_EXACT
 
 agent1_model = PPO.load("reinforcement_learning/checkpoints/agent_600000_steps.zip")
 agent2_model = PPO.load("reinforcement_learning/checkpoints/agent_600000_steps.zip")
 
 
-env = LudoEnv(num_players=2, nb_chevaux=4, mode_gym="jeu", mode_fin_partie="tous_pions")
+env = LudoEnv(num_players=2, nb_chevaux=4, mode_gym="jeu", mode_fin_partie="tous")
 
 intentional_actions = defaultdict(int)
 impossible_actions = defaultdict(int)

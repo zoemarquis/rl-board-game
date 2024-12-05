@@ -17,7 +17,7 @@ from ludo_env import LudoEnv
 
 
 env = LudoEnv(
-    num_players=2, nb_chevaux=2, mode_gym="jeu", mode_fin_partie="tous_pions"
+    num_players=2, nb_chevaux=2, mode_gym="jeu", mode_fin_partie="tous"
 )
 obs = env.reset()
 obs = obs[0]

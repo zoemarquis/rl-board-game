@@ -1,7 +1,7 @@
 # ce fichier gère toute la logique du jeu / les règles du jeu
 import numpy as np
 
-from ludo_env.action import Action_NO_EXACT
+from ludo_env.action import Action_NO_EXACT, Action_EXACT
 from ludo_env.state import State_NO_EXACT
 from ludo_env.reward import REWARD_TABLE_MOVE_OUT, DEFAULT_ACTION_ORDER
 
@@ -11,7 +11,7 @@ TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 
 class GameLogic:
-    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous_pions"):
+    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous"):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
@@ -376,11 +376,11 @@ class GameLogic:
         """
         Vérifie si un joueur a remporté la partie.
         """
-        if self.mode_fin_partie == "tous_pions":
+        if self.mode_fin_partie == "tous":
             for player_id in range(self.num_players):
                 if self.board[player_id][-1] == self.nb_chevaux:
                     return player_id
-        elif self.mode_fin_partie == "un_pion":
+        elif self.mode_fin_partie == "un":
             for player_id in range(self.num_players):
                 if self.board[player_id][-1] == 1:
                     return player_id

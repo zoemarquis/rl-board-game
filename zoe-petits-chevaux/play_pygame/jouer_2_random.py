@@ -8,7 +8,7 @@ from reinforcement_learning.agent import RandomAgent
 import pygame
 import time
 
-env = LudoEnv(with_render=True, num_players=2, nb_chevaux=2, mode_fin_partie="tous_pions", mode_gym="jeu")
+env = LudoEnv(with_render=True, num_players=2, nb_chevaux=2, mode_fin_partie="tous", mode_gym="jeu")
 
 def play_game(env, agents):
     obs, info = env.reset()

@@ -10,7 +10,7 @@ from ludo_env import LudoEnv
 
 env = LudoEnv(
     num_players=3, nb_chevaux=4, 
-    mode_fin_partie="un_pion",
+    mode_fin_partie="un",
     mode_gym="jeu", 
 )
 
