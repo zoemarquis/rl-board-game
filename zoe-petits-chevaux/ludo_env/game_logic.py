@@ -59,6 +59,13 @@ class GameLogic:
             for _ in range(self.board[i][0]):
                 ecurie_overview.append(i)
         return ecurie_overview
+    
+    def get_ecurie_player(self, player_id):
+        ecurie = []
+        for _ in range(self.board[player_id][0]):
+            ecurie.append(player_id)
+
+        return len(ecurie)
 
     def get_objectif_overview(self):
         """
