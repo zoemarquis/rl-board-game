@@ -132,11 +132,11 @@ class LudoEnv(gym.Env):
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
             if self.mode_gym == "jeu":
-                if self.mode_pied_escaler == "exact":
+                if self.mode_pied_escalier == "exact":
                     print(
                         f"ACTION INTERDITE : {Action_EXACT(action%len(Action_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                     )
-                elif self.mode_pied_escaler == "not_exact":
+                elif self.mode_pied_escalier == "not_exact":
                     print(
                         f"ACTION INTERDITE : {Action_NO_EXACT(action%len(Action_NO_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                     )

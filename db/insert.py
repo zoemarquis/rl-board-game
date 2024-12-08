@@ -55,11 +55,10 @@ class PlayerToInsert:
             .filter(Player.name == self.name, Player.is_human == True)
             .first()
         )
-
-        if player is None:
-            # Si le joueur n'existe pas, on l'ajoute
+        if not player:
             player = Player(name=self.name, is_human=self.is_human)
             session.add(player)
+            session.commit()
             print(f"Joueur ajouté : {player.name}")
         else:
             print(f"Joueur existant : {player.name}")
@@ -83,7 +82,7 @@ class SetOfRulesToInsert:
         existing_set_of_rules = (
             session.query(SetOfRules)
             .join(IsRuleOf)
-            .filter(IsRuleOf.rule_id.in_(self.rules_ids))
+            .filter(IsRuleOf.game_rule_id.in_(self.rules_ids))
             .group_by(SetOfRules.set_of_rules_id)
             .having(func.count(SetOfRules.set_of_rules_id) == len(self.rules_ids))
             .first()
@@ -94,19 +93,26 @@ class SetOfRulesToInsert:
 
         # vérif que les règles existent
         for rule_id in self.rules_ids:
-            rule = session.query(GameRule).filter(GameRule.rule_id == rule_id).first()
+            rule = session.query(GameRule).filter(GameRule.game_rule_id == rule_id).first()
             if rule is None:
                 raise ValueError(f"La règle {rule_id} n'existe pas.")
 
-        # si pas de combinaison existante, on crée un nouveau set de règles
-        new_set_of_rules = SetOfRules()
+        # si pas de combinaison existante, on crée un nouveau set de règles (avec name et description par défaut)
+        new_set_of_rules = SetOfRules(
+            name="Nom par défaut",
+            description="Règle générée automatiquement",
+        )
         session.add(new_set_of_rules)
+        session.commit()
+
         # on crée les liens entre les règles et le set de règles
         for rule_id in self.rules_ids:
             is_rule_of = IsRuleOf(
-                set_of_rules_id=new_set_of_rules.set_of_rules_id, rule_id=rule_id
+                set_of_rules_id=new_set_of_rules.set_of_rules_id, game_rule_id=rule_id
             )
             session.add(is_rule_of)
+        session.commit()
+
         print(f"Nouveau set de règles créé : {new_set_of_rules.set_of_rules_id}")
         return new_set_of_rules.set_of_rules_id
 
@@ -155,15 +161,35 @@ def store_final_game_data(
         set_of_rules_id = rules.get_or_create_set_of_rules(session)
         game = Game(
             set_of_rules_id=set_of_rules_id,
-            played_at=datetime.now(),
-            nb_participants=len(players),
+            nb_participants=len(players)
         )
         session.add(game)
+        session.commit()
         game_id = game.game_id
+
+ 
         for player in players:
-            player.get_or_create_human_player(session)
-            participant = ParticipantToInsert(game_id, player)
-            participant.create_participant(session)
+            if player.is_human:
+                player_id = player.get_or_create_human_player(session)
+            
+            # Gestion des agents
+            else:
+                db_player = session.query(Player).filter(Player.name == player.name).first()
+                if not db_player:
+                    db_player = Player(name=player.name, is_human=False)
+                    session.add(db_player)
+                    session.commit()
+                player_id = db_player.player_id
+
+            participant = Participant(
+                game_id=game_id,
+                player_id=player_id,
+                turn_order=player.turn_order,
+                score=player.score,
+                nb_moves=player.nb_moves,
+                is_winner=player.is_winner,
+            )
+            session.add(participant)
 
         session.commit()
-        print("Données enregistrées.")
+        print(f"Données enregistrées avec l'ID (game) : {game_id}")

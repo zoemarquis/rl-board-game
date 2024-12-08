@@ -14,3 +14,6 @@ streamlit
 sqlalchemy 
 
 black # formatter
+
+# DB
+psycopg2
