@@ -1,18 +1,20 @@
 # Fichier permettant de définir les configurations de jeu pour les parties entre agents
-import os 
+import os
+import rules
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux/reinforcement_learning"))
 
 
 # TODO :  Ajouter les sets de règles
 # TODO :  Ajouter d'autres paramètres pouvant être utiles
 def generate_game_config(num_players, nb_chevaux, mode_fin, mode_escalier, agent_path):
+    my_ids_rules = rules.determine_rules(num_players, nb_chevaux, mode_fin, mode_escalier)
     return {
         "num_players": num_players,
         "nb_chevaux": nb_chevaux,
         "mode_fin_partie": mode_fin,
         "mode_pied_escalier": mode_escalier,
-        "agents": [{"path": os.path.join(BASE_DIR, agent_path), "name": f"Agent {i + 1}"} for i in range(num_players)]
-        
+        "agents": [{"path": os.path.join(BASE_DIR, agent_path), "name": f"Agent {i + 1}"} for i in range(num_players)],
+        "rules_ids": my_ids_rules
     }
 
 game_configs = {

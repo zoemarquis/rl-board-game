@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from datetime import datetime
 from schema import Player, Participant, Game, SetOfRules, IsRuleOf, GameRule
-
+import rules
 Session = sessionmaker(bind=create_engine(DATABASE_URL))
 
 
@@ -95,12 +95,22 @@ class SetOfRulesToInsert:
         for rule_id in self.rules_ids:
             rule = session.query(GameRule).filter(GameRule.game_rule_id == rule_id).first()
             if rule is None:
-                raise ValueError(f"La règle {rule_id} n'existe pas.")
+                # si la règle existe pas, on l'ajoute
+                rule_name = rules.ALL_RULES.get(rule_id, f"Règle inconnue {rule_id}")
+                rule = GameRule(
+                    game_rule_id=rule_id,
+                    name=rule_name,
+                    description=f"Description de {rule_name}",
+                )
+                session.add(rule)
+                print(f"Règle créée : ID={rule_id}, Name={rule_name}")
+
+        session.commit()
 
         # si pas de combinaison existante, on crée un nouveau set de règles (avec name et description par défaut)
         new_set_of_rules = SetOfRules(
-            name="Nom par défaut",
-            description="Règle générée automatiquement",
+            name=",".join(map(str, self.rules_ids)),
+            description=rules.generate_rule_description(self.rules_ids, rules.ALL_RULES),
         )
         session.add(new_set_of_rules)
         session.commit()

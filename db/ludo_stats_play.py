@@ -68,7 +68,7 @@ def play_game(env, agents, agent_names):
 
     # TODO : A définir + A créer manuellement pour le moment
     # TODO : Créer un fichier de règles (faire aussi pour les autres paramètres)
-    rules = SetOfRulesToInsert(rules_ids=[0]) 
+    rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
     """
     INSERT INTO game_rule (game_rule_id, name, description)
     VALUES (0, 'Test Rule', 'Règle pour tester.');
