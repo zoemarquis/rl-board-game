@@ -1,0 +1,6 @@
+set_of_rules_id,name,description
+1,"1,4,7,9","Deux joueurs, Deux chevaux, Tous les chevaux doivent gagner, Montée de l'escalier commence exacte"
+2,"1,4,8,9","Deux joueurs, Deux chevaux, Un seul cheval doit gagner, Montée de l'escalier commence exacte"
+3,"1,5,7,9","Deux joueurs, Trois chevaux, Tous les chevaux doivent gagner, Montée de l'escalier commence exacte"
+4,"1,5,8,9","Deux joueurs, Trois chevaux, Un seul cheval doit gagner, Montée de l'escalier commence exacte"
+5,"1,6,7,9","Deux joueurs, Quatre chevaux, Tous les chevaux doivent gagner, Montée de l'escalier commence exacte"

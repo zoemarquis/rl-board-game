@@ -27,13 +27,13 @@ game_configs = {
     "2_players_2_pawns_un_not_exact" : generate_game_config(2, 2, "un", "not_exact", "-"),
 
     # 2 players 3 pawns
-    "2_players_3_pawns_tous_exact" : generate_game_config(2, 3, "tous", "exact", "-"),
+    "2_players_3_pawns_tous_exact" : generate_game_config(2, 3, "tous", "exact", "agent_maskedppo_2joueurs_3chevaux_tous_exact_ascension"),
     "2_players_3_pawns_tous_not_exact" : generate_game_config(2, 3, "tous", "not_exact", "-"),
-    "2_players_3_pawns_un_exact" : generate_game_config(2, 3, "un", "exact", "-"),
+    "2_players_3_pawns_un_exact" : generate_game_config(2, 3, "un", "exact", "agent_maskedppo_2joueurs_3chevaux_un_exact_ascension"),
     "2_players_3_pawns_un_not_exact" : generate_game_config(2, 3, "un", "not_exact", "-"),
 
     # 2 players 4 pawns
-    "2_players_4_pawns_tous_exact" : generate_game_config(2, 4, "tous", "exact", "-"),
+    "2_players_4_pawns_tous_exact" : generate_game_config(2, 4, "tous", "exact", "agent_maskedppo_2joueurs_4chevaux_tous_exact_ascension"),
     "2_players_4_pawns_tous_not_exact" : generate_game_config(2, 4, "tous", "not_exact", "-"),
     "2_players_4_pawns_un_exact" : generate_game_config(2, 4, "un", "exact", "-"),
     "2_players_4_pawns_un_not_exact" : generate_game_config(2, 4, "un", "not_exact", "-"),

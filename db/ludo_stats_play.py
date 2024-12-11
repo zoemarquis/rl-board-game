@@ -111,8 +111,8 @@ def run_all_configs():
         )
 
         print(f"Configuration en cours : {config_name}")
-        for i in range(10):
-            print(f"Partie {i + 1}/10 pour {config_name}")
+        for i in range(100):
+            print(f"Partie {i + 1}/100 pour {config_name}")
             play_game(env, agents, agent_names, config)
 
 
