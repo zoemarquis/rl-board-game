@@ -1,7 +1,7 @@
 # ce fichier gère toute la logique du jeu / les règles du jeu
 import numpy as np
 
-from ludo_env.action import Action_NO_EXACT, Action_EXACT
+from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
 from ludo_env.state import State_NO_EXACT, State_EXACT
 from ludo_env.reward import get_reward_table, get_default_action_order
 
@@ -11,11 +11,14 @@ TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 
 class GameLogic:
-    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous", mode_pied_escalier="not_exact"):
+    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous", mode_pied_escalier="not_exact", mode_ascension="sans_contrainte"):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
+        self.mode_ascension = mode_ascension
         self.mode_pied_escalier = mode_pied_escalier
+        if mode_ascension == "avec_contrainte" and mode_pied_escalier == "not_exact":
+            raise ValueError("Mode d'ascension avec contrainte non supporté")
         self.init_board()
 
     
@@ -28,7 +31,9 @@ class GameLogic:
             raise ValueError("Mode de pied d'escalier non supporté")
         
     def get_action(self):
-        if self.mode_pied_escalier == "not_exact":
+        if self.mode_ascension == "avec_contrainte":
+            return Action_EXACT_ASCENSION
+        elif self.mode_pied_escalier == "not_exact":
             return Action_NO_EXACT
         elif self.mode_pied_escalier == "exact":
             return Action_EXACT
@@ -242,7 +247,7 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}" # TODO MERGE 
+        # TODO MERGE ZOE assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}" # TODO MERGE 
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -495,6 +500,58 @@ class GameLogic:
             
             pass 
 
+        elif self.get_action() == Action_EXACT_ASCENSION:
+            if action == Action_EXACT_ASCENSION.MOVE_OUT:
+                self.sortir_pion(player_id, dice_value)
+            elif action == Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL:
+                self.kill_pawn(player_id, 1)
+                self.sortir_pion(player_id, dice_value)
+
+            elif action == Action_EXACT_ASCENSION.GET_STUCK_BEHIND: # TODO TEST TODO MERGE
+                target_position = old_position + dice_value
+                if target_position >= 57:
+                    target_position = 56
+                valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(player_id, old_position, target_position  )
+                self.avance_pion_path(player_id, old_position, valeur_de_avec_obstacle)
+
+            elif action == Action_EXACT_ASCENSION.KILL:
+                self.kill_pawn(player_id, old_position + dice_value)
+                self.avance_pion_path(player_id, old_position, dice_value)
+            elif action == Action_EXACT_ASCENSION.MOVE_FORWARD or action == Action_EXACT_ASCENSION.REACH_PIED_ESCALIER:
+                # TODO ZOE : tester si il faut kill parce que c'est une action aussi possible lorsque REACH PIED TODO TEST TODO MERGE
+                self.kill_pawn(player_id, old_position + dice_value)
+
+                self.avance_pion_path(player_id, old_position, dice_value)
+            elif action == Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER:
+                self.avance_recule(player_id, old_position, dice_value)
+
+            elif action == Action_EXACT_ASCENSION.MARCHE_1:
+                assert dice_value == 1, "Déplacement pas conforme à la position"
+                self.avance_pion_safe_zone(player_id, old_position, 1)
+            elif action == Action_EXACT_ASCENSION.MARCHE_2:
+                assert dice_value == 2, "Déplacement pas conforme à la position"
+                self.avance_pion_safe_zone(player_id, old_position, 1)
+            elif action == Action_EXACT_ASCENSION.MARCHE_3:
+                assert dice_value == 3, "Déplacement pas conforme à la position"
+                self.avance_pion_safe_zone(player_id, old_position, 1)
+            elif action == Action_EXACT_ASCENSION.MARCHE_4:
+                assert dice_value == 4, "Déplacement pas conforme à la position"
+                self.avance_pion_safe_zone(player_id, old_position, 1)
+            elif action == Action_EXACT_ASCENSION.MARCHE_5:
+                assert dice_value == 5, "Déplacement pas conforme à la position"
+                self.avance_pion_safe_zone(player_id, old_position, 1)
+            elif action == Action_EXACT_ASCENSION.MARCHE_6:
+                assert dice_value == 6, "Déplacement pas conforme à la position"
+                self.avance_pion_safe_zone(player_id, old_position, 1)
+
+            elif action == Action_EXACT_ASCENSION.REACH_GOAL:
+                assert dice_value == 6, "Déplacement pas conforme à la position" # TODO MERGE TODO TEST ZOE 6 pour reach goal dans cette version
+                self.securise_pion_goal(player_id, old_position, dice_value)
+            elif action == Action_EXACT_ASCENSION.NO_ACTION:
+                pass
+            else:
+                raise ValueError("Action non valide")
+
         else:
             raise ValueError("Action non valide")
 
@@ -608,6 +665,74 @@ class GameLogic:
             elif state == State_EXACT.OBJECTIF:
                 pass
 
+        elif self.get_state() == State_EXACT and self.get_action() == Action_EXACT_ASCENSION:
+            if state == State_EXACT.ECURIE:
+                if dice_value == 6:
+                    if self.is_opponent_pawn_on(player_id, 1): 
+                        valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL)
+                    else: 
+                        if self.board[player_id][1] == 0:
+                            valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT)
+
+            elif state == State_EXACT.CHEMIN:
+                if target_position < 56:
+                    obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, target_position)
+                    if obstacle:
+                        nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, target_position)
+                        if nb_cases_avancer > 0:
+                            valid_actions.append(Action_EXACT_ASCENSION.GET_STUCK_BEHIND)
+                    else :
+                        if self.is_there_pawn_to_kill(player_id, target_position):
+                            valid_actions.append(Action_EXACT_ASCENSION.KILL)
+                        else:
+                            valid_actions.append(Action_EXACT_ASCENSION.MOVE_FORWARD)
+
+                elif target_position == 56:
+                    obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, 56)
+                    if obstacle:
+                        nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, 56)
+                        if nb_cases_avancer > 0:
+                            valid_actions.append(Action_EXACT_ASCENSION.GET_STUCK_BEHIND)
+                        else:
+                            if self.is_opponent_pawn_on(player_id, target_position):
+                                valid_actions.append(Action_EXACT_ASCENSION.KILL)
+                            else:
+                                valid_actions.append(Action_EXACT_ASCENSION.REACH_PIED_ESCALIER)
+
+                else: # > 56
+                    obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, 56)
+                    if obstacle:
+                        nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, 56)
+                        if nb_cases_avancer > 0:
+                            valid_actions.append(Action_EXACT_ASCENSION.GET_STUCK_BEHIND)
+                    else :
+                        distance_avant = 56 - position
+                        recule_de = dice_value - distance_avant
+                        position_apres = 56 - recule_de
+                        if position_apres > position:
+                            valid_actions.append(Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER)
+
+            elif state == State_EXACT.PIED_ESCALIER:
+                if dice_value == 1:
+                    valid_actions.append(Action_EXACT_ASCENSION.MARCHE_1)
+
+            elif state == State_EXACT.ESCALIER:
+                if position==57 and dice_value==2:
+                    valid_actions.append(Action_EXACT_ASCENSION.MARCHE_2)
+                elif position==58 and dice_value==3:
+                    valid_actions.append(Action_EXACT_ASCENSION.MARCHE_3)
+                elif position==59 and dice_value==4:
+                    valid_actions.append(Action_EXACT_ASCENSION.MARCHE_4)
+                elif position==60 and dice_value==5:
+                    valid_actions.append(Action_EXACT_ASCENSION.MARCHE_5)
+                elif position==61 and dice_value==6:
+                    valid_actions.append(Action_EXACT_ASCENSION.MARCHE_6)
+                elif position==62 and dice_value==6:
+                    valid_actions.append(Action_EXACT_ASCENSION.REACH_GOAL)
+
+            elif state == State_EXACT.OBJECTIF:
+                pass
+
         return valid_actions
 
     def get_valid_actions(self, player_id, dice_value):
@@ -622,7 +747,9 @@ class GameLogic:
                 all_vide = False
             valid_actions[i] = tmp
         if all_vide:
-            if self.get_action() == Action_NO_EXACT:
+            if self.get_action() == Action_EXACT_ASCENSION:
+                valid_actions.append(Action_EXACT_ASCENSION.NO_ACTION)
+            elif self.get_action() == Action_NO_EXACT:
                 valid_actions.append(Action_NO_EXACT.NO_ACTION)
             elif self.get_action() == Action_EXACT:
                 valid_actions.append(Action_EXACT.NO_ACTION)
@@ -650,6 +777,15 @@ class GameLogic:
                 return 2
             return pawn_id * (len(Action_EXACT) - 3) + action_type.value
         
+        elif self.get_action() == Action_EXACT_ASCENSION:
+            if action_type == Action_EXACT_ASCENSION.NO_ACTION:
+                return 0
+            elif action_type == Action_EXACT_ASCENSION.MOVE_OUT:
+                return 1
+            elif action_type == Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL:
+                return 2
+            return pawn_id * (len(Action_EXACT_ASCENSION) - 3) + action_type.value
+        
         else : 
             raise ValueError("Action non valide")
 
@@ -675,6 +811,16 @@ class GameLogic:
                     encoded_actions.append(self.encode_action(i, action))
             return list(set(encoded_actions))
         
+        elif self.get_action() == Action_EXACT_ASCENSION:
+            if valid_actions[self.nb_chevaux] == Action_EXACT_ASCENSION.NO_ACTION:
+                return [0]
+            valid_actions = valid_actions[: self.nb_chevaux]
+            encoded_actions = []
+            for i, actions in enumerate(valid_actions):
+                for action in actions:
+                    encoded_actions.append(self.encode_action(i, action))
+            return list(set(encoded_actions))
+        # TODO MERGE : simplifier
         else : 
             raise ValueError("Action non valide")
 
@@ -715,7 +861,7 @@ class GameLogic:
 
 
     def get_reward(self, action): 
-        reward_table = get_reward_table(self.mode_pied_escalier)
+        reward_table = get_reward_table(self.mode_pied_escalier, self.mode_ascension) # TODO MERGE reward
         return reward_table[action]
 
 
@@ -817,7 +963,7 @@ class GameLogic:
         return str_game_overview
 
     def debug_action(self, encoded_valid_actions):
-        for action in get_default_action_order(self.nb_chevaux, self.mode_pied_escalier):
+        for action in get_default_action_order(self.nb_chevaux, self.mode_pied_escalier, self.mode_ascension):
             if action in encoded_valid_actions:
                 return action
         assert False, "Erreur : Aucune action possible dans la liste d'actions par défaut" # TODO MERGE

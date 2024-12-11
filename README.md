@@ -80,40 +80,27 @@ choisir entre 1 et 2 (exclusif, par défaut 1)
 2. le premier cheval au centre du plateau fait gagner son joueur 
 
 choisir entre 2, 3, 4 (exclusif) (voire plus ?) chevaux par joueur
-3. chaque joueur a 2 chevaux
-4. chaque joueur a 3 chevaux
-5. chaque joueur a 4 chevaux
+2. chaque joueur a 2 chevaux
+3. chaque joueur a 3 chevaux
+4. chaque joueur a 4 chevaux
+5. chaque joueur a 5 chevaux
+6. chaque joueur a 6 chevaux 
 
+choisir entre atteindre exactement le pied de l'escalier pour pouvoir monter ou non 
+0. pas beosin d'atteindre exactement le pied
+1. atteindre exactement le pied de l'escalier (possible que si avec la valeur du dé il se rapproche de l'objectif : TODO gestion si y a un autre joueur à cet endroit là)
 
+si la dernière réponse était 1:
+0. monter de la valeur indiquée (si il fait plus que l'objectif, atteint quand même l'objectif)
+1. monter exactement les marches 1 à 1 (faire 1 pour aller sur la case 1, 2 case 2, 3 case 3...) dans l'ordre et faire un 6 pour atteindre l'objectif 
 
+TODO ZOE 
+si la dernière réponse était 1:
+0. ne rejoue pas à chaque fois qu'il monte d'une marche
+1. rejoue à chaque fois qu'il monte correctement une marche (raccourcir la partie)
 
+attention : chemin et escalier : plusieurs pions du meme joueur autorisé
 
-# Règles du jeu fonctionnelles
+TODO : gestion protect -> ne pas pouvoir kill / protect si on se mets dans la meme case
+et dans espace observation reward si pions protégés, si plus pion protégé -> reward négatif ?
 
-Qu'un seul pion par case 
-
-## Nombre de pions par joueur 
-- [x] 2 pions
-- [x] 3 pions
-- [x] 4 pions
-- [ ] 5 pions : TODO  
-- [ ] 6 pions : TODO 
-
-## Gagner
-- [x] un pion dans objectif 
-- [x] tous les pions dans objectif 
-
-## Doubler
-- [ ] rester coincé derrière : WIP sur une branche 
-- [x] autoriser
-
-## Pied de l'escalier 
-- [x] il suffit de dépasser pour entrer dans l'escalier
-- [ ] il faut atteindre exactement le pied de l'escalier
-
-## Monter l'escalier 
-- [ ] 
-- [ ]
-
-## Atteindre objectif
-- [ ] 
