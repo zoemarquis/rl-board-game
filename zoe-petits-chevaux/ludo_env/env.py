@@ -149,7 +149,11 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
-            if self.mode_gym == "jeu":
+            if self.mode_gym == "stats_game":
+                action = self.game.debug_action(encoded_valid_actions)
+                pawn_id, action_type = self.game.decode_action(action)
+
+            elif self.mode_gym == "jeu":
                 if self.mode_ascension == "avec_contrainte":
                     print(
                         f"ACTION INTERDITE : {Action_EXACT_ASCENSION(action%len(Action_EXACT_ASCENSION))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
@@ -159,14 +163,13 @@ class LudoEnv(gym.Env):
                     print(
                         f"ACTION INTERDITE : {Action_EXACT(action%len(Action_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                     )
-                elif self.mode_pied_escalier == "not_exact" and self.mode_gym == "jeu":
+                elif self.mode_pied_escalier == "not_exact":
                     print(
                         f"ACTION INTERDITE : {Action_NO_EXACT(action%len(Action_NO_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                     )
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
-                if self.mode_gym == "jeu":
-                    print("debug : ", action, pawn_id, action_type)
+                print("debug : ", action, pawn_id, action_type)
             else:
                 self.change_player()
                 return self._get_observation(), -10, False, False, {}
