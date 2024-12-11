@@ -25,12 +25,14 @@ class PlayerToInsert:
     ):
         assert name is not None, "name must be provided"
         assert is_human is not None, "is_human must be provided"
-        if player_id is None:
+        # TODO : Erreur car player_id est None au début (voir si on enlève ce assert)
+        """if player_id is None:
             assert is_human == True, "player_id must be provided if is_human is False"
         else:
             assert (
                 is_human == False
             ), "player_id must not be provided if is_human is True"
+            """
         assert 1 <= turn_order <= 4, "turn_order must be between 1 and 4"
         if is_human is True:
             assert score is None, "score must be None if is_human is True"
@@ -177,12 +179,10 @@ def store_final_game_data(
         session.commit()
         game_id = game.game_id
 
- 
+        num_player_game = 1
         for player in players:
             if player.is_human:
                 player_id = player.get_or_create_human_player(session)
-            
-            # Gestion des agents
             else:
                 db_player = session.query(Player).filter(Player.name == player.name).first()
                 if not db_player:
@@ -199,7 +199,9 @@ def store_final_game_data(
                 nb_moves=player.nb_moves,
                 is_winner=player.is_winner,
             )
+            participant.num_player_game = num_player_game
             session.add(participant)
+            num_player_game += 1
 
         session.commit()
         print(f"Données enregistrées avec l'ID (game) : {game_id}")

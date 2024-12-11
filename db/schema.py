@@ -32,7 +32,6 @@ class Player(Base):
     player_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False, unique=True)
     is_human = Column(Boolean, nullable=False, default=True)
-    model_path = Column(String, nullable=True)
     description = Column(String, nullable=True)
     strategy = Column(String, nullable=True)
     difficulty = Column(Integer, nullable=True)
@@ -93,14 +92,17 @@ class Participant(Base):
     player_id = Column(
         Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False
     )
+    # TODO : Ajouter au schéma de la BD cette colonne (utile pour quand 2 même agents jouent contre (sinon la clé primaire était la même))
+    num_player_game = Column(Integer, autoincrement=True, nullable=False)
+    
     __table_args__ = (
-        PrimaryKeyConstraint("game_id", "player_id"),
+        PrimaryKeyConstraint("game_id", "num_player_game"),
         CheckConstraint("turn_order IN (1, 2, 3, 4)", name="check_turn_order"),
     )
     turn_order = Column(Integer, nullable=False)
     score = Column(
         Integer, nullable=False, default=0
-    )  # 0 if the player is human -> score of the selected agent
+    )
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
 

@@ -13,7 +13,7 @@ def generate_game_config(num_players, nb_chevaux, mode_fin, mode_escalier, agent
         "nb_chevaux": nb_chevaux,
         "mode_fin_partie": mode_fin,
         "mode_pied_escalier": mode_escalier,
-        "agents": [{"path": os.path.join(BASE_DIR, agent_path), "name": f"Agent {i + 1}"} for i in range(num_players)],
+        "agents": [{"path": os.path.join(BASE_DIR, agent_path), "name": agent_path} for i in range(num_players)],
         "rules_ids": my_ids_rules
     }
 
@@ -21,9 +21,9 @@ def generate_game_config(num_players, nb_chevaux, mode_fin, mode_escalier, agent
 game_configs = {
     ## 2 PLAYERS
     # 2 players 2 pawns
-    "2_players_2_pawns_tous_exact" : generate_game_config(2, 2, "tous", "exact", "agent_maskedppo_2joueurs_2chevaux_tous_exact"),
+    "2_players_2_pawns_tous_exact" : generate_game_config(2, 2, "tous", "exact", "agent_maskedppo_2joueurs_2chevaux_tous_exact_ascension"), #TODO : ajouter ascension
     "2_players_2_pawns_tous_not_exact" : generate_game_config(2, 2, "tous", "not_exact", "-"),
-    "2_players_2_pawns_un_exact" : generate_game_config(2, 2, "un", "exact", "agent_maskedppo_2joueurs_2chevaux_un_exact"),
+    "2_players_2_pawns_un_exact" : generate_game_config(2, 2, "un", "exact", "agent_maskedppo_2joueurs_2chevaux_un_exact_ascension"),
     "2_players_2_pawns_un_not_exact" : generate_game_config(2, 2, "un", "not_exact", "-"),
 
     # 2 players 3 pawns

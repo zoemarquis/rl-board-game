@@ -60,8 +60,8 @@ def play_game(env, agents, agent_names, config):
     players = [
         PlayerToInsert(
             name=agent_names[i],
-            is_human=False, # TODO : Changer cela en fonction du type (normalement toujours False je crois)
-            player_id= 1, # TODO : Changer cela pour avoir un id unique par joueur
+            is_human=False, # TODO : Gérer le cas quand c'est un humain
+            player_id=None,
             turn_order=i + 1,
             nb_moves=moves[i],
             is_winner=(scores[i] == max(scores)),
