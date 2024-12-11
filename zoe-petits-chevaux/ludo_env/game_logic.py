@@ -577,8 +577,7 @@ class GameLogic:
                     if self.is_opponent_pawn_on(player_id, 1): 
                         valid_actions.append(Action_EXACT.MOVE_OUT_AND_KILL)
                     else: 
-                        if self.board[player_id][1] == 0: # si il y a déjà un de mes chevaux sur la case alors je ne peux pas sortir un autre
-                            valid_actions.append(Action_EXACT.MOVE_OUT)
+                        valid_actions.append(Action_EXACT.MOVE_OUT)
 
             elif state == State_EXACT.CHEMIN:
                 # TODO ZOE : si quelquun sur la route alors je suis bloquée dans tous les cas 
@@ -645,8 +644,8 @@ class GameLogic:
                     if self.is_opponent_pawn_on(player_id, 1): 
                         valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL)
                     else: 
-                        if self.board[player_id][1] == 0:
-                            valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT)
+                        valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT)
+
 
             elif state == State_EXACT.CHEMIN:
                 if target_position < 56:
@@ -667,11 +666,11 @@ class GameLogic:
                         nb_cases_avancer = self.get_dice_value_because_of_obstacle(player_id, position, 56)
                         if nb_cases_avancer > 0:
                             valid_actions.append(Action_EXACT_ASCENSION.GET_STUCK_BEHIND)
+                    else:
+                        if self.is_opponent_pawn_on(player_id, target_position):
+                            valid_actions.append(Action_EXACT_ASCENSION.KILL)
                         else:
-                            if self.is_opponent_pawn_on(player_id, target_position):
-                                valid_actions.append(Action_EXACT_ASCENSION.KILL)
-                            else:
-                                valid_actions.append(Action_EXACT_ASCENSION.REACH_PIED_ESCALIER)
+                            valid_actions.append(Action_EXACT_ASCENSION.REACH_PIED_ESCALIER)
 
                 else: # > 56
                     obstacle = self.is_there_pawn_between_my_position_and_target_position(player_id, position, 56)

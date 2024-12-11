@@ -873,3 +873,4 @@ def test_valid_actions(game_3chevaux):
         [Action_NO_EXACT.MOVE_FORWARD],
         False,
     ]
+
