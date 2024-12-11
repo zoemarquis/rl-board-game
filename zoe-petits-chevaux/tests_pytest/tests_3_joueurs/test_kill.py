@@ -73,7 +73,7 @@ def test_kill_2chevaux(game_2chevaux):
     assert game_2chevaux.get_valid_actions(0, 1) == [[], [Action_NO_EXACT.KILL], False]
 
     game_2chevaux.move_pawn(2, 0, 6, Action_NO_EXACT.MOVE_OUT)
-    assert game_2chevaux.get_valid_actions(2, 6) == [[], [Action_NO_EXACT.MOVE_FORWARD], False]
+    assert game_2chevaux.get_valid_actions(2, 6) == [[Action_NO_EXACT.MOVE_OUT], [Action_NO_EXACT.MOVE_FORWARD], False]
 
     game_2chevaux.move_pawn(2, 1, 35, Action_NO_EXACT.MOVE_FORWARD)
     str_to_check = game_2chevaux.get_str_game_overview()

@@ -1,0 +1,92 @@
+# TODOTEST 
+# import pytest
+# from ludo_env import GameLogic, Action_NO_EXACT
+
+
+# @pytest.fixture
+# def game_2chevaux():
+#     return GameLogic(num_players=2, nb_chevaux=2)
+
+
+# @pytest.fixture
+# def game_3chevaux():
+#     return GameLogic(num_players=2, nb_chevaux=3)
+
+
+# @pytest.fixture
+# def game_4chevaux():
+#     return GameLogic(num_players=2, nb_chevaux=4)
+
+
+
+# def test_get_stuck_behind(game_3chevaux):
+#     game_3chevaux.board[0] = [ 1, 
+#                 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0,
+#                 0]
+#     assert game_3chevaux.get_valid_actions(0, 1) == [[], [Action_NO_EXACT.MOVE_FORWARD], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 2) == [[], [Action_NO_EXACT.MOVE_FORWARD], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 3) == [[], [Action_NO_EXACT.MOVE_FORWARD], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 4) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 5) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 6) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     game_3chevaux.board[1] = [ 1, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 1,
+#                 0]
+#     assert game_3chevaux.get_valid_actions(0, 1) == [[], [Action_NO_EXACT.KILL], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 2) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 3) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 4) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 5) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+#     assert game_3chevaux.get_valid_actions(0, 6) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.MOVE_FORWARD], False]
+    
+#     assert game_3chevaux.get_valid_actions(1, 1) == [[], [Action_NO_EXACT.MOVE_FORWARD], [Action_NO_EXACT.REACH_GOAL], False]
+#     assert game_3chevaux.get_valid_actions(1, 2) == [[], [Action_NO_EXACT.MOVE_FORWARD], [Action_NO_EXACT.REACH_GOAL], False]
+#     assert game_3chevaux.get_valid_actions(1, 3) == [[], [Action_NO_EXACT.KILL], [Action_NO_EXACT.REACH_GOAL], False]
+#     assert game_3chevaux.get_valid_actions(1, 4) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.REACH_GOAL], False]
+#     assert game_3chevaux.get_valid_actions(1, 5) == [[], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.REACH_GOAL], False]
+#     assert game_3chevaux.get_valid_actions(1, 6) == [[Action_NO_EXACT.MOVE_OUT], [Action_NO_EXACT.GET_STUCK_BEHIND], [Action_NO_EXACT.REACH_GOAL], False]
+    
+
+# def test_get_stuck_behind(game_3chevaux):
+#     game_3chevaux.board[0] = [ 1, 
+#                 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0,
+#                 0]
+#     game_3chevaux.move_pawn(0, 1, 4, Action_NO_EXACT.GET_STUCK_BEHIND)
+#     assert game_3chevaux.board[0] == [ 1, 
+#                 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0,
+#                 0]
+    
+#     game_3chevaux.board[1] = [ 1, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 1,
+#                 0]
+#     game_3chevaux.move_pawn(1, 30, 6, Action_NO_EXACT.GET_STUCK_BEHIND)
+#     assert game_3chevaux.board[1] == [ 1, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 1,
+#                 0]
+    
+# def test_get_dice_value_because_of_obstacle(game_3chevaux):
+#     pass 
