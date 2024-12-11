@@ -1,27 +1,83 @@
-# Installation de postgreSQL
-# Création d'un utilisateur
-# Création de la base de données
-Terminal :
+# Configuration et exécution de la base de données `ludo_stats`
+
+## 1. Préparation de la base de données
+
+### Installation de PostgreSQL
+1. Installer PostgreSQL sur votre machine.
+2. Créer un utilisateur
+
+### Création de la base de données
+Ouvrir un terminal et exécuter les commandes suivantes :
+
+```bash
 psql -U postgres
-> CREATE DATABASE ludo_stats;
+```
 
-Création d'un fichier secret/config.py avec la ligne suivante dedans :
-postgresql://username:password@localhost:5432/ludo_stats <-- CHANGER USERNAME ET PASSSWORD
+Ensuite, dans le terminal `psql` :
 
-Exécution du script dans le terminal :
+```sql
+CREATE DATABASE ludo_stats;
+```
+
+### Configuration du fichier secret
+Créer un fichier `secret/config.py`, dans le dossier `./db`, contenant la ligne suivante :
+
+```python
+DATABASE_URL = "postgresql://username:password@localhost:5432/ludo_stats"
+```
+
+> ⚠️ **Remplacez `username` et `password`** par vos identifiants PostgreSQL.
+
+### Initialisation de la base de données
+Exécuter le script `schema.py` pour créer les tables dans la base de données :
+
+```bash
 python schema.py
+```
 
-# Connection à la BD pour tester :
-postgres=# \c ludo_stats
-You are now connected to database "ludo_stats" as user "postgres".
+### Connexion à la base de données pour tester
+Vérifiez que la base de données a été correctement créée :
 
-# Lancer le code dans ./db
+```bash
+psql -U postgres
+```
+
+Puis, dans le terminal `psql` :
+
+```sql
+\c ludo_stats
+```
+
+Vous devriez voir un message confirmant la connexion à la base de données `ludo_stats`.
+
+---
+
+## 2. Exécution du code de simulation de parties
+
+### Lancer les simulations de parties
+Le script principal à exécuter est `ludo_stats_play.py`, situé dans le répertoire `./db`. Utilisez la commande suivante :
+
+```bash
 python ludo_stats_play.py
+```
 
---> Les configs de parties sont définies dans config_game.py
+---
 
+## 3. Configuration des agents
 
-TODO :
+Les configurations des agents sont définies dans le fichier `config_game.py`. =
+
+---
+
+## 4. Importer et exporter les données de la base de données
+
+- **Exporter la base de données en CSV** : Utilisez `export.py`.
+- **Importer des données depuis un CSV** : Utilisez `import.py`.
+
+---
+
+## 5. TODO
+
 - Voir dans les fichiers les TODO
 - Voir comment enregistrer la BD pour la partager
 - Description de game_rule utile ?
