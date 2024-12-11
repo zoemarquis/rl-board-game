@@ -56,7 +56,7 @@ class GameLogic:
         for i in range(self.num_players):
             self.board[i] = [0 for _ in range(TOTAL_SIZE)]
             self.board[i][0] = self.nb_chevaux  # on met les pions dans l'écurie
-        self.tour = 0  # TODO : compter les tours pour les stats
+        self.tour = 0  # TODO : compter les tours pour les stats + TODOTEST 
 
     def get_pawns_info(self, player_id):
         """
@@ -141,7 +141,7 @@ class GameLogic:
         return str_game_overview
 
     def get_opponent_positions_on_my_board(self, player_id):
-        # TODO TEST 
+        # TODOTEST 
         assert (
             self.num_players == 2
         ), "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
@@ -177,7 +177,7 @@ class GameLogic:
         # mettre tous les home ensemble, puis les safe zone, puis les goal
         # ensuite calculer pour les path
 
-        # TODO TEST
+        # TODOTEST
         board = [0 for _ in range(TOTAL_SIZE)]
         count_all_home = self.get_ecurie_overview()
         count_self_home = count_all_home.count(other_player_id)
@@ -222,12 +222,12 @@ class GameLogic:
         return board
 
     def dice_generator(self):
-        valeur = np.random.randint(1, 7)  # TODO : fix avec une seed pour les tests
+        valeur = np.random.randint(1, 7)  # TODOTEST : fix avec une seed pour les tests 
         return valeur
 
     def get_pawns_on_position(
         self, player_id, target_position_relative
-    ):  # TODO TEST multijoueurs 3 4 
+    ):  # TODOTEST multijoueurs 3 4 
         if player_id == 0:
             indice = target_position_relative - 1
         elif player_id == 2:
@@ -354,46 +354,18 @@ class GameLogic:
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
 
-        # target_position = old_position + dice_value
-        # chemin_observation = self.get_observation_my_chemin(player_id)
-        # print(f"Chemin observation : {chemin_observation}")
-        
-        # # TODO : Mettre un if ici si on veut autoriser le doublement
-        # # Empêcher de doubler un pion et reculer
-        # for position in range(old_position + 1, min(target_position + 1, 57)):
-        #     #print(f"Position : {position}")
-        #     #print(f"chemin_observation[position] : {chemin_observation[position]}")
-        #     if chemin_observation[position-1] == -1 or chemin_observation[position-1] == 1:
-        #         print(f"Target : {target_position}")
-        #         #if position == target_position and other_player != player_id:
-        #         #    print(f"KILL possible à la position {position}")
-        #         #    break
-        #         #else:
-        #         new_position = 2*position - dice_value - old_position
-        #         #print(f"Chemin bloqué par un pion à la position {position}")
-        #         if new_position < 1:
-        #             new_position = 1
-
-        #         self.board[player_id][old_position] -= 1
-        #         self.board[player_id][new_position] += 1
-        #         return
-
-        # # TODO : Gérer le cas quand un joueur est entre un pion et l'escalier
-        # # et que le pion a un dé le faisant arriver après l'escalier
-        # # --> le code doit être changer dans les actions possibles
-
         assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_recule(self, player_id, old_position, dice_value):
-        # TODO : assert personne sur le chemin devant moi 
+        # TODO MERGE : assert personne sur le chemin devant moi 
         assert old_position + dice_value > 56, "Déplacement pas conforme à la position"
         get_distance_avant = 56 - old_position
         recule_de = dice_value - get_distance_avant
         get_position_apres = 56 - recule_de
         assert old_position < get_position_apres, f"Déplacement pas conforme à la position, {old_position} < {get_position_apres}, dice_value : {dice_value}"
-        # TODO ZOE TEST il manque des assert + mettre des tests sur les actions possibles 
+        # TODOTEST TODO ZOE TEST il manque des assert + mettre des tests sur les actions possibles 
         self.board[player_id][old_position] -= 1
         self.board[player_id][get_position_apres] += 1
 
@@ -507,7 +479,7 @@ class GameLogic:
                 self.kill_pawn(player_id, 1)
                 self.sortir_pion(player_id, dice_value)
 
-            elif action == Action_EXACT_ASCENSION.GET_STUCK_BEHIND: # TODO TEST TODO MERGE
+            elif action == Action_EXACT_ASCENSION.GET_STUCK_BEHIND: # TODOTEST TODO MERGE
                 target_position = old_position + dice_value
                 if target_position >= 57:
                     target_position = 56
@@ -518,7 +490,7 @@ class GameLogic:
                 self.kill_pawn(player_id, old_position + dice_value)
                 self.avance_pion_path(player_id, old_position, dice_value)
             elif action == Action_EXACT_ASCENSION.MOVE_FORWARD or action == Action_EXACT_ASCENSION.REACH_PIED_ESCALIER:
-                # TODO ZOE : tester si il faut kill parce que c'est une action aussi possible lorsque REACH PIED TODO TEST TODO MERGE
+                # TODO ZOE : tester si il faut kill parce que c'est une action aussi possible lorsque REACH PIED TODOTEST TODO MERGE
                 self.kill_pawn(player_id, old_position + dice_value)
 
                 self.avance_pion_path(player_id, old_position, dice_value)

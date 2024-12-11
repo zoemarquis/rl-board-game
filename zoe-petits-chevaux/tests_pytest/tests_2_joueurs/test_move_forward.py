@@ -1,4 +1,4 @@
-# TODO TEST
+# TODOTEST
 
 # interdit  :
 # pas de pion sur la case

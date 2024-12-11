@@ -104,7 +104,7 @@ def test_valid_actions_exact(game_2chevaux_exact):
 
 def test_exact_escalier(game_2chevaux_exact):
     pass 
-    # TODO 
+    # TODOTEST
 
 
 @pytest.fixture

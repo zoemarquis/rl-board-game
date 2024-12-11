@@ -180,7 +180,7 @@ class LudoEnv(gym.Env):
         if not done:
             self.change_player()
 
-        # TODO : 6 alors on rejoue
+        # TODOREGLE : 6 alors on rejoue
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()

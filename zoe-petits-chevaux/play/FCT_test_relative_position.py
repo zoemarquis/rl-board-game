@@ -2,6 +2,8 @@
 Fichier pour tester la fonction get_relative_position de la classe GameLogic
 """
 
+# TODOTEST : intégrer ça au test pytest 
+
 import unittest
 import sys
 from pathlib import Path
@@ -15,14 +17,13 @@ from ludo_env import *
 class TestGameLogic(unittest.TestCase):
 
     def setUp(self):
-        # Attention :  Actuellement, il faut changer NUM_PLAYERS manuellement dans game_logic.py pour tester avec 3 ou 4 joueurs
         self.game_players = GameLogic(num_players=2, nb_chevaux=2)
         self.game_3_players = GameLogic(
             num_players=3, nb_chevaux=2
-        )  # TODO c'est bon maintenant :)
+        )
         self.game_4_players = GameLogic(
             num_players=4, nb_chevaux=2
-        )  # TODO c'est bon maintenant :) aussi
+        )
 
         self.game_players.init_board()
         self.game_3_players.init_board()

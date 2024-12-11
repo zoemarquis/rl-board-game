@@ -71,6 +71,8 @@ lancer les tests
     python3 -m pytest tests_pytest
 
 
+TODOCOMM : mettre à jour règles qu'on peut faire varier avec explication : 
+
 Choix entre 2, 3 et 4 joueurs.
 
 Règles qu'on peut faire changer : 
@@ -88,19 +90,27 @@ choisir entre 2, 3, 4 (exclusif) (voire plus ?) chevaux par joueur
 
 choisir entre atteindre exactement le pied de l'escalier pour pouvoir monter ou non 
 0. pas beosin d'atteindre exactement le pied
-1. atteindre exactement le pied de l'escalier (possible que si avec la valeur du dé il se rapproche de l'objectif : TODO gestion si y a un autre joueur à cet endroit là)
+1. atteindre exactement le pied de l'escalier (possible que si avec la valeur du dé il se rapproche de l'objectif : TODOREGLE gestion si y a un autre joueur à cet endroit là)
 
 si la dernière réponse était 1:
 0. monter de la valeur indiquée (si il fait plus que l'objectif, atteint quand même l'objectif)
 1. monter exactement les marches 1 à 1 (faire 1 pour aller sur la case 1, 2 case 2, 3 case 3...) dans l'ordre et faire un 6 pour atteindre l'objectif 
 
-TODO ZOE 
+TODOREGLE 
 si la dernière réponse était 1:
 0. ne rejoue pas à chaque fois qu'il monte d'une marche
 1. rejoue à chaque fois qu'il monte correctement une marche (raccourcir la partie)
 
 attention : chemin et escalier : plusieurs pions du meme joueur autorisé
 
-TODO : gestion protect -> ne pas pouvoir kill / protect si on se mets dans la meme case
+TODOREGLE : gestion protect -> ne pas pouvoir kill / protect si on se mets dans la meme case
 et dans espace observation reward si pions protégés, si plus pion protégé -> reward négatif ?
 
+
+
+---
+
+TODOTEST : ajouter des tests pour vérifier
+TODODELETE ? : fichier à vérifier puis supprimer si besoin 
+TODOCOMM : commentaires à ajouter 
+TODOREGLE : regle à ajouter / faire varier 

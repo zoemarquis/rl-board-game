@@ -1,5 +1,5 @@
 
-# TODO TEST : comme pour 2 et 3 joueurs
+# TODOTEST : comme pour 2 et 3 joueurs
 
 # import pytest
 # from ludo_env import GameLogic, Action

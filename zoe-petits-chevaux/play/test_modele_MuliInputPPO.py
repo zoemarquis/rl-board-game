@@ -23,8 +23,6 @@ obs = env.reset()
 obs = obs[0]
 done = False
 
-# TODO : à chaque tour : afficher à l'humain la liste des actions valides
-
 while not done:
 
     print(env.game.get_str_game_overview())
@@ -35,7 +33,7 @@ while not done:
         print("-" * 50)
         print("TOUR DE L'HUMAIN")
         # print(env.game.get_instruction_for_player(env.current_player))
-        # TODO : afficher le plateau global (vu par ce joueur) env.game.get_my_board_4_lignes(env.current_player)
+        # env.game.get_my_board_4_lignes(env.current_player)
 
         action_humain = int(
             input("Choisissez une action : ")

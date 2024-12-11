@@ -47,6 +47,7 @@ on purrait tenter un player qui se base sur l'observation -> rester grouper ?
 - raccourcir la partie : jouer avec moins de chevaux
 - le premier qui place un cheval au milieu à gagner / tous chevaux au milieu 
 
+TODO : mettre à jour arborescence à la fin 
 
 ## organisation du dossier
 
@@ -62,10 +63,4 @@ petits_chevaux/
 │   ├── notebook_ppo.ipynb          # notebook avec ppo
 │   └── notebook_qlearning.ipynb    # notebook avec qlearning : pas fonctionnel juste un brouillon
 └── tests/
-│   └── TODO
-
-
-TODO : prendre en compte distance entre toi et sécuriser escalier ?
-
-
-TODO : plus de pions, dé avec plus de face ?
+│   └── TODOTEST 

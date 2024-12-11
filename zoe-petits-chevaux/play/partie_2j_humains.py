@@ -32,8 +32,6 @@ def play_game(env):
             env.game.get_valid_actions(env.current_player, obs["dice_roll"])
         )
         print("encoded valid actions : ", encoded_valid_actions)
-        # TODO voir tout le plateau : home, chemin selon mon pdv, escalier et goal
-        # TODO : voir les actions possibles
 
         action = int(get_human_action(encoded_valid_actions))
         obs, reward, done, truncated, info = env.step(action)
