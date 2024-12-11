@@ -1,4 +1,3 @@
-
 # TODOTEST : comme pour 2 et 3 joueurs
 
 # import pytest
@@ -18,8 +17,6 @@
 # @pytest.fixture
 # def game_4chevaux():
 #     return GameLogic(num_players=4, nb_chevaux=4)
-
-
 
 
 # def test_fin_de_partie_un_cheval_gagne_2chevaux(game_2chevaux):

@@ -81,7 +81,6 @@ def test_3(game):
     str_to_check = game.get_str_game_overview()
     lines = str_to_check.split("\n")
 
-    
     assert lines[0] == "ECURIE 0 : 1", "ECURIE 0 doit avoir 1 pion."
     assert lines[1] == "ECURIE 1 : 0", "ECURIE 1 doit avoir 0 pion."
     assert lines[2] == "ECURIE 2 : 2", "ECURIE 2 doit avoir 2 pions."

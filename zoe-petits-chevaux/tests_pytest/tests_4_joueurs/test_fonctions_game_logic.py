@@ -16,29 +16,28 @@
 # @pytest.fixture
 # def game_4chevaux():
 #     game = GameLogic(num_players=3, nb_chevaux=4)
-#     game.board[0] = [ 2, 
+#     game.board[0] = [ 2,
 #                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 #                 0, 0, 0, 0, 0, 0,
 #                 0]
 #     game.board[1] = [ 4,
 #                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 #                 0, 0, 0, 0, 0, 0,
 #                 0]
 #     game.board[2] = [ 3,
 #                 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+#                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 #                 0, 0, 0, 0, 0, 0,
 #                 0]
 #     return game
-
 
 
 # def test_get_relative_position_0(game_4chevaux):
@@ -60,7 +59,7 @@
 #     # assert game_4chevaux.get_relative_position(0, 3, 29) == 43
 #     # assert game_4chevaux.get_relative_position(0, 3, 42) == 56
 #     # assert game_4chevaux.get_relative_position(0, 3, 56) == 14
-    
+
 # def test_get_relative_position_1(game_4chevaux):
 #     assert game_4chevaux.get_relative_position(1, 0, 1) == 15
 #     assert game_4chevaux.get_relative_position(1, 0, 14) == 28
@@ -87,6 +86,3 @@
 # def test_is_opponent_pawn_on(game_4chevaux):
 #     assert game_4chevaux.is_opponent_pawn_on(0, 14) == False
 #     assert game_4chevaux.get_valid_actions(0, 1) == [[], [], [Action.MOVE_FORWARD], [Action.MOVE_FORWARD], False]
-
-                              
-    

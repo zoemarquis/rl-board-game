@@ -17,7 +17,6 @@ def game_4chevaux():
     return GameLogic(num_players=3, nb_chevaux=4)
 
 
-
 def test_decode_2chevaux(game_2chevaux):
     assert game_2chevaux.decode_action(0) == (0, Action_NO_EXACT.NO_ACTION)
     assert game_2chevaux.decode_action(1) == (0, Action_NO_EXACT.MOVE_OUT)
@@ -63,6 +62,7 @@ def test_decode_3chevaux(game_3chevaux):
     assert game_3chevaux.decode_action(18) == (2, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
     assert game_3chevaux.decode_action(19) == (2, Action_NO_EXACT.REACH_GOAL)
     assert game_3chevaux.decode_action(20) == (2, Action_NO_EXACT.KILL)
+
 
 def test_decode_4chevaux(game_4chevaux):
     assert game_4chevaux.decode_action(0) == (0, Action_NO_EXACT.NO_ACTION)
@@ -115,6 +115,7 @@ def test_encode_2chevaux(game_2chevaux):
     assert 13 == game_2chevaux.encode_action(1, Action_NO_EXACT.REACH_GOAL)
     assert 14 == game_2chevaux.encode_action(1, Action_NO_EXACT.KILL)
 
+
 def test_encode_3chevaux(game_3chevaux):
     assert 0 == game_3chevaux.encode_action(0, Action_NO_EXACT.NO_ACTION)
     assert 1 == game_3chevaux.encode_action(0, Action_NO_EXACT.MOVE_OUT)
@@ -137,6 +138,7 @@ def test_encode_3chevaux(game_3chevaux):
     assert 18 == game_3chevaux.encode_action(2, Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
     assert 19 == game_3chevaux.encode_action(2, Action_NO_EXACT.REACH_GOAL)
     assert 20 == game_3chevaux.encode_action(2, Action_NO_EXACT.KILL)
+
 
 def test_encode_4chevaux(game_4chevaux):
     assert 0 == game_4chevaux.encode_action(0, Action_NO_EXACT.NO_ACTION)

@@ -404,6 +404,8 @@ class GameLogic:
         for pos in range(old_position + 1, target_position):
             if self.is_opponent_pawn_on(player_id, pos) or self.board[player_id][pos] > 0: # autre ou moi meme
                 return True
+            if pos == target_position - 1 and self.is_opponent_pawn_on(player_id, pos):
+                return True # si c'est un de mes pions sur la case d'arrivée c'est autorisé
         return False
 
 
@@ -826,7 +828,20 @@ class GameLogic:
             else:
                 action_type = (action - 3) % (len(Action_EXACT) - 3) + 3
             return pawn_id, Action_EXACT(action_type)
-        
+        elif self.get_action() == Action_EXACT_ASCENSION:
+            if action == 0:
+                return 0, Action_EXACT_ASCENSION.NO_ACTION
+            elif action == 1:
+                return 0, Action_EXACT_ASCENSION.MOVE_OUT
+            elif action == 2:
+                return 0, Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL
+            
+            pawn_id = (action - 3) // (len(Action_EXACT_ASCENSION) - 3)
+            if action < len(Action_EXACT_ASCENSION):    
+                action_type = action
+            else:
+                action_type = (action - 3) % (len(Action_EXACT_ASCENSION) - 3) + 3
+            return pawn_id, Action_EXACT_ASCENSION(action_type)
         else :
             raise ValueError("Action non valide")
 

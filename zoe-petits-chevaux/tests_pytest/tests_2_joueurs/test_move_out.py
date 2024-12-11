@@ -107,21 +107,25 @@ def test_3(game):
 def test_interdit_1(game):
     game.init_board()
     try:
-        game.move_pawn(0, 0, 5, Action_NO_EXACT.MOVE_OUT)  # Action théoriquement interdite
+        game.move_pawn(
+            0, 0, 5, Action_NO_EXACT.MOVE_OUT
+        )  # Action théoriquement interdite
     except AssertionError as e:
-        assert "Le dé n'est pas un 6" in str(e), "Le message d'erreur attendu n'est pas levé."
+        assert "Le dé n'est pas un 6" in str(
+            e
+        ), "Le message d'erreur attendu n'est pas levé."
     else:
         assert False, "Aucune exception levée pour une action interdite."
- 
+
+
 def test_interdit_2(game):
     game.init_board()
     try:
         game.move_pawn(0, 0, 6, Action_NO_EXACT.MOVE_OUT)
         game.move_pawn(0, 5, 6, Action_NO_EXACT.MOVE_FORWARD)
     except AssertionError as e:
-        assert "Pas de pion à déplacer à cette position" in str(e), "Le message d'erreur attendu n'est pas levé."
+        assert "Pas de pion à déplacer à cette position" in str(
+            e
+        ), "Le message d'erreur attendu n'est pas levé."
     else:
         assert False, "Aucune exception levée pour une action interdite."
- 
- 
-

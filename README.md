@@ -114,3 +114,7 @@ TODOTEST : ajouter des tests pour vérifier
 TODODELETE ? : fichier à vérifier puis supprimer si besoin 
 TODOCOMM : commentaires à ajouter 
 TODOREGLE : regle à ajouter / faire varier 
+
+
+
+TODOCOMM : pas le droit de doubler mais le droit de kill si je fais exactement la case où il y a un pion ou alors de rejoindre le pion sur la case si je fais exactement, sinon (je fais plus) je reste coincé derrière

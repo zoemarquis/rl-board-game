@@ -105,4 +105,3 @@ def test_initial_board_4pawns(game_4chevaux):
 
     assert lines[9] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[10] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
-

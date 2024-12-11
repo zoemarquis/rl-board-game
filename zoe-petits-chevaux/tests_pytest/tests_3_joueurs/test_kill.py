@@ -36,8 +36,16 @@ def test_kill_move_out_2chevaux(game_2chevaux):
     assert lines[12] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert lines[13] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
 
-    assert game_2chevaux.get_valid_actions(0, 6) == [[Action_NO_EXACT.MOVE_OUT], [Action_NO_EXACT.MOVE_FORWARD], False]
-    assert game_2chevaux.get_valid_actions(1, 6) == [[Action_NO_EXACT.MOVE_OUT_AND_KILL], [Action_NO_EXACT.MOVE_OUT_AND_KILL], False]
+    assert game_2chevaux.get_valid_actions(0, 6) == [
+        [Action_NO_EXACT.MOVE_OUT],
+        [Action_NO_EXACT.MOVE_FORWARD],
+        False,
+    ]
+    assert game_2chevaux.get_valid_actions(1, 6) == [
+        [Action_NO_EXACT.MOVE_OUT_AND_KILL],
+        [Action_NO_EXACT.MOVE_OUT_AND_KILL],
+        False,
+    ]
 
 
 def test_kill_2chevaux(game_2chevaux):
@@ -69,11 +77,15 @@ def test_kill_2chevaux(game_2chevaux):
     assert lines[11] == "OBJECTIF 0 : 0", "OBJECTIF 0 doit être à 0."
     assert lines[12] == "OBJECTIF 1 : 0", "OBJECTIF 1 doit être à 0."
     assert lines[13] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
-    
+
     assert game_2chevaux.get_valid_actions(0, 1) == [[], [Action_NO_EXACT.KILL], False]
 
     game_2chevaux.move_pawn(2, 0, 6, Action_NO_EXACT.MOVE_OUT)
-    assert game_2chevaux.get_valid_actions(2, 6) == [[Action_NO_EXACT.MOVE_OUT], [Action_NO_EXACT.MOVE_FORWARD], False]
+    assert game_2chevaux.get_valid_actions(2, 6) == [
+        [Action_NO_EXACT.MOVE_OUT],
+        [Action_NO_EXACT.MOVE_FORWARD],
+        False,
+    ]
 
     game_2chevaux.move_pawn(2, 1, 35, Action_NO_EXACT.MOVE_FORWARD)
     str_to_check = game_2chevaux.get_str_game_overview()
@@ -89,7 +101,10 @@ def test_kill_2chevaux(game_2chevaux):
     ), "CHEMIN 0 incorrecte."
     assert (
         lines[7] == "[[], [], [], [], [], [], [], [], [], [], [], [], [], []]"
-    ), "CHEMIN 0 incorrecte." 
+    ), "CHEMIN 0 incorrecte."
 
-    assert game_2chevaux.get_valid_actions(2, 6) == [[Action_NO_EXACT.MOVE_OUT], [Action_NO_EXACT.KILL], False]
-
+    assert game_2chevaux.get_valid_actions(2, 6) == [
+        [Action_NO_EXACT.MOVE_OUT],
+        [Action_NO_EXACT.KILL],
+        False,
+    ]
