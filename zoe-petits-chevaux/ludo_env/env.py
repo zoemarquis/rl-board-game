@@ -32,7 +32,8 @@ class LudoEnv(gym.Env):
         assert mode_gym in [
             "entrainement",
             "jeu",
-        ], "Only 'entrainement' or 'jeu' are allowed"
+            "stats_game",
+        ], "Only 'entrainement' or 'jeu' or 'stats_game' are allowed"
         assert mode_pied_escalier in [
             "exact",
             "not_exact",
@@ -131,18 +132,19 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
-            if self.mode_gym == "jeu":
-                if self.mode_pied_escalier == "exact":
+            if self.mode_gym == "jeu" or self.mode_gym == "stats_game":
+                if self.mode_pied_escalier == "exact" and self.mode_gym == "jeu":
                     print(
                         f"ACTION INTERDITE : {Action_EXACT(action%len(Action_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                     )
-                elif self.mode_pied_escalier == "not_exact":
+                elif self.mode_pied_escalier == "not_exact" and self.mode_gym == "jeu":
                     print(
                         f"ACTION INTERDITE : {Action_NO_EXACT(action%len(Action_NO_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
                     )
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
-                print("debug : ", action, pawn_id, action_type)
+                if self.mode_gym == "jeu":
+                    print("debug : ", action, pawn_id, action_type)
             else:
                 self.change_player()
                 return self._get_observation(), -10, False, False, {}

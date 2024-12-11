@@ -17,24 +17,11 @@ from ludo_env import LudoEnv
 from ludo_env.action import Action_NO_EXACT, Action_EXACT
 
 
-# TODO : Modifier cela pour utiliser plusieurs configs
-# TODO : Gérer les règles
+# TODO : Faire premières viz ?
 
-config_name = "two_players_two_pawns"
-config = game_configs[config_name]
 
-agents = [PPO.load(agent_config["path"]) for agent_config in config["agents"]]
-agent_names = [agent_config["name"] for agent_config in config["agents"]]
 
-env = LudoEnv(
-    num_players=config["num_players"],
-    nb_chevaux=config["nb_chevaux"],
-    mode_gym="jeu",
-    mode_fin_partie=config["mode_fin_partie"],
-    mode_pied_escalier=config["mode_pied_escalier"],
-)
-
-def play_game(env, agents, agent_names):
+def play_game(env, agents, agent_names, config):
     obs, info = env.reset()
     done = False
     turn = 0
@@ -69,10 +56,6 @@ def play_game(env, agents, agent_names):
     # TODO : A définir + A créer manuellement pour le moment
     # TODO : Créer un fichier de règles (faire aussi pour les autres paramètres)
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
-    """
-    INSERT INTO game_rule (game_rule_id, name, description)
-    VALUES (0, 'Test Rule', 'Règle pour tester.');
-    """
     
     players = [
         PlayerToInsert(
@@ -108,5 +91,29 @@ def play_game(env, agents, agent_names):
     print("Nombre de coups :", moves)
     print("Nombre de tours :", turn)
 
-# TODO : Lancer plusieurs parties et enregistrer les statistiques
-play_game(env, agents, agent_names)
+
+
+def run_all_configs():
+    for config_name, config in game_configs.items():
+        try:
+            agents = [PPO.load(agent_config["path"]) for agent_config in config["agents"]]
+            agent_names = [agent_config["name"] for agent_config in config["agents"]]
+        except FileNotFoundError as e:
+            #print(f"Erreur de chargement pour la configuration {config_name}: {e}")
+            continue
+
+        env = LudoEnv(
+            num_players=config["num_players"],
+            nb_chevaux=config["nb_chevaux"],
+            mode_gym="stats_game",
+            mode_fin_partie=config["mode_fin_partie"],
+            mode_pied_escalier=config["mode_pied_escalier"],
+        )
+
+        print(f"Configuration en cours : {config_name}")
+        for i in range(10):
+            print(f"Partie {i + 1}/10 pour {config_name}")
+            play_game(env, agents, agent_names, config)
+
+
+run_all_configs()

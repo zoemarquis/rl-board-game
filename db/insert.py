@@ -62,8 +62,8 @@ class PlayerToInsert:
             print(f"Joueur ajouté : {player.name}")
         else:
             print(f"Joueur existant : {player.name}")
-        return player.player_id
-
+        self.player_id = player.player_id
+        return self.player_id
 
 class SetOfRulesToInsert:
     def __init__(self, rules_ids: list[int], set_of_rules_id: int = None):

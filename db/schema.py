@@ -14,6 +14,7 @@ from sqlalchemy import (
     func,
     Integer,
     PrimaryKeyConstraint,
+    UniqueConstraint,
     String,
 )
 from sqlalchemy.orm import sessionmaker, declarative_base, Mapped
@@ -31,6 +32,7 @@ class Player(Base):
     player_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False, unique=True)
     is_human = Column(Boolean, nullable=False, default=True)
+    model_path = Column(String, nullable=True)
     description = Column(String, nullable=True)
     strategy = Column(String, nullable=True)
     difficulty = Column(Integer, nullable=True)

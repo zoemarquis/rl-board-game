@@ -24,3 +24,5 @@ python ludo_stats_play.py
 TODO :
 - Voir dans les fichiers les TODO
 - Voir comment enregistrer la BD pour la partager
+- Description de game_rule utile ?
+- Gérer correctement les players et participants
