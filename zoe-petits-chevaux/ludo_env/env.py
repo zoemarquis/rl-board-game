@@ -8,7 +8,7 @@ from ludo_env.game_logic import (
     SAFE_ZONE_SIZE,
 )
 from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
-# from ludo_env.renderer import Renderer
+from ludo_env.renderer import Renderer
 
 
 class LudoEnv(gym.Env):
@@ -19,6 +19,7 @@ class LudoEnv(gym.Env):
         mode_fin_partie="tous",
         mode_ascension="sans_contrainte",
         mode_pied_escalier= "not_exact",
+        mode_rejoue_6 = "non", 
 
         mode_gym="entrainement",
 
@@ -47,7 +48,10 @@ class LudoEnv(gym.Env):
             or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "not_exact")\
             or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "exact"),\
         "Only 'avec_contrainte' and 'exact' or 'sans_contrainte' and 'not_exact' or 'sans_contrainte' and 'exact' are allowed"
-
+        assert mode_rejoue_6 in [
+            "oui",
+            "non",
+        ], "Only 'oui' or 'non' are allowed"
 
 
         super(LudoEnv, self).__init__()
@@ -60,9 +64,10 @@ class LudoEnv(gym.Env):
         self.mode_fin_partie = mode_fin_partie
         self.mode_pied_escalier = mode_pied_escalier
         self.mode_ascension = mode_ascension
+        self.mode_rejoue_6 = mode_rejoue_6
 
         if self.with_render:
-            self.renderer = None #Renderer()
+            self.renderer = Renderer()
 
         if mode_ascension == "sans_contrainte":
             if mode_pied_escalier == "not_exact":
@@ -183,13 +188,14 @@ class LudoEnv(gym.Env):
         if not done:
             self.change_player()
 
-        # TODOREGLE : 6 alors on rejoue
-
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
         return observation, reward, done, False, {}
 
     def change_player(self):
-        self.current_player = (self.current_player + 1) % self.num_players
-        if self.current_player == 0:
-            self.game.tour += 1
+        if self.mode_rejoue_6 == "oui" and self.dice_roll == 6:
+            pass
+        else:
+            self.current_player = (self.current_player + 1) % self.num_players
+            if self.current_player == 0:
+                self.game.tour += 1

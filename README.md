@@ -50,6 +50,8 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
     - Dans le cas de l'exactitude nécessaire pour le pied de l'excalier, on peut utiliser l'ordre simplifié ou alors l'ordre strict : 
         - Chaque marche de l'escalier nécessite un jet spécifique : 1 pour la première marche, 2 pour la deuxième, ... ainsi que 6 pour atteindre l’objectif.
 
+- Rejouer si dé = 6 (oui ou non)
+
 TODOREGLE : 
 si la dernière réponse était 1:
 0. ne rejoue pas à chaque fois qu'il monte d'une marche

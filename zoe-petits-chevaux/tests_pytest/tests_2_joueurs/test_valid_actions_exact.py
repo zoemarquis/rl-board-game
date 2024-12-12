@@ -982,3 +982,6 @@ def test_valid_actions(game_3chevaux):
 
 
 # TODOTEST atteindre objectif avec > 
+
+
+# TODOTEST : si notre cheval devant et > -> on s'arrete sur la case ?
