@@ -5,6 +5,13 @@ version actuelle du jeu :
 actions : rien, sortir un pion de l'écurie, avancer un pion, entrer dans la safe zone, avancer dans la safe zone, atteindre l'objectif
 (il manque kill surtout)
 
+## Conda environment
+
+```bash
+conda env create -f environment.yml
+conda activate ludo-env
+```
+
 ## TO DO
 
 ### écrire les règles du jeu 
