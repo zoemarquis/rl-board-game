@@ -20,6 +20,7 @@ class LudoEnv(gym.Env):
         mode_ascension="sans_contrainte",
         mode_pied_escalier= "not_exact",
         mode_rejoue_6 = "non", 
+        mode_rejoue_marche = "non",
 
         mode_gym="entrainement",
 
@@ -44,14 +45,22 @@ class LudoEnv(gym.Env):
             "avec_contrainte",
             "sans_contrainte",
         ], "Only 'avec_contrainte' or 'sans_contrainte' are allowed"
-        assert (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact") \
-            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "not_exact")\
-            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "exact"),\
-        "Only 'avec_contrainte' and 'exact' or 'sans_contrainte' and 'not_exact' or 'sans_contrainte' and 'exact' are allowed"
         assert mode_rejoue_6 in [
             "oui",
             "non",
         ], "Only 'oui' or 'non' are allowed"
+        assert mode_rejoue_marche in [
+            "oui",
+            "non",
+        ], "Only 'oui' or 'non' are allowed"
+
+        assert (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact") \
+            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "not_exact")\
+            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "exact"),\
+        "Only 'avec_contrainte' and 'exact' or 'sans_contrainte' and 'not_exact' or 'sans_contrainte' and 'exact' are allowed"
+        
+        if mode_rejoue_marche == "oui":
+            assert mode_ascension == "avec_contrainte"
 
 
         super(LudoEnv, self).__init__()
@@ -65,6 +74,7 @@ class LudoEnv(gym.Env):
         self.mode_pied_escalier = mode_pied_escalier
         self.mode_ascension = mode_ascension
         self.mode_rejoue_6 = mode_rejoue_6
+        self.mode_rejoue_marche = mode_rejoue_marche
 
         if self.with_render:
             self.renderer = Renderer()
@@ -176,7 +186,7 @@ class LudoEnv(gym.Env):
                 pawn_id, action_type = self.game.decode_action(action)
                 print("debug : ", action, pawn_id, action_type)
             else:
-                self.change_player()
+                self.change_player(action_type)
                 return self._get_observation(), -10, False, False, {}
 
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
@@ -186,15 +196,22 @@ class LudoEnv(gym.Env):
         done = self.game.is_game_over()
 
         if not done:
-            self.change_player()
+            self.change_player(action_type)
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
         return observation, reward, done, False, {}
 
-    def change_player(self):
+    def change_player(self, action_type):
         if self.mode_rejoue_6 == "oui" and self.dice_roll == 6:
             pass
+        elif self.mode_rejoue_marche == "oui" and (action_type == Action_EXACT_ASCENSION.MARCHE_1
+                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_2
+                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_3
+                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_4
+                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_5
+                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_6):
+            pass 
         else:
             self.current_player = (self.current_player + 1) % self.num_players
             if self.current_player == 0:

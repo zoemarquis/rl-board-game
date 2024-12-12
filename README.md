@@ -49,6 +49,8 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
     - Ordre simplifié : Un pion peut monter plusieurs marches de l'escalier en un seul lancé de dé, il suffit qu'il arrive ou dépasse l'objectif pour l'atteindre.
     - Dans le cas de l'exactitude nécessaire pour le pied de l'excalier, on peut utiliser l'ordre simplifié ou alors l'ordre strict : 
         - Chaque marche de l'escalier nécessite un jet spécifique : 1 pour la première marche, 2 pour la deuxième, ... ainsi que 6 pour atteindre l’objectif.
+- Dans le cas de l'ordre strict pour progresser dans l'escalier : 
+    - Rejouer lors de la montée de chaque marche (oui ou non)
 
 - Rejouer si dé = 6 (oui ou non)
 
