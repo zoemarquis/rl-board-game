@@ -36,6 +36,7 @@ class Player(Base):
     strategy = Column(String, nullable=True)
     difficulty = Column(Integer, nullable=True)
     registration_date = Column(DateTime(timezone=True), server_default=func.now())
+    nb_train_steps = Column(Integer, nullable=True)
 
 
 class GameRule(Base):
@@ -105,6 +106,7 @@ class Participant(Base):
     )
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
+    nb_actions_interdites = Column(Integer, nullable=False, default=0)
 
 
 # Create all tables in the database

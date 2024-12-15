@@ -22,6 +22,8 @@ class PlayerToInsert:
         is_winner: bool,
         score: int = None,
         player_id: int = None,
+        nb_train_steps: int = None,
+        nb_actions_interdites: int = 0,
     ):
         assert name is not None, "name must be provided"
         assert is_human is not None, "is_human must be provided"
@@ -47,6 +49,8 @@ class PlayerToInsert:
         self.score = score
         self.nb_moves = nb_moves
         self.is_winner = is_winner
+        self.nb_train_steps = nb_train_steps
+        self.nb_actions_interdites = nb_actions_interdites
 
     def get_or_create_human_player(self, session) -> int:
         if not self.is_human:
@@ -130,13 +134,14 @@ class SetOfRulesToInsert:
 
 
 class ParticipantToInsert:
-    def __init__(self, game_id: int, player: PlayerToInsert):
+    def __init__(self, game_id: int, player: PlayerToInsert, nb_actions_interdites: int = 0):
         self.game_id = game_id
         self.player_id = player.player_id
         self.turn_order = player.turn_order
         self.score = player.score
         self.nb_moves = player.nb_moves
         self.is_winner = player.is_winner
+        self.nb_actions_interdites = nb_actions_interdites
 
     def create_participant(self, session) -> int:
         participant = (
@@ -155,6 +160,7 @@ class ParticipantToInsert:
                 score=self.score,
                 nb_moves=self.nb_moves,
                 is_winner=self.is_winner,
+                nb_actions_interdites=self.nb_actions_interdites,
             )
             session.add(participant)
             print(
@@ -186,7 +192,7 @@ def store_final_game_data(
             else:
                 db_player = session.query(Player).filter(Player.name == player.name).first()
                 if not db_player:
-                    db_player = Player(name=player.name, is_human=False)
+                    db_player = Player(name=player.name, is_human=False, nb_train_steps=player.nb_train_steps)
                     session.add(db_player)
                     session.commit()
                 player_id = db_player.player_id
@@ -198,6 +204,7 @@ def store_final_game_data(
                 score=player.score,
                 nb_moves=player.nb_moves,
                 is_winner=player.is_winner,
+                nb_actions_interdites = player.nb_actions_interdites,
             )
             participant.num_player_game = num_player_game
             session.add(participant)

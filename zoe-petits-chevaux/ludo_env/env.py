@@ -75,6 +75,7 @@ class LudoEnv(gym.Env):
         self.mode_ascension = mode_ascension
         self.mode_rejoue_6 = mode_rejoue_6
         self.mode_rejoue_marche = mode_rejoue_marche
+        self.nb_actions_interdites = {player: 0 for player in range(self.num_players)}
 
         if self.with_render:
             self.renderer = Renderer()
@@ -164,6 +165,7 @@ class LudoEnv(gym.Env):
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
+            self.nb_actions_interdites[self.current_player] += 1
             if self.mode_gym == "stats_game":
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)

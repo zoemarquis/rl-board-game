@@ -56,16 +56,19 @@ def play_game(env, agents, agent_names, config):
     # TODO : A définir + A créer manuellement pour le moment
     # TODO : Créer un fichier de règles (faire aussi pour les autres paramètres)
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
+    nb_actions_interdites = [env.nb_actions_interdites[player] for player in range(env.num_players)]
     
     players = [
         PlayerToInsert(
             name=agent_names[i],
             is_human=False, # TODO : Gérer le cas quand c'est un humain
-            player_id=None,
             turn_order=i + 1,
             nb_moves=moves[i],
             is_winner=(scores[i] == max(scores)),
             score=scores[i],
+            player_id=None,
+            nb_train_steps=config["nb_train_steps"],
+            nb_actions_interdites=nb_actions_interdites[i],
             # TODO : Ajouter d'autres paramètres
         )
         for i in range(env.num_players)
@@ -114,8 +117,8 @@ def run_all_configs():
         )
 
         print(f"Configuration en cours : {config_name}")
-        for i in range(100):
-            print(f"Partie {i + 1}/100 pour {config_name}")
+        for i in range(1):
+            print(f"Partie {i + 1}/1 pour {config_name}")
             play_game(env, agents, agent_names, config)
 
 
