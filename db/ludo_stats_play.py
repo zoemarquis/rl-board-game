@@ -105,9 +105,12 @@ def run_all_configs():
         env = LudoEnv(
             num_players=config["num_players"],
             nb_chevaux=config["nb_chevaux"],
+            mode_fin_partie=config["mode_fin_partie"], 
+            mode_ascension=config["mode_ascension"],
+            mode_pied_escalier=config["mode_pied_escalier"],  
+            mode_rejoue_6=config["mode_rejoue_6"],  
+            mode_rejoue_marche=config["mode_rejoue_marche"],  
             mode_gym="stats_game",
-            mode_fin_partie=config["mode_fin_partie"],
-            mode_pied_escalier=config["mode_pied_escalier"],
         )
 
         print(f"Configuration en cours : {config_name}")

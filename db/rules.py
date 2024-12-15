@@ -9,18 +9,24 @@ ALL_RULES = {
     6: "Quatre chevaux",
     7: "Tous les chevaux doivent gagner",
     8: "Un seul cheval doit gagner",
-    9: "Montée de l'escalier commence exacte",
-    10: "Montée de l'escalier commence non exacte",
+    9: "Montée de l'escalier avec contrainte",
+    10: "Montée de l'escalier sans contrainte",
+    11: "Montée de l'escalier commence exacte",
+    12: "Montée de l'escalier commence non exacte",
+    13: "Relance avec un 6 autorisée",
+    14: "Relance avec un 6 interdite",
+    15: "Relance après une marche autorisée",
+    16: "Relance après une marche interdite",
 }
 
 def generate_rule_description(rule_ids, all_rules):
     descriptions = [all_rules[rule_id] for rule_id in rule_ids if rule_id in all_rules]
     return ", ".join(descriptions)
 
-
-def determine_rules(num_players, nb_chevaux, mode_fin, mode_escalier):
+def determine_rules(num_players, nb_chevaux, mode_fin_partie, mode_ascension, mode_pied_escalier, mode_rejoue_6, mode_rejoue_marche):
     rules = []
 
+    # Règles pour le nombre de joueurs
     if num_players == 2:
         rules.append(1)
     elif num_players == 3:
@@ -28,6 +34,7 @@ def determine_rules(num_players, nb_chevaux, mode_fin, mode_escalier):
     elif num_players == 4:
         rules.append(3)
     
+    # Règles pour le nombre de chevaux
     if nb_chevaux == 2:
         rules.append(4)
     elif nb_chevaux == 3:
@@ -35,14 +42,34 @@ def determine_rules(num_players, nb_chevaux, mode_fin, mode_escalier):
     elif nb_chevaux == 4:
         rules.append(6)
     
-    if mode_fin == "tous":
+    # Règles pour la condition de fin de partie
+    if mode_fin_partie == "tous":
         rules.append(7)
-    elif mode_fin == "un":
+    elif mode_fin_partie == "un":
         rules.append(8)
     
-    if mode_escalier == "exact":
+    # Règles pour la montée de l'escalier
+    if mode_ascension == "avec_contrainte":
         rules.append(9)
-    else:
+    elif mode_ascension == "sans_contrainte":
         rules.append(10)
-    
+
+    # Règles pour l'arrivée dans l'escalier
+    if mode_pied_escalier == "exact":
+        rules.append(11)
+    elif mode_pied_escalier == "not_exact":
+        rules.append(12)
+
+    # Règles pour rejouer avec un 6
+    if mode_rejoue_6 == "oui":
+        rules.append(13)
+    elif mode_rejoue_6 == "non":
+        rules.append(14)
+
+    # Règles pour rejouer après une marche
+    if mode_rejoue_marche == "oui":
+        rules.append(15)
+    elif mode_rejoue_marche == "non":
+        rules.append(16)
+
     return rules
