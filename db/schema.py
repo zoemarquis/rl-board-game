@@ -87,14 +87,11 @@ class Game(Base):
 class Participant(Base):
     __tablename__ = "participant"
 
-    game_id = Column(
-        Integer, ForeignKey("game.game_id", ondelete="CASCADE"), nullable=False
-    )
-    player_id = Column(
-        Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False
-    )
-    # TODO : Ajouter au schéma de la BD cette colonne (utile pour quand 2 même agents jouent contre (sinon la clé primaire était la même))
+    participant_id = Column(Integer, primary_key=True, autoincrement=True)
+    game_id = Column(Integer, ForeignKey("game.game_id", ondelete="CASCADE"), nullable=False)
+    player_id = Column(Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False)
     num_player_game = Column(Integer, autoincrement=True, nullable=False)
+    action_stats = Column(Integer, ForeignKey("action_stats.stat_id", ondelete="CASCADE"), nullable=True)
     
     __table_args__ = (
         PrimaryKeyConstraint("game_id", "num_player_game"),
@@ -107,6 +104,20 @@ class Participant(Base):
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
     nb_actions_interdites = Column(Integer, nullable=False, default=0)
+
+class ActionStats(Base):
+    __tablename__ = "action_stats"
+
+    stat_id = Column(Integer, primary_key=True, autoincrement=True)
+    nb_no_action = Column(Integer, nullable=False, default=0)
+    nb_move_out = Column(Integer, nullable=False, default=0)
+    nb_move_out_and_kill = Column(Integer, nullable=False, default=0)
+    nb_move_forward = Column(Integer, nullable=False, default=0)
+    nb_get_stuck_behind = Column(Integer, nullable=False, default=0)
+    nb_enter_safezone = Column(Integer, nullable=False, default=0)
+    nb_move_in_safe_zone = Column(Integer, nullable=False, default=0)
+    nb_reach_goal = Column(Integer, nullable=False, default=0)
+    nb_kill = Column(Integer, nullable=False, default=0)
 
 
 # Create all tables in the database

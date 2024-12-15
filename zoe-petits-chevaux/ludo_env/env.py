@@ -137,6 +137,10 @@ class LudoEnv(gym.Env):
             mode_ascension=self.mode_ascension,
             mode_pied_escalier=self.mode_pied_escalier,
         )
+        self.actions_par_type = {
+            player: {action_type: 0 for action_type in self.game.get_action()} 
+            for player in range(self.num_players)
+        }
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 
@@ -162,6 +166,10 @@ class LudoEnv(gym.Env):
             print("my_goal : ", obs["my_goal"])
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
+
+        if action_type in self.actions_par_type[self.current_player]:
+            self.actions_par_type[self.current_player][action_type] += 1
+            
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
@@ -218,3 +226,12 @@ class LudoEnv(gym.Env):
             self.current_player = (self.current_player + 1) % self.num_players
             if self.current_player == 0:
                 self.game.tour += 1
+
+    # Retourne le nombre de chaque type d'actions par participants
+    def export_action_stats(self):
+        action_stats_by_player = {}
+        for player, actions in self.actions_par_type.items():
+            action_stats_by_player[player] = {
+                action.name: count for action, count in actions.items()
+            }
+        return action_stats_by_player

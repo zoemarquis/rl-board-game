@@ -7,7 +7,7 @@ from secret.config import DATABASE_URL
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from datetime import datetime
-from schema import Player, Participant, Game, SetOfRules, IsRuleOf, GameRule
+from schema import Player, Participant, Game, SetOfRules, IsRuleOf, GameRule, ActionStats
 import rules
 Session = sessionmaker(bind=create_engine(DATABASE_URL))
 
@@ -174,6 +174,7 @@ class ParticipantToInsert:
 def store_final_game_data(
     rules: SetOfRulesToInsert,
     players: list[PlayerToInsert],
+    actions_stats_by_player: dict,
 ):
     with Session() as session:
         set_of_rules_id = rules.get_or_create_set_of_rules(session)
@@ -197,6 +198,22 @@ def store_final_game_data(
                     session.commit()
                 player_id = db_player.player_id
 
+            stats = actions_stats_by_player.get(player.turn_order - 1, {})
+
+            action_stats = ActionStats(
+                nb_no_action=stats.get('NO_ACTION', 0),
+                nb_move_out=stats.get('MOVE_OUT', 0),
+                nb_move_out_and_kill=stats.get('MOVE_OUT_AND_KILL', 0),
+                nb_move_forward=stats.get('MOVE_FORWARD', 0),
+                nb_get_stuck_behind=stats.get('GET_STUCK_BEHIND', 0),
+                nb_enter_safezone=stats.get('ENTER_SAFEZONE', 0),
+                nb_move_in_safe_zone=stats.get('MOVE_IN_SAFE_ZONE', 0),
+                nb_reach_goal=stats.get('REACH_GOAL', 0),
+                nb_kill=stats.get('KILL', 0),
+            )
+            session.add(action_stats)
+            session.commit()
+
             participant = Participant(
                 game_id=game_id,
                 player_id=player_id,
@@ -205,6 +222,7 @@ def store_final_game_data(
                 nb_moves=player.nb_moves,
                 is_winner=player.is_winner,
                 nb_actions_interdites = player.nb_actions_interdites,
+                action_stats=action_stats.stat_id,
             )
             participant.num_player_game = num_player_game
             session.add(participant)

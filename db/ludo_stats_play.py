@@ -73,7 +73,9 @@ def play_game(env, agents, agent_names, config):
         )
         for i in range(env.num_players)
     ]
-    store_final_game_data(players=players, rules=rules)
+
+    actions_stats_by_player = env.export_action_stats()
+    store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player)
 
 
     print("Partie terminée")
