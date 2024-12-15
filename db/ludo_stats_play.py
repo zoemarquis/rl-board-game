@@ -78,7 +78,7 @@ def play_game(env, agents, agent_names, config):
     store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player)
 
 
-    print("Partie terminée")
+    """print("Partie terminée")
     print("Résumé des actions intentionnelles:")
     for action_type, count in intentional_actions.items():
         print(f"- Action {action_type.name}: {count} fois")
@@ -94,7 +94,7 @@ def play_game(env, agents, agent_names, config):
     print()
     print("Scores :", scores)
     print("Nombre de coups :", moves)
-    print("Nombre de tours :", turn)
+    print("Nombre de tours :", turn)"""
 
 
 
@@ -119,8 +119,8 @@ def run_all_configs():
         )
 
         print(f"Configuration en cours : {config_name}")
-        for i in range(1):
-            print(f"Partie {i + 1}/1 pour {config_name}")
+        for i in range(100):
+            print(f"Partie {i + 1}/100 pour {config_name}")
             play_game(env, agents, agent_names, config)
 
 

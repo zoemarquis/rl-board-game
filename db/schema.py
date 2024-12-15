@@ -90,17 +90,10 @@ class Participant(Base):
     participant_id = Column(Integer, primary_key=True, autoincrement=True)
     game_id = Column(Integer, ForeignKey("game.game_id", ondelete="CASCADE"), nullable=False)
     player_id = Column(Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False)
-    num_player_game = Column(Integer, autoincrement=True, nullable=False)
+    num_player_game = Column(Integer, nullable=False)
     action_stats = Column(Integer, ForeignKey("action_stats.stat_id", ondelete="CASCADE"), nullable=True)
-    
-    __table_args__ = (
-        PrimaryKeyConstraint("game_id", "num_player_game"),
-        CheckConstraint("turn_order IN (1, 2, 3, 4)", name="check_turn_order"),
-    )
     turn_order = Column(Integer, nullable=False)
-    score = Column(
-        Integer, nullable=False, default=0
-    )
+    score = Column(Integer, nullable=False, default=0)
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
     nb_actions_interdites = Column(Integer, nullable=False, default=0)

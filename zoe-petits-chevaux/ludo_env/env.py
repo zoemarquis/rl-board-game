@@ -75,7 +75,6 @@ class LudoEnv(gym.Env):
         self.mode_ascension = mode_ascension
         self.mode_rejoue_6 = mode_rejoue_6
         self.mode_rejoue_marche = mode_rejoue_marche
-        self.nb_actions_interdites = {player: 0 for player in range(self.num_players)}
 
         if self.with_render:
             self.renderer = Renderer()
@@ -141,6 +140,7 @@ class LudoEnv(gym.Env):
             player: {action_type: 0 for action_type in self.game.get_action()} 
             for player in range(self.num_players)
         }
+        self.nb_actions_interdites = {player: 0 for player in range(self.num_players)}
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 

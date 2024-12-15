@@ -1,6 +1,0 @@
-player_id,name,is_human,strategy,description,difficulty,registration_date
-1,agent_maskedppo_2joueurs_2chevaux_tous_exact_ascension,False,,,,2024-12-11 19:14:10.328359+01:00
-2,agent_maskedppo_2joueurs_2chevaux_un_exact_ascension,False,,,,2024-12-11 19:14:10.864920+01:00
-3,agent_maskedppo_2joueurs_3chevaux_tous_exact_ascension,False,,,,2024-12-11 19:47:26.570836+01:00
-4,agent_maskedppo_2joueurs_3chevaux_un_exact_ascension,False,,,,2024-12-11 19:47:39.724934+01:00
-5,agent_maskedppo_2joueurs_4chevaux_tous_exact_ascension,False,,,,2024-12-11 19:47:47.047443+01:00
