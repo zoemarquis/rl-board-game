@@ -40,9 +40,8 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, agent_path):
 # TODO : Ajouter toutes les configurations de jeu + avoir tous les agents correspondants
 # TODO : Revoir comment automatiser cela
 game_configs = {
-    ## 2 PLAYERS
-    # 2 players 2 pawns
 
+    # 2 players 2 pawns
     generate_model_name(1, 2, 2, 10000) : generate_game_config(2, 2, config_param[1], generate_model_name(1, 2, 2, 10000)),
     generate_model_name(2, 2, 2, 10000) : generate_game_config(2, 2, config_param[2], generate_model_name(2, 2, 2, 10000)),
     generate_model_name(3, 2, 2, 10000) : generate_game_config(2, 2, config_param[3], generate_model_name(3, 2, 2, 10000)),
@@ -59,58 +58,41 @@ game_configs = {
     generate_model_name(14, 2, 2, 10000) : generate_game_config(2, 2, config_param[14], generate_model_name(14, 2, 2, 10000)),
     generate_model_name(15, 2, 2, 10000) : generate_game_config(2, 2, config_param[15], generate_model_name(15, 2, 2, 10000)),
     generate_model_name(16, 2, 2, 10000) : generate_game_config(2, 2, config_param[16], generate_model_name(16, 2, 2, 10000)),
-}
 
-
-"""
-# 2 players 3 pawns
-    "2_players_3_pawns_tous_exact" : generate_game_config(2, 3, "tous", "exact", "agent_maskedppo_2joueurs_3chevaux_tous_exact_ascension"),
-    "2_players_3_pawns_tous_not_exact" : generate_game_config(2, 3, "tous", "not_exact", "-"),
-    "2_players_3_pawns_un_exact" : generate_game_config(2, 3, "un", "exact", "agent_maskedppo_2joueurs_3chevaux_un_exact_ascension"),
-    "2_players_3_pawns_un_not_exact" : generate_game_config(2, 3, "un", "not_exact", "-"),
-
-    # 2 players 4 pawns
-    "2_players_4_pawns_tous_exact" : generate_game_config(2, 4, "tous", "exact", "agent_maskedppo_2joueurs_4chevaux_tous_exact_ascension"),
-    "2_players_4_pawns_tous_not_exact" : generate_game_config(2, 4, "tous", "not_exact", "-"),
-    "2_players_4_pawns_un_exact" : generate_game_config(2, 4, "un", "exact", "-"),
-    "2_players_4_pawns_un_not_exact" : generate_game_config(2, 4, "un", "not_exact", "-"),
-
-    ## 3 PLAYERS
     # 3 players 2 pawns
-    "3_players_2_pawns_tous_exact" : generate_game_config(3, 2, "tous", "exact", "-"),
-    "3_players_2_pawns_tous_not_exact" : generate_game_config(3, 2, "tous", "not_exact", "-"),
-    "3_players_2_pawns_un_exact" : generate_game_config(3, 2, "un", "exact", "-"),
-    "3_players_2_pawns_un_not_exact" : generate_game_config(3, 2, "un", "not_exact", "-"),
+    generate_model_name(1, 3, 2, 10000) : generate_game_config(3, 2, config_param[1], generate_model_name(1, 3, 2, 10000)),
+    generate_model_name(2, 3, 2, 10000) : generate_game_config(3, 2, config_param[2], generate_model_name(2, 3, 2, 10000)),
+    generate_model_name(3, 3, 2, 10000) : generate_game_config(3, 2, config_param[3], generate_model_name(3, 3, 2, 10000)),
+    generate_model_name(4, 3, 2, 10000) : generate_game_config(3, 2, config_param[4], generate_model_name(4, 3, 2, 10000)),
+    generate_model_name(5, 3, 2, 10000) : generate_game_config(3, 2, config_param[5], generate_model_name(5, 3, 2, 10000)),
+    generate_model_name(6, 3, 2, 10000) : generate_game_config(3, 2, config_param[6], generate_model_name(6, 3, 2, 10000)),
+    generate_model_name(7, 3, 2, 10000) : generate_game_config(3, 2, config_param[7], generate_model_name(7, 3, 2, 10000)),
+    generate_model_name(8, 3, 2, 10000) : generate_game_config(3, 2, config_param[8], generate_model_name(8, 3, 2, 10000)),
+    generate_model_name(9, 3, 2, 10000) : generate_game_config(3, 2, config_param[9], generate_model_name(9, 3, 2, 10000)),
+    generate_model_name(10, 3, 2, 10000) : generate_game_config(3, 2, config_param[10], generate_model_name(10, 3, 2, 10000)),
+    generate_model_name(11, 3, 2, 10000) : generate_game_config(3, 2, config_param[11], generate_model_name(11, 3, 2, 10000)),
+    generate_model_name(12, 3, 2, 10000) : generate_game_config(3, 2, config_param[12], generate_model_name(12, 3, 2, 10000)),
+    generate_model_name(13, 3, 2, 10000) : generate_game_config(3, 2, config_param[13], generate_model_name(13, 3, 2, 10000)),
+    generate_model_name(14, 3, 2, 10000) : generate_game_config(3, 2, config_param[14], generate_model_name(14, 3, 2, 10000)),
+    generate_model_name(15, 3, 2, 10000) : generate_game_config(3, 2, config_param[15], generate_model_name(15, 3, 2, 10000)),
+    generate_model_name(16, 3, 2, 10000) : generate_game_config(3, 2, config_param[16], generate_model_name(16, 3, 2, 10000)),    
 
-    # 3 players 3 pawns
-    "3_players_3_pawns_tous_exact" : generate_game_config(3, 3, "tous", "exact", "-"),
-    "3_players_3_pawns_tous_not_exact" : generate_game_config(3, 3, "tous", "not_exact", "-"),
-    "3_players_3_pawns_un_exact" : generate_game_config(3, 3, "un", "exact", "-"),
-    "3_players_3_pawns_un_not_exact" : generate_game_config(3, 3, "un", "not_exact", "-"),
-
-    # 3 players 4 pawns
-    "3_players_4_pawns_tous_exact" : generate_game_config(3, 4, "tous", "exact", "-"),
-    "3_players_4_pawns_tous_not_exact" : generate_game_config(3, 4, "tous", "not_exact", "-"),
-    "3_players_4_pawns_un_exact" : generate_game_config(3, 4, "un", "exact", "-"),
-    "3_players_4_pawns_un_not_exact" : generate_game_config(3, 4, "un", "not_exact", "-"),
-
-    ## 4 PLAYERS
     # 4 players 2 pawns
-    "4_players_2_pawns_tous_exact" : generate_game_config(4, 2, "tous", "exact", "-"),
-    "4_players_2_pawns_tous_not_exact" : generate_game_config(4, 2, "tous", "not_exact", "-"),
-    "4_players_2_pawns_un_exact" : generate_game_config(4, 2, "un", "exact", "-"),
-    "4_players_2_pawns_un_not_exact" : generate_game_config(4, 2, "un", "not_exact", "-"),
+    generate_model_name(1, 4, 2, 10000) : generate_game_config(4, 2, config_param[1], generate_model_name(1, 4, 2, 10000)),
+    generate_model_name(2, 4, 2, 10000) : generate_game_config(4, 2, config_param[2], generate_model_name(2, 4, 2, 10000)),
+    generate_model_name(3, 4, 2, 10000) : generate_game_config(4, 2, config_param[3], generate_model_name(3, 4, 2, 10000)),
+    generate_model_name(4, 4, 2, 10000) : generate_game_config(4, 2, config_param[4], generate_model_name(4, 4, 2, 10000)),
+    generate_model_name(5, 4, 2, 10000) : generate_game_config(4, 2, config_param[5], generate_model_name(5, 4, 2, 10000)),
+    generate_model_name(6, 4, 2, 10000) : generate_game_config(4, 2, config_param[6], generate_model_name(6, 4, 2, 10000)),
+    generate_model_name(7, 4, 2, 10000) : generate_game_config(4, 2, config_param[7], generate_model_name(7, 4, 2, 10000)),
+    generate_model_name(8, 4, 2, 10000) : generate_game_config(4, 2, config_param[8], generate_model_name(8, 4, 2, 10000)),
+    generate_model_name(9, 4, 2, 10000) : generate_game_config(4, 2, config_param[9], generate_model_name(9, 4, 2, 10000)),
+    generate_model_name(10, 4, 2, 10000) : generate_game_config(4, 2, config_param[10], generate_model_name(10, 4, 2, 10000)),
+    generate_model_name(11, 4, 2, 10000) : generate_game_config(4, 2, config_param[11], generate_model_name(11, 4, 2, 10000)),
+    generate_model_name(12, 4, 2, 10000) : generate_game_config(4, 2, config_param[12], generate_model_name(12, 4, 2, 10000)),
+    generate_model_name(13, 4, 2, 10000) : generate_game_config(4, 2, config_param[13], generate_model_name(13, 4, 2, 10000)),
+    generate_model_name(14, 4, 2, 10000) : generate_game_config(4, 2, config_param[14], generate_model_name(14, 4, 2, 10000)),
+    generate_model_name(15, 4, 2, 10000) : generate_game_config(4, 2, config_param[15], generate_model_name(15, 4, 2, 10000)),
+    generate_model_name(16, 4, 2, 10000) : generate_game_config(4, 2, config_param[16], generate_model_name(16, 4, 2, 10000)),
 
-    # 4 players 3 pawns
-    "4_players_3_pawns_tous_exact" : generate_game_config(4, 3, "tous", "exact", "-"),
-    "4_players_3_pawns_tous_not_exact" : generate_game_config(4, 3, "tous", "not_exact", "-"),
-    "4_players_3_pawns_un_exact" : generate_game_config(4, 3, "un", "exact", "-"),
-    "4_players_3_pawns_un_not_exact" : generate_game_config(4, 3, "un", "not_exact", "-"),
-
-    # 4 players 4 pawns
-    "4_players_4_pawns_tous_exact" : generate_game_config(4, 4, "tous", "exact", "-"),
-    "4_players_4_pawns_tous_not_exact" : generate_game_config(4, 4, "tous", "not_exact", "-"),
-    "4_players_4_pawns_un_exact" : generate_game_config(4, 4, "un", "exact", "-"),
-    "4_players_4_pawns_un_not_exact" : generate_game_config(4, 4, "un", "not_exact", "-"),
-
-"""
+}
