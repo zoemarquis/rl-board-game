@@ -55,15 +55,97 @@ REWARD_TABLE_MOVE_OUT_EXACT_ASCENSION = {
 
 }
 
-def get_reward_table(mode_pied_escalier, mode_ascension = "sans_contrainte"):
-    if mode_ascension == "avec_contrainte":
-        return REWARD_TABLE_MOVE_OUT_EXACT_ASCENSION
-    elif mode_pied_escalier == "not_exact":
-        return REWARD_TABLE_MOVE_OUT_NO_EXACT
-    elif mode_pied_escalier == "exact":
-        return REWARD_TABLE_MOVE_OUT_EXACT
+
+class AgentType:
+    BALANCED = "balanced"  # Current reward structure
+    AGGRESSIVE = "aggressive"  # Prioritizes killing
+    RUSHER = "rusher"  # Prioritizes advancing quickly
+    DEFENSIVE = "defensive"  # Prioritizes getting pawns to safety
+    SPAWNER = "spawner"  # Prioritizes getting pawns out
+    SUBOPTIMAL = "suboptimal"  # Makes intentionally suboptimal choices
+
+def create_reward_table(agent_type, action_enum):
+    """Creates a reward table based on agent type and action enumeration."""
+    if isinstance(action_enum, type(Action_NO_EXACT)):
+        base_table = {action: 0 for action in Action_NO_EXACT}
+    elif isinstance(action_enum, type(Action_EXACT)):
+        base_table = {action: 0 for action in Action_EXACT}
+    elif isinstance(action_enum, type(Action_EXACT_ASCENSION)):
+        base_table = {action: 0 for action in Action_EXACT_ASCENSION}
     else:
-        raise ValueError(f"mode_pied_escalier should be 'not_exact' or 'exact', not {mode_pied_escalier}")
+        raise ValueError("Invalid action enumeration type")
+
+    if agent_type == AgentType.AGGRESSIVE:
+        # Prioritizes killing and aggressive moves
+        base_table.update({
+            'KILL': 50,
+            'MOVE_OUT_AND_KILL': 40,
+            'MOVE_FORWARD': 5,
+            'MOVE_OUT': 10,
+            'REACH_GOAL': 20,
+        })
+    
+    elif agent_type == AgentType.RUSHER:
+        # Prioritizes advancing quickly towards the goal
+        base_table.update({
+            'MOVE_FORWARD': 30,
+            'REACH_GOAL': 50,
+            'MOVE_OUT': 20,
+            'KILL': 10,
+            'MOVE_OUT_AND_KILL': 15,
+        })
+    
+    elif agent_type == AgentType.DEFENSIVE:
+        # Prioritizes safe moves and reaching safe zones
+        base_table.update({
+            'ENTER_SAFEZONE': 40,
+            'MOVE_IN_SAFE_ZONE': 30,
+            'REACH_GOAL': 50,
+            'MOVE_OUT': 20,
+            'MOVE_FORWARD': 10,
+            'KILL': 5,
+        })
+    
+    elif agent_type == AgentType.SPAWNER:
+        # Prioritizes getting pawns out of home
+        base_table.update({
+            'MOVE_OUT': 50,
+            'MOVE_OUT_AND_KILL': 40,
+            'MOVE_FORWARD': 10,
+            'KILL': 15,
+            'REACH_GOAL': 20,
+        })
+    
+    elif agent_type == AgentType.SUBOPTIMAL:
+        # Makes intentionally suboptimal choices
+        base_table.update({
+            'MOVE_FORWARD': 5,
+            'MOVE_OUT': 3,
+            'KILL': 2,
+            'REACH_GOAL': 10,
+            'GET_STUCK_BEHIND': 15,  # Prioritizes getting stuck
+        })
+
+    return base_table
+
+def get_reward_table(mode_pied_escalier, mode_ascension = "sans_contrainte", agent_type=AgentType.BALANCED):
+    if agent_type == AgentType.BALANCED:
+        # Use existing reward tables for balanced agents
+        if mode_ascension == "avec_contrainte":
+            return REWARD_TABLE_MOVE_OUT_EXACT_ASCENSION
+        elif mode_pied_escalier == "not_exact":
+            return REWARD_TABLE_MOVE_OUT_NO_EXACT
+        elif mode_pied_escalier == "exact":
+            return REWARD_TABLE_MOVE_OUT_EXACT
+    else:
+        # Create custom reward table based on agent type
+        if mode_ascension == "avec_contrainte":
+            return create_reward_table(agent_type, Action_EXACT_ASCENSION)
+        elif mode_pied_escalier == "not_exact":
+            return create_reward_table(agent_type, Action_NO_EXACT)
+        elif mode_pied_escalier == "exact":
+            return create_reward_table(agent_type, Action_EXACT)
+    raise ValueError(f"mode_pied_escalier should be 'not_exact' or 'exact', not {mode_pied_escalier}")
 
 # ------------------- DEFAULT ACTION ORDER TABLES -------------------
 

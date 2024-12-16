@@ -9,6 +9,7 @@ from ludo_env.game_logic import (
 )
 from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
 from ludo_env.renderer import Renderer
+from ludo_env.reward import AgentType
 
 
 class LudoEnv(gym.Env):
@@ -16,6 +17,9 @@ class LudoEnv(gym.Env):
         self,
         num_players,
         nb_chevaux,
+
+        agent_type=AgentType.BALANCED,
+
         mode_fin_partie="tous",
         mode_ascension="sans_contrainte",
         mode_pied_escalier= "not_exact",
@@ -67,6 +71,8 @@ class LudoEnv(gym.Env):
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
         self.with_render = with_render
         self.mode_gym = mode_gym
+
+        self.agent_type = agent_type
 
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
@@ -135,6 +141,7 @@ class LudoEnv(gym.Env):
             mode_fin_partie=self.mode_fin_partie,
             mode_ascension=self.mode_ascension,
             mode_pied_escalier=self.mode_pied_escalier,
+            agent_type=self.agent_type,
         )
         self.actions_par_type = {
             player: {action_type: 0 for action_type in self.game.get_action()} 
@@ -202,7 +209,7 @@ class LudoEnv(gym.Env):
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
         self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
-        reward = self.game.get_reward(action_type)
+        reward = self.game.get_reward(action_type, self.agent_type)
         done = self.game.is_game_over()
 
         if not done:

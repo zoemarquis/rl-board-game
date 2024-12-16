@@ -3,7 +3,7 @@ import numpy as np
 
 from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
 from ludo_env.state import State_NO_EXACT, State_EXACT
-from ludo_env.reward import get_reward_table, get_default_action_order
+from ludo_env.reward import get_reward_table, get_default_action_order, AgentType
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
@@ -11,12 +11,13 @@ TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 
 class GameLogic:
-    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous", mode_pied_escalier="not_exact", mode_ascension="sans_contrainte"):
+    def __init__(self, num_players, nb_chevaux, mode_fin_partie="tous", mode_pied_escalier="not_exact", mode_ascension="sans_contrainte", agent_type=AgentType.BALANCED):
         self.num_players = num_players
         self.nb_chevaux = nb_chevaux
         self.mode_fin_partie = mode_fin_partie
         self.mode_ascension = mode_ascension
         self.mode_pied_escalier = mode_pied_escalier
+        self.agent_type = agent_type
         if mode_ascension == "avec_contrainte" and mode_pied_escalier == "not_exact":
             raise ValueError("Mode d'ascension avec contrainte non supporté")
         self.init_board()
@@ -846,8 +847,14 @@ class GameLogic:
 
 
 
-    def get_reward(self, action): 
-        reward_table = get_reward_table(self.mode_pied_escalier, self.mode_ascension) # TODO MERGE reward
+    def get_reward(self, action, agent_type=None): 
+        # Use instance agent_type if none provided
+        agent_type = agent_type if agent_type is not None else self.agent_type
+        reward_table = get_reward_table(
+            self.mode_pied_escalier, 
+            self.mode_ascension,
+            agent_type
+        ) # TODO MERGE reward
         return reward_table[action]
 
 
