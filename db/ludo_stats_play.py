@@ -67,6 +67,7 @@ def play_game(env, agents, agent_names, config):
             nb_moves=moves[i],
             is_winner=(scores[i] == max(scores)),
             score=scores[i],
+            strategy=config["strategy"][i],
             player_id=None,
             nb_train_steps=config["nb_train_steps"],
             nb_actions_interdites=nb_actions_interdites[i],
@@ -105,7 +106,7 @@ def run_all_configs():
             agents = [PPO.load(agent_config["path"]) for agent_config in config["agents"]]
             agent_names = [agent_config["name"] for agent_config in config["agents"]]
         except FileNotFoundError as e:
-            #print(f"Erreur de chargement pour la configuration {config_name}: {e}")
+            #print(f"Erreur de chargement pour la configuration {config_name}: {e}\n")
             continue
 
         env = LudoEnv(
@@ -120,8 +121,8 @@ def run_all_configs():
         )
 
         print(f"Configuration en cours : {config_name}")
-        for i in range(100):
-            print(f"Partie {i + 1}/100 pour {config_name}")
+        for i in range(10):
+            print(f"Partie {i + 1}/10 pour {config_name}")
             play_game(env, agents, agent_names, config)
 
 
@@ -173,15 +174,15 @@ def run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_
 
 if __name__ == "__main__":
 
-    #run_all_configs()
+    run_all_configs()
 
-    num_conf = 1
+    """num_conf = 1
     num_players = 2
     nb_chevaux = 2
     total_timesteps = 200000
 
     agent_types = ["balanced", "defensive"]
 
-    run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_types)
+    run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_types)"""
 
 

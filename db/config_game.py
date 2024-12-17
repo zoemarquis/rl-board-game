@@ -43,6 +43,7 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
         "agents": [{"path": agent_paths[i], "name": os.path.basename(agent_paths[i])} for i in range(num_players)],
         "rules_ids": my_ids_rules,
         "nb_train_steps": nb_train_steps,
+        "strategy": agent_types
     }
 
 
@@ -52,14 +53,25 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
 agent_types = AgentType.get_all_agent_types()
 #print(agent_types)
 game_configs = {}
-total_timesteps = 2000
+total_timesteps = 200000
+
+num_players_all = [2]
+nb_chevaux_all = [2]
+num_env_all = [1]
 
 for agent_type in agent_types:
-    for num_players in [2, 3, 4]:
-        for nb_chevaux in [2]:
-            for num_env in range(1, 17):
-                game_configs[f"{agent_type}_conf_{num_env}_{num_players}j_{nb_chevaux}c"] = generate_game_config(
-                    num_players, nb_chevaux, config_param[num_env], total_timesteps, num_env, total_timesteps, agent_type
+    for num_players in num_players_all:
+        for nb_chevaux in nb_chevaux_all:
+            for num_env in num_env_all:
+                game_configs[
+                    f"{agent_type}_conf_{num_env}_{num_players}j_{nb_chevaux}c"] = generate_game_config(
+                    num_players, 
+                    nb_chevaux, 
+                    config_param[num_env], 
+                    total_timesteps, 
+                    num_env, 
+                    total_timesteps, 
+                    [agent_type] * num_players
                 )
 
 # Exemple de config

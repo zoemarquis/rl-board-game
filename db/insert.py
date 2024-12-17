@@ -24,6 +24,7 @@ class PlayerToInsert:
         player_id: int = None,
         nb_train_steps: int = None,
         nb_actions_interdites: int = 0,
+        strategy: str = None,
     ):
         assert name is not None, "name must be provided"
         assert is_human is not None, "is_human must be provided"
@@ -51,6 +52,7 @@ class PlayerToInsert:
         self.is_winner = is_winner
         self.nb_train_steps = nb_train_steps
         self.nb_actions_interdites = nb_actions_interdites
+        self.strategy = strategy
 
     def get_or_create_human_player(self, session) -> int:
         if not self.is_human:
@@ -191,11 +193,20 @@ def store_final_game_data(
             if player.is_human:
                 player_id = player.get_or_create_human_player(session)
             else:
+                
                 db_player = session.query(Player).filter(Player.name == player.name).first()
+                
+                # Ajout de l'agent s'il n'est pas déjà dans la BD
                 if not db_player:
-                    db_player = Player(name=player.name, is_human=False, nb_train_steps=player.nb_train_steps)
+                    db_player = Player(
+                        name=player.name, 
+                        is_human=False, 
+                        strategy=player.strategy,
+                        nb_train_steps=player.nb_train_steps                        
+                    )
                     session.add(db_player)
                     session.commit()
+                
                 player_id = db_player.player_id
 
             stats = actions_stats_by_player.get(player.turn_order - 1, {})
