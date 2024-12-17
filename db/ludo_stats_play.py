@@ -4,6 +4,7 @@
 
 import sys
 import os
+import itertools
 
 from collections import defaultdict
 from stable_baselines3 import PPO
@@ -15,6 +16,7 @@ sys.path.append(racine_dir)
 
 from ludo_env import LudoEnv
 from ludo_env.action import Action_NO_EXACT, Action_EXACT
+from ludo_env.reward import AgentType
 
 
 # TODO : Faire premières viz ?
@@ -121,8 +123,8 @@ def run_all_configs():
         )
 
         print(f"Configuration en cours : {config_name}")
-        for i in range(10):
-            print(f"Partie {i + 1}/10 pour {config_name}")
+        for i in range(100):
+            print(f"Partie {i + 1}/100 pour {config_name}")
             play_game(env, agents, agent_names, config)
 
 
@@ -167,22 +169,26 @@ def run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_
 
     print(f"Exécution de la configuration : conf_{num_conf}_{num_players}j_{nb_chevaux}c")
     print(f"Agents : {agent_types}")
-    for i in range(10):
-        print(f"Partie {i + 1}/10 : {agent_types}")
+    for i in range(100):
+        print(f"Partie {i + 1}/100 : {agent_types}")
         play_game(env, agents, agent_names, config)
 
 
 if __name__ == "__main__":
 
-    run_all_configs()
+    #run_all_configs()
 
-    """num_conf = 1
-    num_players = 2
+    num_conf = 16
+    num_players = 3
     nb_chevaux = 2
-    total_timesteps = 200000
+    total_timesteps = 100000
 
-    agent_types = ["balanced", "defensive"]
+    agent_types = AgentType.get_all_agent_types()
+    agent_combinations = list(itertools.combinations_with_replacement(agent_types, num_players))
 
-    run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_types)"""
+    for agents in agent_combinations:
+        print(f"Configuration: {agents}")
+        
+        run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agents)
 
 

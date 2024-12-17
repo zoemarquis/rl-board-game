@@ -53,11 +53,11 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
 agent_types = AgentType.get_all_agent_types()
 #print(agent_types)
 game_configs = {}
-total_timesteps = 200000
+total_timesteps = 2000
 
 num_players_all = [2]
 nb_chevaux_all = [2]
-num_env_all = [1]
+num_env_all = [1, 9, 16]
 
 for agent_type in agent_types:
     for num_players in num_players_all:

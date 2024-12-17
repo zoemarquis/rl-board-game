@@ -79,6 +79,15 @@ Les configurations des agents sont définies dans le fichier `config_game.py`. =
 ## 5. TODO
 
 - Voir dans les fichiers les TODO
-- Voir comment enregistrer la BD pour la partager
 - Description de game_rule utile ?
-- Gérer correctement les players et participants
+- Checker le nombre de parties jouées par les agents
+- Checker contre qui jouent les agents
+
+- Statistiques intéressantes
+    - 1 conf avec différents types d'agents : mouvements choisis, qui gagne
+    - 1 type d'agent différentes conf : nombre d'erreurs
+    - 1 type d'agent, 1 conf mais steps entrainement différent : nombre erreurs, qui gagne, mouvements choisis
+
+- Ajouter le type d'agent dans la BD
+- Ecrire document qui résume tout ce que j'ai fais
+
