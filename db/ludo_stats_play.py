@@ -7,7 +7,7 @@ import os
 
 from collections import defaultdict
 from stable_baselines3 import PPO
-from config_game import game_configs
+from config_game import game_configs, generate_model_name, config_param, generate_game_config
 from insert import store_final_game_data, PlayerToInsert, SetOfRulesToInsert
 
 racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux"))
@@ -37,6 +37,7 @@ def play_game(env, agents, agent_names, config):
         encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
 
         if env.current_player < len(agents):
+            #print("Joueur", env.current_player, ":", agent_names[env.current_player])
             action, _ = agents[env.current_player].predict(obs, deterministic=True)
         else:
             raise ValueError("Nombre de joueurs non supporté")
@@ -124,4 +125,63 @@ def run_all_configs():
             play_game(env, agents, agent_names, config)
 
 
-run_all_configs()
+def run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_types):
+
+    if len(agent_types) != num_players:
+        raise ValueError("Le nombre de types d'agents doit correspondre au nombre de joueurs.")
+
+    agent_paths = [
+        generate_model_name(agent_type, num_conf, num_players, nb_chevaux, total_timesteps)
+        for agent_type in agent_types
+    ]
+
+    config_param_for_env = config_param[num_conf]
+    config = generate_game_config(
+        num_players=num_players,
+        nb_chevaux=nb_chevaux,
+        my_config_param=config_param_for_env,
+        nb_train_steps=total_timesteps,
+        num_conf=num_conf,
+        total_timesteps=total_timesteps,
+        agent_types=agent_types
+    )
+
+    try:
+        agents = [PPO.load(path) for path in agent_paths]
+        agent_names = [os.path.basename(path) for path in agent_paths]
+    except FileNotFoundError as e:
+        print(f"Erreur de chargement des agents : {e}")
+        return
+
+    env = LudoEnv(
+        num_players=config["num_players"],
+        nb_chevaux=config["nb_chevaux"],
+        mode_fin_partie=config["mode_fin_partie"],
+        mode_ascension=config["mode_ascension"],
+        mode_pied_escalier=config["mode_pied_escalier"],
+        mode_rejoue_6=config["mode_rejoue_6"],
+        mode_rejoue_marche=config["mode_rejoue_marche"],
+        mode_gym="stats_game",
+    )
+
+    print(f"Exécution de la configuration : conf_{num_conf}_{num_players}j_{nb_chevaux}c")
+    print(f"Agents : {agent_types}")
+    for i in range(10):
+        print(f"Partie {i + 1}/10 : {agent_types}")
+        play_game(env, agents, agent_names, config)
+
+
+if __name__ == "__main__":
+
+    #run_all_configs()
+
+    num_conf = 1
+    num_players = 2
+    nb_chevaux = 2
+    total_timesteps = 200000
+
+    agent_types = ["balanced", "defensive"]
+
+    run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_types)
+
+

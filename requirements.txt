@@ -17,3 +17,5 @@ black # formatter
 
 # DB
 psycopg2-binary # ! pour ubuntu et mac os -binary : TODO tester avec des venv qu'on a bien tous les reuirements
+
+itertools
