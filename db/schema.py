@@ -111,7 +111,14 @@ class ActionStats(Base):
     nb_move_in_safe_zone = Column(Integer, nullable=False, default=0)
     nb_reach_goal = Column(Integer, nullable=False, default=0)
     nb_kill = Column(Integer, nullable=False, default=0)
-
+    nb_reach_pied_escalier = Column(Integer, nullable=False, default=0)
+    nb_avance_recule_pied_escalier = Column(Integer, nullable=False, default=0)
+    nb_marche_1 = Column(Integer, nullable=False, default=0)
+    nb_marche_2 = Column(Integer, nullable=False, default=0)
+    nb_marche_3 = Column(Integer, nullable=False, default=0)
+    nb_marche_4 = Column(Integer, nullable=False, default=0)
+    nb_marche_5 = Column(Integer, nullable=False, default=0)
+    nb_marche_6 = Column(Integer, nullable=False, default=0)
 
 # Create all tables in the database
 Base.metadata.create_all(engine)

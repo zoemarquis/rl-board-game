@@ -221,6 +221,14 @@ def store_final_game_data(
                 nb_move_in_safe_zone=stats.get('MOVE_IN_SAFE_ZONE', 0),
                 nb_reach_goal=stats.get('REACH_GOAL', 0),
                 nb_kill=stats.get('KILL', 0),
+                nb_reach_pied_escalier = stats.get('REACH_PIED_ESCALIER', 0),
+                nb_avance_recule_pied_escalier = stats.get('AVANCE_RECULE_PIED_ESCALIER', 0),
+                nb_marche_1 = stats.get('MARCHE_1', 0),
+                nb_marche_2 = stats.get('MARCHE_2', 0),
+                nb_marche_3 = stats.get('MARCHE_3', 0),
+                nb_marche_4 = stats.get('MARCHE_4', 0),
+                nb_marche_5 = stats.get('MARCHE_5', 0),
+                nb_marche_6 = stats.get('MARCHE_6', 0),
             )
             session.add(action_stats)
             session.commit()
