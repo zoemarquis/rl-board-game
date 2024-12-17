@@ -64,6 +64,10 @@ class AgentType:
     SPAWNER = "spawner"  # Prioritizes getting pawns out
     SUBOPTIMAL = "suboptimal"  # Makes intentionally suboptimal choices
 
+    @classmethod
+    def get_all_agent_types(cls):
+        return [cls.BALANCED, cls.AGGRESSIVE, cls.RUSHER, cls.DEFENSIVE, cls.SPAWNER, cls.SUBOPTIMAL]
+
 def create_reward_table(agent_type, action_enum):
     """Creates a reward table based on agent type and action enumeration."""
     if isinstance(action_enum, type(Action_NO_EXACT)):

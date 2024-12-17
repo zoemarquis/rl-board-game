@@ -10,18 +10,23 @@ sys.path.append(racine_dir)
 
 from config import config_param
 
+racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux/"))
+sys.path.append(racine_dir)
+from ludo_env.reward import AgentType
+
 
 # Créer un nom de fichier à partir des paramètres de l'environnement
-def generate_model_name(num_env, num_players, nb_chevaux, total_timesteps):
-    model_name = (f"{num_players}j_{nb_chevaux}c_conf_{num_env}_{total_timesteps}_steps"
-    )
-    return model_name
+def generate_model_name(agent_type, num_env, num_players, nb_chevaux, total_timesteps):
+    model_name = (f"{agent_type}_{num_players}j_{nb_chevaux}c_conf_{num_env}_{total_timesteps}_steps")
+    model_path = os.path.join(BASE_DIR, f"{num_players}_joueurs", f"{nb_chevaux}_pions", f"conf_{num_env}", model_name)
+    return model_path
 
 
 
 # TODO :  Ajouter d'autres paramètres pouvant être utiles
-def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_steps, agent_path):
+def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_steps, num_env, total_timesteps, agent_type):
 
+    agent_path = generate_model_name(agent_type, num_env, num_players, nb_chevaux, total_timesteps)
     my_ids_rules = rules.determine_rules(num_players, nb_chevaux, my_config_param['mode_fin_partie'], my_config_param['mode_ascension'], my_config_param['mode_pied_escalier'], my_config_param['mode_rejoue_6'], my_config_param['mode_rejoue_marche'])
     return {
         "num_players": num_players,
@@ -31,7 +36,7 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
         "mode_pied_escalier": my_config_param['mode_pied_escalier'],
         "mode_rejoue_6": my_config_param['mode_rejoue_6'],
         "mode_rejoue_marche": my_config_param['mode_rejoue_marche'],
-        "agents": [{"path": os.path.join(BASE_DIR, agent_path), "name": agent_path} for i in range(num_players)],
+        "agents": [{"path": agent_path, "name": os.path.basename(agent_path)} for _ in range(num_players)],
         "rules_ids": my_ids_rules,
         "nb_train_steps": nb_train_steps,
     }
@@ -40,60 +45,15 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
 
 # TODO : Ajouter toutes les configurations de jeu + avoir tous les agents correspondants
 # TODO : Revoir comment automatiser cela
-game_configs = {
+agent_types = AgentType.get_all_agent_types()
+print(agent_types)
+game_configs = {}
+total_timesteps = 2000
 
-    # 2 players 2 pawns
-    generate_model_name(1, 2, 2, 10000) : generate_game_config(2, 2, config_param[1], 10000, generate_model_name(1, 2, 2, 10000)),
-    generate_model_name(2, 2, 2, 10000) : generate_game_config(2, 2, config_param[2], 10000, generate_model_name(2, 2, 2, 10000)),
-    generate_model_name(3, 2, 2, 10000) : generate_game_config(2, 2, config_param[3], 10000, generate_model_name(3, 2, 2, 10000)),
-    generate_model_name(4, 2, 2, 10000) : generate_game_config(2, 2, config_param[4], 10000, generate_model_name(4, 2, 2, 10000)),
-    generate_model_name(5, 2, 2, 10000) : generate_game_config(2, 2, config_param[5], 10000, generate_model_name(5, 2, 2, 10000)),
-    generate_model_name(6, 2, 2, 10000) : generate_game_config(2, 2, config_param[6], 10000, generate_model_name(6, 2, 2, 10000)),
-    generate_model_name(7, 2, 2, 10000) : generate_game_config(2, 2, config_param[7], 10000, generate_model_name(7, 2, 2, 10000)),
-    generate_model_name(8, 2, 2, 10000) : generate_game_config(2, 2, config_param[8], 10000, generate_model_name(8, 2, 2, 10000)),
-    generate_model_name(9, 2, 2, 10000) : generate_game_config(2, 2, config_param[9], 10000, generate_model_name(9, 2, 2, 10000)),
-    generate_model_name(10, 2, 2, 10000) : generate_game_config(2, 2, config_param[10], 10000, generate_model_name(10, 2, 2, 10000)),
-    generate_model_name(11, 2, 2, 10000) : generate_game_config(2, 2, config_param[11], 10000, generate_model_name(11, 2, 2, 10000)),
-    generate_model_name(12, 2, 2, 10000) : generate_game_config(2, 2, config_param[12], 10000, generate_model_name(12, 2, 2, 10000)),
-    generate_model_name(13, 2, 2, 10000) : generate_game_config(2, 2, config_param[13], 10000, generate_model_name(13, 2, 2, 10000)),
-    generate_model_name(14, 2, 2, 10000) : generate_game_config(2, 2, config_param[14], 10000, generate_model_name(14, 2, 2, 10000)),
-    generate_model_name(15, 2, 2, 10000) : generate_game_config(2, 2, config_param[15], 10000, generate_model_name(15, 2, 2, 10000)),
-    generate_model_name(16, 2, 2, 10000) : generate_game_config(2, 2, config_param[16], 10000, generate_model_name(16, 2, 2, 10000)),
-    
-    # 3 players 2 pawns
-    generate_model_name(1, 3, 2, 10000) : generate_game_config(3, 2, config_param[1], 10000, generate_model_name(1, 3, 2, 10000)),
-    generate_model_name(2, 3, 2, 10000) : generate_game_config(3, 2, config_param[2], 10000, generate_model_name(2, 3, 2, 10000)),
-    generate_model_name(3, 3, 2, 10000) : generate_game_config(3, 2, config_param[3], 10000, generate_model_name(3, 3, 2, 10000)),
-    generate_model_name(4, 3, 2, 10000) : generate_game_config(3, 2, config_param[4], 10000, generate_model_name(4, 3, 2, 10000)),
-    generate_model_name(5, 3, 2, 10000) : generate_game_config(3, 2, config_param[5], 10000, generate_model_name(5, 3, 2, 10000)),
-    generate_model_name(6, 3, 2, 10000) : generate_game_config(3, 2, config_param[6], 10000, generate_model_name(6, 3, 2, 10000)),
-    generate_model_name(7, 3, 2, 10000) : generate_game_config(3, 2, config_param[7], 10000, generate_model_name(7, 3, 2, 10000)),
-    generate_model_name(8, 3, 2, 10000) : generate_game_config(3, 2, config_param[8], 10000, generate_model_name(8, 3, 2, 10000)),
-    generate_model_name(9, 3, 2, 10000) : generate_game_config(3, 2, config_param[9], 10000, generate_model_name(9, 3, 2, 10000)),
-    generate_model_name(10, 3, 2, 10000) : generate_game_config(3, 2, config_param[10], 10000, generate_model_name(10, 3, 2, 10000)),
-    generate_model_name(11, 3, 2, 10000) : generate_game_config(3, 2, config_param[11], 10000, generate_model_name(11, 3, 2, 10000)),
-    generate_model_name(12, 3, 2, 10000) : generate_game_config(3, 2, config_param[12], 10000, generate_model_name(12, 3, 2, 10000)),
-    generate_model_name(13, 3, 2, 10000) : generate_game_config(3, 2, config_param[13], 10000, generate_model_name(13, 3, 2, 10000)),
-    generate_model_name(14, 3, 2, 10000) : generate_game_config(3, 2, config_param[14], 10000, generate_model_name(14, 3, 2, 10000)),
-    generate_model_name(15, 3, 2, 10000) : generate_game_config(3, 2, config_param[15], 10000, generate_model_name(15, 3, 2, 10000)),
-    generate_model_name(16, 3, 2, 10000) : generate_game_config(3, 2, config_param[16], 10000, generate_model_name(16, 3, 2, 10000)),    
-
-    # 4 players 2 pawns
-    generate_model_name(1, 4, 2, 10000) : generate_game_config(4, 2, config_param[1], 10000, generate_model_name(1, 4, 2, 10000)),
-    generate_model_name(2, 4, 2, 10000) : generate_game_config(4, 2, config_param[2], 10000, generate_model_name(2, 4, 2, 10000)),
-    generate_model_name(3, 4, 2, 10000) : generate_game_config(4, 2, config_param[3], 10000, generate_model_name(3, 4, 2, 10000)),
-    generate_model_name(4, 4, 2, 10000) : generate_game_config(4, 2, config_param[4], 10000, generate_model_name(4, 4, 2, 10000)),
-    generate_model_name(5, 4, 2, 10000) : generate_game_config(4, 2, config_param[5], 10000, generate_model_name(5, 4, 2, 10000)),
-    generate_model_name(6, 4, 2, 10000) : generate_game_config(4, 2, config_param[6], 10000, generate_model_name(6, 4, 2, 10000)),
-    generate_model_name(7, 4, 2, 10000) : generate_game_config(4, 2, config_param[7], 10000, generate_model_name(7, 4, 2, 10000)),
-    generate_model_name(8, 4, 2, 10000) : generate_game_config(4, 2, config_param[8], 10000, generate_model_name(8, 4, 2, 10000)),
-    generate_model_name(9, 4, 2, 10000) : generate_game_config(4, 2, config_param[9], 10000, generate_model_name(9, 4, 2, 10000)),
-    generate_model_name(10, 4, 2, 10000) : generate_game_config(4, 2, config_param[10], 10000, generate_model_name(10, 4, 2, 10000)),
-    generate_model_name(11, 4, 2, 10000) : generate_game_config(4, 2, config_param[11], 10000, generate_model_name(11, 4, 2, 10000)),
-    generate_model_name(12, 4, 2, 10000) : generate_game_config(4, 2, config_param[12], 10000, generate_model_name(12, 4, 2, 10000)),
-    generate_model_name(13, 4, 2, 10000) : generate_game_config(4, 2, config_param[13], 10000, generate_model_name(13, 4, 2, 10000)),
-    generate_model_name(14, 4, 2, 10000) : generate_game_config(4, 2, config_param[14], 10000, generate_model_name(14, 4, 2, 10000)),
-    generate_model_name(15, 4, 2, 10000) : generate_game_config(4, 2, config_param[15], 10000, generate_model_name(15, 4, 2, 10000)),
-    generate_model_name(16, 4, 2, 10000) : generate_game_config(4, 2, config_param[16], 10000, generate_model_name(16, 4, 2, 10000)),
-
-}
+for agent_type in agent_types:
+    for num_players in [2, 3, 4]:
+        for nb_chevaux in [2]:
+            for num_env in range(1, 17):
+                game_configs[f"{agent_type}_conf_{num_env}_{num_players}j_{nb_chevaux}c"] = generate_game_config(
+                    num_players, nb_chevaux, config_param[num_env], total_timesteps, num_env, total_timesteps, agent_type
+                )
