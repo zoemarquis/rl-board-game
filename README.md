@@ -34,6 +34,13 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
                 - S'arrêter sur la case du pion si la valeur du dé est supérieure. : TODO vérifier
 - Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
 
+- **Disposition des écuries selon le nombre de joueurs** :
+    - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.
+    - **3 ou 4 joueurs** : Les écuries sont réparties de manière équidistante toutes les 14 cases. Une même case peut être perçue différemment selon le point de vue du joueur :
+        Par exemple, la case 1 pour un joueur sera la case 15, case 29 ou case 43 pour les autres joueurs, en fonction de leur position de départ.
+        
+    Cela garantit une répartition équilibrée des positions de départ sur le plateau.
+
 ### Variations des Règles :
 - Nombre de joueurs :
     - Le jeu peut être joué à 2, 3 ou 4 joueurs.
@@ -54,15 +61,15 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
 
 - Rejouer si dé = 6 (oui ou non)
 
-TODOREGLE : 
-si la dernière réponse était 1:
-0. ne rejoue pas à chaque fois qu'il monte d'une marche
-1. rejoue à chaque fois qu'il monte correctement une marche (raccourcir la partie)
+- Pouvoir protéger un pion (oui ou non) : si on a deux pions sur la même case, alors personne ne peut les tuer.
 
-TODOREGLE : gestion protect -> ne pas pouvoir kill / protect si on se mets dans la meme case
-et dans espace observation reward si pions protégés, si plus pion protégé -> reward négatif ?
+## Différents agents : 
 
+- TODO DANIIL 
 
+## Comment lancer une partie (avec interface graphique) :
+
+- TODO KATIA 
 
 ## Technologies utilisées :
 🐍 Python : Langage principal pour la gestion du jeu et des agents.  
@@ -74,8 +81,35 @@ et dans espace observation reward si pions protégés, si plus pion protégé ->
 ✅ Pytest : Tests unitaires pour garantir la fiabilité du code.  
 
 # packages, excéuter le jeu ... TODOCOMM 
+-> requirements
+-> venv (?, plus compatible que conda pour permettre les tests prof)
+
+<!-- ## Conda environment
+
+```bash
+conda env create -f environment.yml
+conda activate ludo-env
+``` -->
 
 
+
+## organisation du dossier
+
+TODOCOMM
+
+petits_chevaux/
+│
+├── ludo_env/
+│   ├── env.py              # Classe de l'environnement Gymnasium
+│   ├── game_logic.py       # Gestion de la logique et des règles du jeu
+│   └── renderer.py         # interface graphique
+├── reinforcement_learning/
+│   ├── agent.py            # Définir des agents (Random par exemple), qlearnin : brouillon
+│   ├── notebook_maskedppo.ipynb    # notebook avec un pseudo masked ppo
+│   ├── notebook_ppo.ipynb          # notebook avec ppo
+│   └── notebook_qlearning.ipynb    # notebook avec qlearning : pas fonctionnel juste un brouillon
+└── tests/
+│   └── TODOTEST 
 ---
 
 notice des TODO :
