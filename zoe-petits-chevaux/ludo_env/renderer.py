@@ -19,16 +19,9 @@ BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 GREY = (128, 128, 128)
 
-PLAYER_4_COLORS = {
-    0: GREEN,
-    1: YELLOW,
-    2: RED,
-    3: BLUE
-}
-PLAYER_2_COLORS = {
-    0: GREEN,
-    1: RED
-}
+PLAYER_4_COLORS = {0: GREEN, 1: YELLOW, 2: RED, 3: BLUE}
+PLAYER_2_COLORS = {0: GREEN, 1: RED}
+
 
 class Renderer:
     def __init__(self):
@@ -41,15 +34,19 @@ class Renderer:
 
         for i, file in enumerate(dice_files, start=1):
             image = pygame.image.load(file)
-            resized_image = pygame.transform.scale(image, (3 * SQUARE_SIZE, 3 * SQUARE_SIZE))
+            resized_image = pygame.transform.scale(
+                image, (3 * SQUARE_SIZE, 3 * SQUARE_SIZE)
+            )
             self.dice_images[i] = resized_image
 
-    def render(self, game, current_player, dice_value, valid_actions, infos, players_type):
+    def render(
+        self, game, current_player, dice_value, valid_actions, infos, players_type
+    ):
         if game.num_players == 2:
             self.colors = PLAYER_2_COLORS
         else:
             self.colors = PLAYER_4_COLORS
-        
+
         self.window.fill(GREY)  # Remplir l'écran avec du noir
 
         # Dessiner les cases du parcours
@@ -67,9 +64,11 @@ class Renderer:
 
         self.show_current_player(game, current_player)
         if players_type[current_player] == "human":
-            self.show_valid_actions(valid_actions, current_player, infos, game.num_players)
+            self.show_valid_actions(
+                valid_actions, current_player, infos, game.num_players
+            )
         self.show_dice_value(dice_value)
-        
+
         pygame.display.flip()  # Mettre à jour l'affichage
 
     def draw_path(self, game):
@@ -168,7 +167,9 @@ class Renderer:
                     )  # Adjust size of the circle
 
                     # Create text to represent the pawn count
-                    font = pygame.font.Font(None, 24)  # Use a larger font for visibility
+                    font = pygame.font.Font(
+                        None, 24
+                    )  # Use a larger font for visibility
                     text = font.render(str(pawn_count), True, BLACK)
 
                     # Position the text in the center of the circle
@@ -238,7 +239,7 @@ class Renderer:
             font = pygame.font.Font(None, 16)
             text = font.render(str(i + 1), True, WHITE)
             self.window.blit(text, (y * SQUARE_SIZE + 12, x * SQUARE_SIZE + 12))
-        
+
         self.draw_pawns_safezone_player_2(game)
 
     def draw_safe_zone_player_3(self, game):
@@ -266,12 +267,16 @@ class Renderer:
         pygame.draw.rect(
             self.window,
             GREEN,
-            pygame.Rect(0 * SQUARE_SIZE, 0 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6* SQUARE_SIZE),
+            pygame.Rect(
+                0 * SQUARE_SIZE, 0 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6 * SQUARE_SIZE
+            ),
         )
         pygame.draw.rect(
             self.window,
             WHITE,
-            pygame.Rect(1 * SQUARE_SIZE, 1 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE)
+            pygame.Rect(
+                1 * SQUARE_SIZE, 1 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE
+            ),
         )
 
         num_pawns = game.get_ecurie_player(0)
@@ -284,12 +289,16 @@ class Renderer:
         pygame.draw.rect(
             self.window,
             YELLOW,
-            pygame.Rect(9 * SQUARE_SIZE, 0 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6* SQUARE_SIZE),
+            pygame.Rect(
+                9 * SQUARE_SIZE, 0 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6 * SQUARE_SIZE
+            ),
         )
         pygame.draw.rect(
             self.window,
             WHITE,
-            pygame.Rect(10 * SQUARE_SIZE, 1 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE)
+            pygame.Rect(
+                10 * SQUARE_SIZE, 1 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE
+            ),
         )
 
         if game.num_players > 2:
@@ -303,12 +312,16 @@ class Renderer:
         pygame.draw.rect(
             self.window,
             RED,
-            pygame.Rect(9 * SQUARE_SIZE, 9 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6* SQUARE_SIZE),
+            pygame.Rect(
+                9 * SQUARE_SIZE, 9 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6 * SQUARE_SIZE
+            ),
         )
         pygame.draw.rect(
             self.window,
             WHITE,
-            pygame.Rect(10 * SQUARE_SIZE, 10 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE)
+            pygame.Rect(
+                10 * SQUARE_SIZE, 10 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE
+            ),
         )
 
         if game.num_players == 2:
@@ -324,12 +337,16 @@ class Renderer:
         pygame.draw.rect(
             self.window,
             BLUE,
-            pygame.Rect(0 * SQUARE_SIZE, 9 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6* SQUARE_SIZE),
+            pygame.Rect(
+                0 * SQUARE_SIZE, 9 * SQUARE_SIZE, 6 * SQUARE_SIZE, 6 * SQUARE_SIZE
+            ),
         )
         pygame.draw.rect(
             self.window,
             WHITE,
-            pygame.Rect(1 * SQUARE_SIZE, 10 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE)
+            pygame.Rect(
+                1 * SQUARE_SIZE, 10 * SQUARE_SIZE, 4 * SQUARE_SIZE, 4 * SQUARE_SIZE
+            ),
         )
 
         if game.num_players == 4:
@@ -356,14 +373,14 @@ class Renderer:
             if i != 0:
                 x, y = position[i]
                 pygame.draw.circle(
-                        self.window,
-                        WHITE,
-                        (
-                            y * SQUARE_SIZE + SQUARE_SIZE // 2,
-                            x * SQUARE_SIZE + SQUARE_SIZE // 2,
-                        ),
-                        SQUARE_SIZE // 3,
-                    )  # Adjust size of the circle
+                    self.window,
+                    WHITE,
+                    (
+                        y * SQUARE_SIZE + SQUARE_SIZE // 2,
+                        x * SQUARE_SIZE + SQUARE_SIZE // 2,
+                    ),
+                    SQUARE_SIZE // 3,
+                )  # Adjust size of the circle
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
@@ -386,14 +403,14 @@ class Renderer:
             if i != 0:
                 x, y = position[i]
                 pygame.draw.circle(
-                        self.window,
-                        WHITE,
-                        (
-                            y * SQUARE_SIZE + SQUARE_SIZE // 2,
-                            x * SQUARE_SIZE + SQUARE_SIZE // 2,
-                        ),
-                        SQUARE_SIZE // 3,
-                    )  # Adjust size of the circle
+                    self.window,
+                    WHITE,
+                    (
+                        y * SQUARE_SIZE + SQUARE_SIZE // 2,
+                        x * SQUARE_SIZE + SQUARE_SIZE // 2,
+                    ),
+                    SQUARE_SIZE // 3,
+                )  # Adjust size of the circle
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
@@ -415,19 +432,19 @@ class Renderer:
             escalier = game.board[1][57:63]
         else:
             escalier = game.board[2][57:63]
-        
+
         for i in escalier:
             if i != 0:
                 x, y = position[i]
                 pygame.draw.circle(
-                        self.window,
-                        WHITE,
-                        (
-                            y * SQUARE_SIZE + SQUARE_SIZE // 2,
-                            x * SQUARE_SIZE + SQUARE_SIZE // 2,
-                        ),
-                        SQUARE_SIZE // 3,
-                    )  # Adjust size of the circle
+                    self.window,
+                    WHITE,
+                    (
+                        y * SQUARE_SIZE + SQUARE_SIZE // 2,
+                        x * SQUARE_SIZE + SQUARE_SIZE // 2,
+                    ),
+                    SQUARE_SIZE // 3,
+                )  # Adjust size of the circle
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
@@ -443,33 +460,33 @@ class Renderer:
                 self.window.blit(text, text_rect)
 
     def draw_pawns_safezone_player_3(self, game):
-            position = position = [(13, 7), (12, 7), (11, 7), (10, 7), (9, 7), (8, 7)]
-            escalier = game.board[3][57:63]
-            for i in escalier:
-                if i != 0:
-                    x, y = position[i]
-                    pygame.draw.circle(
-                            self.window,
-                            WHITE,
-                            (
-                                y * SQUARE_SIZE + SQUARE_SIZE // 2,
-                                x * SQUARE_SIZE + SQUARE_SIZE // 2,
-                            ),
-                            SQUARE_SIZE // 3,
-                        )  # Adjust size of the circle
+        position = position = [(13, 7), (12, 7), (11, 7), (10, 7), (9, 7), (8, 7)]
+        escalier = game.board[3][57:63]
+        for i in escalier:
+            if i != 0:
+                x, y = position[i]
+                pygame.draw.circle(
+                    self.window,
+                    WHITE,
+                    (
+                        y * SQUARE_SIZE + SQUARE_SIZE // 2,
+                        x * SQUARE_SIZE + SQUARE_SIZE // 2,
+                    ),
+                    SQUARE_SIZE // 3,
+                )  # Adjust size of the circle
 
-                    # Create text to represent the pawn count
-                    font = pygame.font.Font(None, 24)  # Use a larger font for visibility
-                    text = font.render(str(i), True, BLACK)
+                # Create text to represent the pawn count
+                font = pygame.font.Font(None, 24)  # Use a larger font for visibility
+                text = font.render(str(i), True, BLACK)
 
-                    # Position the text in the center of the circle
-                    text_rect = text.get_rect(
-                        center=(
-                            y * SQUARE_SIZE + SQUARE_SIZE // 2,
-                            x * SQUARE_SIZE + SQUARE_SIZE // 2,
-                        )
+                # Position the text in the center of the circle
+                text_rect = text.get_rect(
+                    center=(
+                        y * SQUARE_SIZE + SQUARE_SIZE // 2,
+                        x * SQUARE_SIZE + SQUARE_SIZE // 2,
                     )
-                    self.window.blit(text, text_rect)
+                )
+                self.window.blit(text, text_rect)
 
     def show_current_player(self, game, current_player):
         if game.num_players == 2:
@@ -487,7 +504,9 @@ class Renderer:
 
     def show_dice_value(self, dice_value):
         if dice_value not in self.dice_images:
-            raise ValueError(f"Invalid dice_value: {dice_value}. Must be between 1 and 6.")
+            raise ValueError(
+                f"Invalid dice_value: {dice_value}. Must be between 1 and 6."
+            )
 
         # Get the corresponding image
         dice_image = self.dice_images[dice_value]
@@ -541,7 +560,7 @@ class Renderer:
 
         text = font.render(text, True, BLACK)
         text_rect = text.get_rect()
-        rect_width = text_rect.width + 20 # Add some padding
+        rect_width = text_rect.width + 20  # Add some padding
         rect_height = text_rect.height + 20
 
         button_rect = pygame.Rect(x, y, rect_width, rect_height)
@@ -552,7 +571,7 @@ class Renderer:
         self.window.blit(text, text_rect)
 
         return tuple
-        
+
     def show_valid_actions(self, valid_actions, player_id, infos, num_players):
         y_current = 2
         button_mapping = {}
@@ -565,28 +584,36 @@ class Renderer:
                 y_current += 1.5
             elif action in [3, 4, 5, 6, 7]:
                 action_text = self.get_action_text_complex(action, 0)
-                position = self.get_absolute_position(infos[0]["position"], player_id, num_players)
+                position = self.get_absolute_position(
+                    infos[0]["position"], player_id, num_players
+                )
                 text = f"Pion pos {position} : {action_text}"
                 button_rect = self.render_action_button(text, y_current)
                 button_mapping[button_rect] = action
                 y_current += 1.5
             elif action in [8, 9, 10, 11, 12]:
                 action_text = self.get_action_text_complex(action, 1)
-                position = self.get_absolute_position(infos[1]["position"], player_id, num_players)
+                position = self.get_absolute_position(
+                    infos[1]["position"], player_id, num_players
+                )
                 text = f"Pion pos {position} : {action_text}"
                 button_rect = self.render_action_button(text, y_current)
                 button_mapping[button_rect] = action
                 y_current += 1.5
             elif action in [13, 14, 15, 16, 17]:
                 action_text = self.get_action_text_complex(action, 2)
-                position = self.get_absolute_position(infos[2]["position"], player_id, num_players)
+                position = self.get_absolute_position(
+                    infos[2]["position"], player_id, num_players
+                )
                 text = f"Pion pos {position} : {action_text}"
                 button_rect = self.render_action_button(text, y_current)
                 button_mapping[button_rect] = action
                 y_current += 1.5
             elif action in [18, 19, 20, 21, 22]:
                 action_text = self.get_action_text_complex(action, 3)
-                position = self.get_absolute_position(infos[3]["position"], player_id, num_players)
+                position = self.get_absolute_position(
+                    infos[3]["position"], player_id, num_players
+                )
                 text = f"Pion pos {position} : {action_text}"
                 button_rect = self.render_action_button(text, y_current)
                 button_mapping[button_rect] = action
@@ -603,9 +630,9 @@ class Renderer:
             #     text = f"Pion pos {position} : {action_text}"
             #     self.render_action_button(text, y_current)
             #     y_current += 1
-        
+
         self.button_mapping = button_mapping
-    
+
     def show_click_button_message(self):
         font = pygame.font.SysFont(None, 30)
         text = font.render("Cliquez sur un bouton d'action", True, WHITE)

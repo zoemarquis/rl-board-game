@@ -16,7 +16,11 @@ def test_kill_on_exit_action_with_opponent(game_logic):
     print(valid_actions)
 
     # Vérifie que KILL est possible et MOVE_OUT non
-    assert  valid_actions == [[Action_NO_EXACT.MOVE_OUT_AND_KILL], [Action_NO_EXACT.MOVE_OUT_AND_KILL], False]
+    assert valid_actions == [
+        [Action_NO_EXACT.MOVE_OUT_AND_KILL],
+        [Action_NO_EXACT.MOVE_OUT_AND_KILL],
+        False,
+    ]
 
     # Exécute l'action KILL
     game_logic.sortir_pion(player_id=0, dice_value=6)

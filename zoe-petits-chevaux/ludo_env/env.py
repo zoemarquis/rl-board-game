@@ -17,17 +17,13 @@ class LudoEnv(gym.Env):
         self,
         num_players,
         nb_chevaux,
-
         agent_type=AgentType.BALANCED,
-
         mode_fin_partie="tous",
         mode_ascension="sans_contrainte",
-        mode_pied_escalier= "not_exact",
-        mode_rejoue_6 = "non", 
-        mode_rejoue_marche = "non",
-
+        mode_pied_escalier="not_exact",
+        mode_rejoue_6="non",
+        mode_rejoue_marche="non",
         mode_gym="entrainement",
-
         with_render=False,
     ):
         assert num_players in [2, 3, 4], "Only 2, 3 or 4 players are allowed"
@@ -58,14 +54,17 @@ class LudoEnv(gym.Env):
             "non",
         ], "Only 'oui' or 'non' are allowed"
 
-        assert (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact") \
-            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "not_exact")\
-            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "exact"),\
-        "Only 'avec_contrainte' and 'exact' or 'sans_contrainte' and 'not_exact' or 'sans_contrainte' and 'exact' are allowed"
-        
+        assert (
+            (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact")
+            or (
+                mode_ascension == "sans_contrainte"
+                and mode_pied_escalier == "not_exact"
+            )
+            or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "exact")
+        ), "Only 'avec_contrainte' and 'exact' or 'sans_contrainte' and 'not_exact' or 'sans_contrainte' and 'exact' are allowed"
+
         if mode_rejoue_marche == "oui":
             assert mode_ascension == "avec_contrainte"
-
 
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
@@ -99,23 +98,21 @@ class LudoEnv(gym.Env):
                 3 + self.nb_chevaux * (len(Action_EXACT_ASCENSION) - 3)
             )
 
-
         self.observation_space = gym.spaces.Dict(
             {
-                "my_ecurie" : gym.spaces.Discrete(self.nb_chevaux + 1),
+                "my_ecurie": gym.spaces.Discrete(self.nb_chevaux + 1),
                 # État de l'écurie du joueur courant
-
-                "my_chemin" : gym.spaces.Box(
-                    low=-self.nb_chevaux, high=self.nb_chevaux, shape=(BOARD_SIZE,), dtype=np.int8
-                ), # État du chemin du joueur courant : -1 = adversaire, 0 = vide, 1 = joueur courant
-
-                "my_escalier" : gym.spaces.Box(
-                    low=0, high=self.nb_chevaux, shape=(SAFE_ZONE_SIZE,) , dtype=np.int8
-                ), # État de l'escalier du joueur courant
-
-                "my_goal" : gym.spaces.Discrete(self.nb_chevaux + 1),
+                "my_chemin": gym.spaces.Box(
+                    low=-self.nb_chevaux,
+                    high=self.nb_chevaux,
+                    shape=(BOARD_SIZE,),
+                    dtype=np.int8,
+                ),  # État du chemin du joueur courant : -1 = adversaire, 0 = vide, 1 = joueur courant
+                "my_escalier": gym.spaces.Box(
+                    low=0, high=self.nb_chevaux, shape=(SAFE_ZONE_SIZE,), dtype=np.int8
+                ),  # État de l'escalier du joueur courant
+                "my_goal": gym.spaces.Discrete(self.nb_chevaux + 1),
                 # État du goal du joueur courant
-
                 "dice_roll": gym.spaces.Discrete(7),  # Résultat du dé (1 à 6)
             }
         )
@@ -124,10 +121,10 @@ class LudoEnv(gym.Env):
 
     def _get_observation(self):
         obs = {
-            "my_ecurie" : self.game.get_observation_my_ecurie(self.current_player),
-            "my_chemin" : self.game.get_observation_my_chemin(self.current_player),
-            "my_escalier" : self.game.get_observation_my_escalier(self.current_player),
-            "my_goal" : self.game.get_observation_my_goal(self.current_player),
+            "my_ecurie": self.game.get_observation_my_ecurie(self.current_player),
+            "my_chemin": self.game.get_observation_my_chemin(self.current_player),
+            "my_escalier": self.game.get_observation_my_escalier(self.current_player),
+            "my_goal": self.game.get_observation_my_goal(self.current_player),
             "dice_roll": self.dice_roll,
         }
         return obs
@@ -144,22 +141,27 @@ class LudoEnv(gym.Env):
             agent_type=self.agent_type,
         )
         self.actions_par_type = {
-            player: {action_type: 0 for action_type in self.game.get_action()} 
+            player: {action_type: 0 for action_type in self.game.get_action()}
             for player in range(self.num_players)
         }
         self.nb_actions_interdites = {player: 0 for player in range(self.num_players)}
         self.dice_roll = self.game.dice_generator()
         return self._get_observation(), {}
 
-    def render(self, game, mode="human", players_type=["human", "human", "human", "human"]):
+    def render(
+        self, game, mode="human", players_type=["human", "human", "human", "human"]
+    ):
         if self.with_render:
             self.renderer.render(
-                self.game, 
-                self.current_player, 
+                self.game,
+                self.current_player,
                 self.dice_roll,
-                self.game.encode_valid_actions(self.game.get_valid_actions(self.current_player, self.dice_roll)),
+                self.game.encode_valid_actions(
+                    self.game.get_valid_actions(self.current_player, self.dice_roll)
+                ),
                 self.game.get_pawns_info(self.current_player),
-                players_type)
+                players_type,
+            )
 
     def step(self, action):
         obs = self._get_observation()
@@ -176,7 +178,7 @@ class LudoEnv(gym.Env):
 
         if action_type in self.actions_par_type[self.current_player]:
             self.actions_par_type[self.current_player][action_type] += 1
-            
+
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
@@ -189,7 +191,7 @@ class LudoEnv(gym.Env):
                 if self.mode_ascension == "avec_contrainte":
                     print(
                         f"ACTION INTERDITE : {Action_EXACT_ASCENSION(action%len(Action_EXACT_ASCENSION))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
-                    ) 
+                    )
                 elif self.mode_pied_escalier == "exact":
 
                     print(
@@ -222,13 +224,15 @@ class LudoEnv(gym.Env):
     def change_player(self, action_type):
         if self.mode_rejoue_6 == "oui" and self.dice_roll == 6:
             pass
-        elif self.mode_rejoue_marche == "oui" and (action_type == Action_EXACT_ASCENSION.MARCHE_1
-                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_2
-                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_3
-                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_4
-                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_5
-                                                   or action_type == Action_EXACT_ASCENSION.MARCHE_6):
-            pass 
+        elif self.mode_rejoue_marche == "oui" and (
+            action_type == Action_EXACT_ASCENSION.MARCHE_1
+            or action_type == Action_EXACT_ASCENSION.MARCHE_2
+            or action_type == Action_EXACT_ASCENSION.MARCHE_3
+            or action_type == Action_EXACT_ASCENSION.MARCHE_4
+            or action_type == Action_EXACT_ASCENSION.MARCHE_5
+            or action_type == Action_EXACT_ASCENSION.MARCHE_6
+        ):
+            pass
         else:
             self.current_player = (self.current_player + 1) % self.num_players
             if self.current_player == 0:

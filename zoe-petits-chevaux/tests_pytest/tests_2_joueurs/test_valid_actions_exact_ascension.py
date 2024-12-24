@@ -34,8 +34,8 @@ def game_4chevaux():
 
 def test_valid_actions(game_3chevaux):
     game_3chevaux.board[0] = [
-        1, # ecurie
-        1, # 1
+        1,  # ecurie
+        1,  # 1
         0,
         0,
         0,
@@ -90,14 +90,14 @@ def test_valid_actions(game_3chevaux):
         0,
         0,
         0,  # 55
-        0, # pied escalier 
-        0, # marche 1
-        0, # marche 2
-        0,# marche 3
+        0,  # pied escalier
+        0,  # marche 1
+        0,  # marche 2
+        0,  # marche 3
         0,  # marche 4
         0,  # marche 5
-        0, # marche 6
-        0, # goal
+        0,  # marche 6
+        0,  # goal
     ]
     assert game_3chevaux.get_valid_actions(0, 1) == [
         [],
@@ -240,7 +240,7 @@ def test_valid_actions(game_3chevaux):
     assert game_3chevaux.get_valid_actions(1, 1) == [
         [],
         [Action_EXACT_ASCENSION.MOVE_FORWARD],
-        [], # 6 pour atteintdre goal
+        [],  # 6 pour atteintdre goal
         False,
     ]
     assert game_3chevaux.get_valid_actions(1, 2) == [
@@ -780,77 +780,74 @@ def test_valid_actions(game_3chevaux):
         [Action_EXACT_ASCENSION.MOVE_OUT],
         [Action_EXACT_ASCENSION.MOVE_FORWARD],
         [],
-        False,  
+        False,
     ]
 
-
-
-
     game_3chevaux.board[1] = [
-        1, # ecurie
-        0, # 1
+        1,  # ecurie
+        0,  # 1
         0,
         0,
         0,
-        0, # 5
-        0,
-        0,
-        0,
-        0,
-        0, # 10
+        0,  # 5
         0,
         0,
         0,
         0,
-        0, # 15
+        0,  # 10
         0,
         0,
         0,
         0,
-        0, # 20
+        0,  # 15
         0,
         0,
         0,
         0,
-        0,# 25
-        0,
-        0,
-        0, # 28
-        0,
-        0,# 30
+        0,  # 20
         0,
         0,
         0,
         0,
-        0,#35
+        0,  # 25
+        0,
+        0,
+        0,  # 28
+        0,
+        0,  # 30
         0,
         0,
         0,
         0,
-        0,#40
-        0,
-        0, # 42
-        0,
-        0,
-        0,#45
+        0,  # 35
         0,
         0,
         0,
         0,
-        0,#50
+        0,  # 40
+        0,
+        0,  # 42
+        0,
+        0,
+        0,  # 45
+        0,
+        0,
+        0,
+        0,
+        0,  # 50
         0,
         0,
         0,
         1,
-        0, # 55
-        1, # pied ecalier
-        0, # marche 1
-        0, # marche 2
-        0, # marche 3
-        0, # marche 4
-        0, # marche 5
-        0, # marche 6
-        0, # goal
+        0,  # 55
+        1,  # pied ecalier
+        0,  # marche 1
+        0,  # marche 2
+        0,  # marche 3
+        0,  # marche 4
+        0,  # marche 5
+        0,  # marche 6
+        0,  # goal
     ]
     assert game_3chevaux.get_valid_actions(1, 1) == [
         [],
@@ -866,7 +863,7 @@ def test_valid_actions(game_3chevaux):
     ]
     assert game_3chevaux.get_valid_actions(1, 3) == [
         [],
-        [Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER], # ou GET STUCK BEHIND ?
+        [Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER],  # ou GET STUCK BEHIND ?
         [],
         False,
     ]
@@ -889,77 +886,74 @@ def test_valid_actions(game_3chevaux):
         False,
     ]
 
-
-
-
-# TODOTEST tuer sur pied escalier 
-    game_3chevaux.board[1][56]=0
-    game_3chevaux.board[1][57]=1
+    # TODOTEST tuer sur pied escalier
+    game_3chevaux.board[1][56] = 0
+    game_3chevaux.board[1][57] = 1
     game_3chevaux.board[0] = [
-        0, # ecurie
-        0, # 1
+        0,  # ecurie
+        0,  # 1
         0,
         0,
         0,
-        0, # 5
-        0,
-        0,
-        0,
-        0,
-        0, # 10
+        0,  # 5
         0,
         0,
         0,
         0,
-        0, # 15
+        0,  # 10
         0,
         0,
         0,
         0,
-        0, # 20
+        0,  # 15
         0,
         0,
         0,
         0,
-        0,# 25
-        0,
-        0,
-        1, # 28
-        0,
-        0,# 30
+        0,  # 20
         0,
         0,
         0,
         0,
-        0,#35
+        0,  # 25
+        0,
+        0,
+        1,  # 28
+        0,
+        0,  # 30
         0,
         0,
         0,
         0,
-        0,#40
-        0,
-        0, # 42
-        0,
-        0,
-        0,#45
+        0,  # 35
         0,
         0,
         0,
         0,
-        0,#50
+        0,  # 40
+        0,
+        0,  # 42
+        0,
+        0,
+        0,  # 45
+        0,
+        0,
+        0,
+        0,
+        0,  # 50
         0,
         0,
         0,
         1,
-        0, # 55
-        1, # pied ecalier
-        0, # marche 1
-        0, # marche 2
-        0, # marche 3
-        0, # marche 4
-        0, # marche 5
-        0, # marche 6
-        0, # goal
+        0,  # 55
+        1,  # pied ecalier
+        0,  # marche 1
+        0,  # marche 2
+        0,  # marche 3
+        0,  # marche 4
+        0,  # marche 5
+        0,  # marche 6
+        0,  # goal
     ]
     assert game_3chevaux.get_valid_actions(1, 1) == [
         [],
@@ -969,13 +963,13 @@ def test_valid_actions(game_3chevaux):
     ]
     assert game_3chevaux.get_valid_actions(1, 2) == [
         [],
-        [Action_EXACT_ASCENSION.KILL], # ou REACH_PIED_ESCALIER ? 
+        [Action_EXACT_ASCENSION.KILL],  # ou REACH_PIED_ESCALIER ?
         [Action_EXACT_ASCENSION.MARCHE_2],
         False,
     ]
     assert game_3chevaux.get_valid_actions(1, 3) == [
         [],
-        [Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER], # ou GET STUCK BEHIND ?
+        [Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER],  # ou GET STUCK BEHIND ?
         [],
         False,
     ]

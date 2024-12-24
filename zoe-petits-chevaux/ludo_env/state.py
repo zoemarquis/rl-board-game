@@ -20,7 +20,6 @@ class State_NO_EXACT(Enum):
             return State_NO_EXACT.OBJECTIF
 
 
-
 class State_EXACT(Enum):
     ECURIE = 0
     CHEMIN = 1

@@ -874,74 +874,71 @@ def test_valid_actions(game_3chevaux):
         False,
     ]
 
-
-
-
     game_3chevaux.board[1] = [
-        1, # ecurie
-        0, # 1
+        1,  # ecurie
+        0,  # 1
         0,
         0,
         0,
-        0, # 5
-        0,
-        0,
-        0,
-        0,
-        0, # 10
+        0,  # 5
         0,
         0,
         0,
         0,
-        0, # 15
+        0,  # 10
         0,
         0,
         0,
         0,
-        0, # 20
+        0,  # 15
         0,
         0,
         0,
         0,
-        0,# 25
-        0,
-        0,
-        0, # 28
-        0,
-        0,# 30
+        0,  # 20
         0,
         0,
         0,
         0,
-        0,#35
+        0,  # 25
+        0,
+        0,
+        0,  # 28
+        0,
+        0,  # 30
         0,
         0,
         0,
         0,
-        0,#40
-        0,
-        0, # 42
-        0,
-        0,
-        0,#45
+        0,  # 35
         0,
         0,
         0,
         0,
-        0,#50
+        0,  # 40
+        0,
+        0,  # 42
+        0,
+        0,
+        0,  # 45
+        0,
+        0,
+        0,
+        0,
+        0,  # 50
         0,
         0,
         0,
         1,
-        0, # 55
-        1, # pied ecalier
-        0, # marche 1
-        0, # marche 2
-        0, # marche 3
-        0, # marche 4
-        0, # marche 5
-        0, # marche 6
-        0, # goal
+        0,  # 55
+        1,  # pied ecalier
+        0,  # marche 1
+        0,  # marche 2
+        0,  # marche 3
+        0,  # marche 4
+        0,  # marche 5
+        0,  # marche 6
+        0,  # goal
     ]
     assert game_3chevaux.get_valid_actions(1, 1) == [
         [],
@@ -951,13 +948,13 @@ def test_valid_actions(game_3chevaux):
     ]
     assert game_3chevaux.get_valid_actions(1, 2) == [
         [],
-        [Action_EXACT.REACH_PIED_ESCALIER], # KILL ou REACH PIED ESCALIER 
+        [Action_EXACT.REACH_PIED_ESCALIER],  # KILL ou REACH PIED ESCALIER
         [Action_EXACT.MOVE_IN_SAFE_ZONE],
         False,
     ]
     assert game_3chevaux.get_valid_actions(1, 3) == [
         [],
-        [Action_EXACT.AVANCE_RECULE_PIED_ESCALIER], # ou GET STUCK BEHIND ?
+        [Action_EXACT.AVANCE_RECULE_PIED_ESCALIER],  # ou GET STUCK BEHIND ?
         [Action_EXACT.MOVE_IN_SAFE_ZONE],
         False,
     ]
@@ -981,7 +978,7 @@ def test_valid_actions(game_3chevaux):
     ]
 
 
-# TODOTEST atteindre objectif avec > 
+# TODOTEST atteindre objectif avec >
 
 
 # TODOTEST : si notre cheval devant et > -> on s'arrete sur la case ?

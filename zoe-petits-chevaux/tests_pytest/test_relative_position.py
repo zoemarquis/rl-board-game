@@ -6,13 +6,16 @@ from ludo_env import GameLogic
 def jeu_2_joueurs():
     return GameLogic(num_players=2, nb_chevaux=2)
 
+
 @pytest.fixture
 def jeu_3_joueurs():
     return GameLogic(num_players=3, nb_chevaux=2)
 
+
 @pytest.fixture
 def jeu_4_joueurs():
     return GameLogic(num_players=4, nb_chevaux=2)
+
 
 def test_get_relative_position_2_players(jeu_2_joueurs):
     assert jeu_2_joueurs.get_relative_position(0, 1, 1) == 29
