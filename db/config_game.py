@@ -50,6 +50,7 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
 
 # TODO : Ajouter toutes les configurations de jeu + avoir tous les agents correspondants
 # TODO : Revoir comment automatiser cela
+'''
 agent_types = AgentType.get_all_agent_types()
 #print(agent_types)
 game_configs = {}
@@ -73,6 +74,6 @@ for agent_type in agent_types:
                     total_timesteps, 
                     [agent_type] * num_players
                 )
-
+'''
 # Exemple de config
 # generate_model_name(16, 2, 2, 10000) : generate_game_config(2, 2, config_param[16], 10000, generate_model_name(16, 2, 2, 10000))

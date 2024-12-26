@@ -20,6 +20,13 @@ config_param = {
     16: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="non", mode_rejoue_marche="non"),
 }
 
+def print_all_configs():
+    print("Configurations disponibles :\n")
+    for config_id, config in config_param.items():
+        print(f"Configuration {config_id}:")
+        for key, value in config.items():
+            print(f"  - {key}: {value}")
+        print()
 
 # num_players_options = [2]
 # nb_chevaux_options = [2]

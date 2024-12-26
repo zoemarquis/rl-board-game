@@ -1,6 +1,7 @@
 # INFO :  Script à lancer depuis le répertoire db
 # Permet d'enregistrer les statistiques d'une partie dans la base de données
-# EN COURS DE DEVELOPPEMENT
+
+# TODO : Ajouter la possibilité de faire jouer des joueurs avec des timesteps différents
 
 import sys
 import os
@@ -8,7 +9,7 @@ import itertools
 
 from collections import defaultdict
 from stable_baselines3 import PPO
-from config_game import game_configs, generate_model_name, config_param, generate_game_config
+from config_game import config_param, generate_game_config
 from insert import store_final_game_data, PlayerToInsert, SetOfRulesToInsert
 
 racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux"))
@@ -17,18 +18,14 @@ sys.path.append(racine_dir)
 from ludo_env import LudoEnv
 from ludo_env.action import Action_NO_EXACT, Action_EXACT
 from ludo_env.reward import AgentType
+from config import config_param, print_all_configs
 
-
-# TODO : Faire premières viz ?
-
-
-
+# Fonction pour faire jouer des agents les uns contre les autres
 def play_game(env, agents, agent_names, config):
     obs, info = env.reset()
     done = False
     turn = 0
 
-    # TODO : Ajouter d'autres info et voir comment ajouter dans la BD
     scores = [0] * env.num_players
     moves = [0] * env.num_players
     intentional_actions = defaultdict(int)
@@ -39,7 +36,6 @@ def play_game(env, agents, agent_names, config):
         encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
 
         if env.current_player < len(agents):
-            #print("Joueur", env.current_player, ":", agent_names[env.current_player])
             action, _ = agents[env.current_player].predict(obs, deterministic=True)
         else:
             raise ValueError("Nombre de joueurs non supporté")
@@ -56,8 +52,6 @@ def play_game(env, agents, agent_names, config):
 
         turn += 1
 
-    # TODO : A définir + A créer manuellement pour le moment
-    # TODO : Créer un fichier de règles (faire aussi pour les autres paramètres)
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
     nb_actions_interdites = [env.nb_actions_interdites[player] for player in range(env.num_players)]
     
@@ -81,63 +75,97 @@ def play_game(env, agents, agent_names, config):
     actions_stats_by_player = env.export_action_stats()
     store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player)
 
+# Main pour lancer une partie en choisissant les paramètres voulu depuis le terminal
+def main():
+    
+    # Choix config
+    print_all_configs()
+    num_conf = int(input("Entrez le numéro de configuration : "))
 
-    """print("Partie terminée")
-    print("Résumé des actions intentionnelles:")
-    for action_type, count in intentional_actions.items():
-        print(f"- Action {action_type.name}: {count} fois")
+    # Choix nombre de joueurs et de chevaux
+    num_players = int(input("Entrez le nombre de joueurs : "))
+    nb_chevaux = int(input("Entrez le nombre de chevaux : "))
 
-    print()
-    print("Résumé des actions impossibles:")
-    for action_type, count in impossible_actions.items():
-        print(f"- Action {action_type.name}: {count} fois")
+    # Vérifie si des agents sont entrainés
+    agent_dir = os.path.join(racine_dir, f"reinforcement_learning/agents/{num_players}_joueurs/{nb_chevaux}_pions/conf_{num_conf}")
+    if not os.path.exists(agent_dir):
+        print(f"Erreur : Le répertoire {agent_dir} n'existe pas. Aucun agent n'est disponible pour ces paramètres.")
+        return
+    
+    # Agents disponibles par timesteps
+    agents_by_timesteps = {}
+    
+    for filename in os.listdir(agent_dir):
+        if filename.endswith(".zip"):
+            parts = filename.split("_")
+            try:
+                timesteps = int(parts[-2])
+                agent_type = parts[0]
+            except (IndexError, ValueError):
+                print(f"Fichier ignoré : {filename}")
+                continue
+        
+            if timesteps not in agents_by_timesteps:
+                agents_by_timesteps[timesteps] = []
+            agents_by_timesteps[timesteps].append(agent_type)
+    
+    if agents_by_timesteps:
+        print("Agents disponibles par total_timesteps :")
+        for timesteps, agents in sorted(agents_by_timesteps.items()):
+            print(f"{timesteps} steps : {', '.join(sorted(agents))}")
+    else:
+        print("Aucun agent entraîné trouvé dans ce répertoire.")
+        return
 
-    print()
-    pct_tour_imp = sum(impossible_actions.values()) / (sum(intentional_actions.values()) + sum(impossible_actions.values()))
-    print("Pourcentage coups impossibles : ", round(pct_tour_imp * 100, 2), "%")
-    print()
-    print("Scores :", scores)
-    print("Nombre de coups :", moves)
-    print("Nombre de tours :", turn)"""
+    # Choix timesteps entraînement
+    total_timesteps = int(input("\nEntrez le total de steps d'entraînement : "))
+    available_agents = set()
+    model_name_pattern = f"_{total_timesteps}_"
+    for filename in os.listdir(agent_dir):
+        if model_name_pattern in filename:
+            for agent_type in AgentType.get_all_agent_types():
+                if agent_type in filename:
+                    available_agents.add(agent_type)
+    
+    if not available_agents:
+        print(f"Aucun agent correspondant n'est disponible dans le répertoire {agent_dir}.")
+        return
 
+    # Affichage des agents disponibles
+    available_agents = sorted(set(agents_by_timesteps[total_timesteps]))
+    print("\nTypes d'agents disponibles :")
+    for idx, agent in enumerate(available_agents, start=1):
+        print(f"{idx}. {agent}")
 
+    # Choix types d'agents dans la partie
+    agent_indices = input(f"Entrez les numéros des agents dans l'ordre (séparés par des espaces, {num_players} à choisir) : ")
+    agent_indices = list(map(int, agent_indices.split()))
+    if len(agent_indices) != num_players:
+        print("Le nombre de types d'agents ne correspond pas au nombre de joueurs.")
+        return
 
-def run_all_configs():
-    for config_name, config in game_configs.items():
-        try:
-            agents = [PPO.load(agent_config["path"]) for agent_config in config["agents"]]
-            agent_names = [agent_config["name"] for agent_config in config["agents"]]
-        except FileNotFoundError as e:
-            #print(f"Erreur de chargement pour la configuration {config_name}: {e}\n")
-            continue
+    selected_agents = [available_agents[idx - 1] for idx in agent_indices]
 
-        env = LudoEnv(
-            num_players=config["num_players"],
-            nb_chevaux=config["nb_chevaux"],
-            mode_fin_partie=config["mode_fin_partie"], 
-            mode_ascension=config["mode_ascension"],
-            mode_pied_escalier=config["mode_pied_escalier"],  
-            mode_rejoue_6=config["mode_rejoue_6"],  
-            mode_rejoue_marche=config["mode_rejoue_marche"],  
-            mode_gym="stats_game",
-        )
+    agent_paths = []
+    for agent_type in selected_agents:
+        found = False
+        for filename in os.listdir(agent_dir):
+            if f"_{total_timesteps}_" in filename and agent_type in filename:
+                agent_paths.append(os.path.join(agent_dir, filename))
+                found = True
+                break
+        if not found:
+            print(f"Erreur : Aucun fichier d'agent correspondant à '{agent_type}' avec {total_timesteps} steps trouvé dans {agent_dir}.")
+            return
 
-        print(f"Configuration en cours : {config_name}")
-        for i in range(100):
-            print(f"Partie {i + 1}/100 pour {config_name}")
-            play_game(env, agents, agent_names, config)
+    try:
+        agents = [PPO.load(path) for path in agent_paths]
+        agent_names = [os.path.basename(path) for path in agent_paths]
+    except Exception as e:
+        print(f"Erreur lors du chargement des agents : {e}")
+        return
 
-
-def run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_types):
-
-    if len(agent_types) != num_players:
-        raise ValueError("Le nombre de types d'agents doit correspondre au nombre de joueurs.")
-
-    agent_paths = [
-        generate_model_name(agent_type, num_conf, num_players, nb_chevaux, total_timesteps)
-        for agent_type in agent_types
-    ]
-
+    # Configuration de l'env
     config_param_for_env = config_param[num_conf]
     config = generate_game_config(
         num_players=num_players,
@@ -146,16 +174,8 @@ def run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_
         nb_train_steps=total_timesteps,
         num_conf=num_conf,
         total_timesteps=total_timesteps,
-        agent_types=agent_types
+        agent_types=selected_agents
     )
-
-    try:
-        agents = [PPO.load(path) for path in agent_paths]
-        agent_names = [os.path.basename(path) for path in agent_paths]
-    except FileNotFoundError as e:
-        print(f"Erreur de chargement des agents : {e}")
-        return
-
     env = LudoEnv(
         num_players=config["num_players"],
         nb_chevaux=config["nb_chevaux"],
@@ -167,28 +187,13 @@ def run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agent_
         mode_gym="stats_game",
     )
 
-    print(f"Exécution de la configuration : conf_{num_conf}_{num_players}j_{nb_chevaux}c")
-    print(f"Agents : {agent_types}")
-    for i in range(100):
-        print(f"Partie {i + 1}/100 : {agent_types}")
+    # Choix nombre parties
+    num_games = int(input("\nEntrez le nombre de parties à jouer : "))
+
+    # Lancer les parties
+    for i in range(1, num_games + 1):
+        print(f"\n=== Partie {i}/{num_games} ===")
         play_game(env, agents, agent_names, config)
 
-
 if __name__ == "__main__":
-
-    #run_all_configs()
-
-    num_conf = 16
-    num_players = 3
-    nb_chevaux = 2
-    total_timesteps = 100000
-
-    agent_types = AgentType.get_all_agent_types()
-    agent_combinations = list(itertools.combinations_with_replacement(agent_types, num_players))
-
-    for agents in agent_combinations:
-        print(f"Configuration: {agents}")
-        
-        run_single_config(num_conf, num_players, nb_chevaux, total_timesteps, agents)
-
-
+    main()
