@@ -76,7 +76,16 @@ Les configurations des agents sont définies dans le fichier `config_game.py`. =
 
 ---
 
-## 5. TODO
+## 5. Vider la base de données
+
+```bash
+truncate table action_stats, game, game_rule, is_rule_of, participant, player, set_of_rules;
+```
+
+
+---
+
+## 6. TODO
 
 - Voir dans les fichiers les TODO
 - Description de game_rule utile ?
