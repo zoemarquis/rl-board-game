@@ -65,7 +65,7 @@ def play_game(env, agents, agent_names, config):
             score=scores[i],
             strategy=config["strategy"][i],
             player_id=None,
-            nb_train_steps=config["nb_train_steps"],
+            nb_train_steps=config["nb_train_steps"][i],
             nb_actions_interdites=nb_actions_interdites[i],
             # TODO : Ajouter d'autres paramètres
         )
@@ -117,22 +117,16 @@ def main():
         print("Aucun agent entraîné trouvé dans ce répertoire.")
         return
 
-    # Choix timesteps entraînement
-    total_timesteps = int(input("\nEntrez le total de steps d'entraînement : "))
     available_agents = set()
-    model_name_pattern = f"_{total_timesteps}_"
     for filename in os.listdir(agent_dir):
-        if model_name_pattern in filename:
-            for agent_type in AgentType.get_all_agent_types():
-                if agent_type in filename:
-                    available_agents.add(agent_type)
+        available_agents.add(filename)
     
     if not available_agents:
         print(f"Aucun agent correspondant n'est disponible dans le répertoire {agent_dir}.")
         return
 
     # Affichage des agents disponibles
-    available_agents = sorted(set(agents_by_timesteps[total_timesteps]))
+    available_agents = list(available_agents)
     print("\nTypes d'agents disponibles :")
     for idx, agent in enumerate(available_agents, start=1):
         print(f"{idx}. {agent}")
@@ -147,16 +141,13 @@ def main():
     selected_agents = [available_agents[idx - 1] for idx in agent_indices]
 
     agent_paths = []
-    for agent_type in selected_agents:
-        found = False
-        for filename in os.listdir(agent_dir):
-            if f"_{total_timesteps}_" in filename and agent_type in filename:
-                agent_paths.append(os.path.join(agent_dir, filename))
-                found = True
-                break
-        if not found:
-            print(f"Erreur : Aucun fichier d'agent correspondant à '{agent_type}' avec {total_timesteps} steps trouvé dans {agent_dir}.")
-            return
+    found = False
+    for filename in selected_agents:
+        agent_paths.append(os.path.join(agent_dir, filename))
+        found = True
+    if not found:
+        print(f"Erreur : Aucun fichier d'agent correspondant à '{agent_type}' dans {agent_dir}.")
+        return
 
     try:
         agents = [PPO.load(path) for path in agent_paths]
@@ -171,11 +162,11 @@ def main():
         num_players=num_players,
         nb_chevaux=nb_chevaux,
         my_config_param=config_param_for_env,
-        nb_train_steps=total_timesteps,
+        nb_train_steps=[int(agent.split("_")[5]) for agent in selected_agents],  # Extraire les timesteps depuis les noms d'agents
         num_conf=num_conf,
-        total_timesteps=total_timesteps,
-        agent_types=selected_agents
+        agent_types=[agent.split("_")[0] for agent in selected_agents]  # Extraire les types d'agents
     )
+             
     env = LudoEnv(
         num_players=config["num_players"],
         nb_chevaux=config["nb_chevaux"],

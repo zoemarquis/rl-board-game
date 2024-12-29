@@ -17,21 +17,29 @@ from ludo_env.reward import AgentType
 
 # Créer un nom de fichier à partir des paramètres de l'environnement
 def generate_model_name(agent_type, num_env, num_players, nb_chevaux, total_timesteps):
-    model_name = (f"{agent_type}_{num_players}j_{nb_chevaux}c_conf_{num_env}_{total_timesteps}_steps")
+    model_name = f"{agent_type}_{num_players}j_{nb_chevaux}c_conf_{num_env}_{total_timesteps}_steps"
     model_path = os.path.join(BASE_DIR, f"{num_players}_joueurs", f"{nb_chevaux}_pions", f"conf_{num_env}", model_name)
     return model_path
 
 
 
 # TODO :  Ajouter d'autres paramètres pouvant être utiles
-def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_steps, num_conf, total_timesteps, agent_types):
+def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_steps, num_conf, agent_types):
 
     agent_paths = [
-        generate_model_name(agent_type, num_conf, num_players, nb_chevaux, total_timesteps)
-        for agent_type in agent_types
+        generate_model_name(agent_types[i], num_conf, num_players, nb_chevaux, nb_train_steps[i])
+        for i in range(num_players)
     ]
 
-    my_ids_rules = rules.determine_rules(num_players, nb_chevaux, my_config_param['mode_fin_partie'], my_config_param['mode_ascension'], my_config_param['mode_pied_escalier'], my_config_param['mode_rejoue_6'], my_config_param['mode_rejoue_marche'])
+    my_ids_rules = rules.determine_rules(
+        num_players,
+        nb_chevaux,
+        my_config_param['mode_fin_partie'],
+        my_config_param['mode_ascension'],
+        my_config_param['mode_pied_escalier'],
+        my_config_param['mode_rejoue_6'],
+        my_config_param['mode_rejoue_marche']
+    )
     return {
         "num_players": num_players,
         "nb_chevaux": nb_chevaux,
