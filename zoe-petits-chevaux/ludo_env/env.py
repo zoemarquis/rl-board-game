@@ -176,13 +176,14 @@ class LudoEnv(gym.Env):
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
 
-        if action_type in self.actions_par_type[self.current_player]:
-            self.actions_par_type[self.current_player][action_type] += 1
+        is_auto_action = False
 
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
         if action not in encoded_valid_actions:
             self.nb_actions_interdites[self.current_player] += 1
+            is_auto_action = True
+
             if self.mode_gym == "stats_game":
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
@@ -207,6 +208,11 @@ class LudoEnv(gym.Env):
             else:
                 self.change_player(action_type)
                 return self._get_observation(), -10, False, False, {}
+
+        # On ajoute seulement les actions non automatiques aux statistiques
+        if not is_auto_action:
+            if action_type in self.actions_par_type[self.current_player]:
+                self.actions_par_type[self.current_player][action_type] += 1
 
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
