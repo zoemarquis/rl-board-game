@@ -7,6 +7,15 @@ from ludo_env.reward import get_reward_table, get_default_action_order, AgentTyp
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
+
+ONE_PLAYER_BOARD_SIZE = BOARD_SIZE // 4 # 14
+TWO_PLAYERS_BOARD_SIZE = BOARD_SIZE // 2 # 28
+THIRD_PLAYER_IDX = 3 * ONE_PLAYER_BOARD_SIZE # 42
+
+N_FIRST_STEP = BOARD_SIZE + 1 # 57
+N_LAST_STEP = BOARD_SIZE + SAFE_ZONE_SIZE # 62
+FINAL_POSITION = BOARD_SIZE + SAFE_ZONE_SIZE + 1 # 63
+
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
 
@@ -57,7 +66,7 @@ class GameLogic:
         Chaque joueur a son propre board de 0 (ecurie) à 63 (objectif)
         Pour chaque joueur :
             - 0 : ECURIE
-            - 1-56 : CHEMIN
+            - 1-BOARD_SIZE : CHEMIN
             - 57-62 : ESCALIER
             - 63 : OBJECTIF
         """
@@ -119,11 +128,11 @@ class GameLogic:
         """
         retourne une liste contenant chaque pion dans sa safezone
         """
-        escalier_overview = [[] for _ in range(6)]
+        escalier_overview = [[] for _ in range(SAFE_ZONE_SIZE)]
         for i in range(self.num_players):
-            for j in range(57, 63):
+            for j in range(N_FIRST_STEP, FINAL_POSITION):
                 for _ in range(self.board[i][j]):
-                    escalier_overview[j - 57].append(i)
+                    escalier_overview[j - N_FIRST_STEP].append(i)
         return escalier_overview
 
     def get_str_game_overview(self):
@@ -141,11 +150,11 @@ class GameLogic:
             if self.num_players == 2
             else self.get_chemin_pdv(0)
         )
-        for i in range(56 // 14):
-            str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
+        for i in range(BOARD_SIZE // ONE_PLAYER_BOARD_SIZE):
+            str_game_overview += f"{chemin[i * ONE_PLAYER_BOARD_SIZE: (i + 1) * ONE_PLAYER_BOARD_SIZE]}\n"
 
         for i in range(self.num_players):
-            str_game_overview += f"ESCALIER {i} : {self.board[i][57:63]}\n"
+            str_game_overview += f"ESCALIER {i} : {self.board[i][N_FIRST_STEP:FINAL_POSITION]}\n"
 
         for i in range(self.num_players):
             str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
@@ -174,11 +183,11 @@ class GameLogic:
             if self.num_players == 2
             else self.get_chemin_pdv(player_id)
         )
-        for i in range(56 // 14):
-            str_game_overview += f"{chemin[i * 14 : (i + 1) * 14]}\n"
+        for i in range(BOARD_SIZE // ONE_PLAYER_BOARD_SIZE):
+            str_game_overview += f"{chemin[i * ONE_PLAYER_BOARD_SIZE: (i + 1) * ONE_PLAYER_BOARD_SIZE]}\n"
 
         for i in range(self.num_players):
-            str_game_overview += f"ESCALIER {i} : {self.board[i][57:63]}\n"
+            str_game_overview += f"ESCALIER {i} : {self.board[i][N_FIRST_STEP:FINAL_POSITION]}\n"
 
         for i in range(self.num_players):
             str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
@@ -200,37 +209,37 @@ class GameLogic:
         board[-1] = count_self_goal
 
         safe_zone = self.get_escalier_overview()
-        for i in range(6):
+        for i in range(SAFE_ZONE_SIZE):
             count_all_safe = safe_zone[i]
             count_self_safe = count_all_safe.count(other_player_id)
-            board[i + 57] = count_self_safe
+            board[i + N_FIRST_STEP] = count_self_safe
 
         path_zone = (
             self.get_chemin_pdv_2_joueurs(other_player_id)
             if self.num_players == 2
             else self.get_chemin_pdv(other_player_id)
         )
-        path_board = [0 for _ in range(56)]
-        for i in range(56):
+        path_board = [0 for _ in range(BOARD_SIZE)]
+        for i in range(BOARD_SIZE):
             count_all_path = path_zone[i]
             count_self_path = count_all_path.count(other_player_id)
             path_board[i] = count_self_path
         # shift path board pour matcher avec le bon joueur
         if other_player_id == 0:
-            board[1:57] = path_board
+            board[1:N_FIRST_STEP] = path_board
         elif other_player_id == 1:
             if self.num_players != 2:
-                board[15:57] = path_board[:42]
-                board[1:15] = path_board[42:]
+                board[ONE_PLAYER_BOARD_SIZE + 1:N_FIRST_STEP] = path_board[:THIRD_PLAYER_IDX]
+                board[1:ONE_PLAYER_BOARD_SIZE + 1] = path_board[THIRD_PLAYER_IDX:]
             else:
-                board[29:57] = path_board[:28]
-                board[1:29] = path_board[28:]
+                board[TWO_PLAYERS_BOARD_SIZE + 1:N_FIRST_STEP] = path_board[:TWO_PLAYERS_BOARD_SIZE]
+                board[1:TWO_PLAYERS_BOARD_SIZE + 1] = path_board[TWO_PLAYERS_BOARD_SIZE:]
         elif other_player_id == 2:
-            board[29:57] = path_board[:28]
-            board[1:29] = path_board[28:]
+            board[TWO_PLAYERS_BOARD_SIZE + 1:N_FIRST_STEP] = path_board[:TWO_PLAYERS_BOARD_SIZE]
+            board[1:TWO_PLAYERS_BOARD_SIZE + 1] = path_board[TWO_PLAYERS_BOARD_SIZE:]
         elif other_player_id == 3:
-            board[43:57] = path_board[:14]
-            board[1:43] = path_board[14:]
+            board[THIRD_PLAYER_IDX + 1:N_FIRST_STEP] = path_board[:ONE_PLAYER_BOARD_SIZE]
+            board[1:THIRD_PLAYER_IDX + 1] = path_board[ONE_PLAYER_BOARD_SIZE:]
         return board
 
     def dice_generator(self):
@@ -243,17 +252,17 @@ class GameLogic:
         if player_id == 0:
             indice = target_position_relative - 1
         elif player_id == 2:
-            indice = (target_position_relative - 1 + 28) % 56
+            indice = (target_position_relative - 1 + TWO_PLAYERS_BOARD_SIZE) % BOARD_SIZE
         elif player_id == 3:
-            indice = (target_position_relative - 1 + 42) % 56
+            indice = (target_position_relative - 1 + THIRD_PLAYER_IDX) % BOARD_SIZE
 
         if self.num_players == 2:
             if player_id == 1:
-                indice = (target_position_relative - 1 + 28) % 56
+                indice = (target_position_relative - 1 + TWO_PLAYERS_BOARD_SIZE) % BOARD_SIZE
             return self.get_chemin_pdv_2_joueurs(player_id)[indice]
         elif self.num_players == 3 or self.num_players == 4:
             if player_id == 1:
-                indice = (target_position_relative - 1 + 14) % 56
+                indice = (target_position_relative - 1 + ONE_PLAYER_BOARD_SIZE) % BOARD_SIZE
             return self.get_chemin_pdv(player_id)[indice]
         else:
             raise ValueError("get_pawns_on_position pas bien implémenté")
@@ -272,7 +281,7 @@ class GameLogic:
     def get_dice_value_because_of_obstacle(
         self, player_id, old_position, target_position
     ):
-        assert target_position in range(1, 57), f"Position incorrecte {target_position}"
+        assert target_position in range(1, N_FIRST_STEP), f"Position incorrecte {target_position}"
         dice_value = 0
         for pos in range(old_position + 1, target_position):
             if (
@@ -286,42 +295,29 @@ class GameLogic:
         raise ValueError(
             f"Pas d'obstacle. Player id : {player_id} Old position :{old_position} target position : {target_position} État du plateau : {self.board}"
         )
-
-    # def is_pawn_threatened(
-    #     self, player, position
-    # ):  # si un pion est menacé par un autre pion adverse -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
-    #     # TODO
-    #     # retourne combien de pions sont menacés ?
-    #     return False
-
-    # def is_pawn_protected(
-    #     self, player, position
-    # ):  # si un pion est protégé par un autre pion allié -> quelquun dans les 6 cases avant (HOME d'un autre joueur compte)
-    #     # TODO
-    #     return False
-
+    
     # Savoir la position d'un joueur dans la perspective d'un autre joueur
     def get_relative_position(self, from_player, to_player, position):
-        if position == 0 or position >= 57:
+        if position == 0 or position >= N_FIRST_STEP:
             raise ValueError("Position incorrecte")
 
         # Décalage de 28
         if self.num_players == 2:
-            offset = (to_player - from_player) * 28
+            offset = (to_player - from_player) * TWO_PLAYERS_BOARD_SIZE
         # Décalage de 14 (pour 3 c'est comme si on avait 4 joueurs et 1 pas utilisé)
         elif self.num_players == 3 or self.num_players == 4:
-            offset = (from_player - to_player) * 14
+            offset = (from_player - to_player) * ONE_PLAYER_BOARD_SIZE
         else:
             raise ValueError("Nombre de joueurs non supporté")
-        result = (position + offset) % 56
+        result = (position + offset) % BOARD_SIZE
         if result == 0:
-            return 56
+            return BOARD_SIZE
         return result
 
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
-        assert position in range(1, 57), "Position incorrecte"  # TODO MERGE
+        assert position in range(1, N_FIRST_STEP), "Position incorrecte"  # TODO MERGE
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -373,16 +369,16 @@ class GameLogic:
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
 
-        assert old_position + dice_value < 57, "Déplacement pas conforme à la position"
+        assert old_position + dice_value < N_FIRST_STEP, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_recule(self, player_id, old_position, dice_value):
         # TODO MERGE : assert personne sur le chemin devant moi
-        assert old_position + dice_value > 56, "Déplacement pas conforme à la position"
-        get_distance_avant = 56 - old_position
+        assert old_position + dice_value > BOARD_SIZE, "Déplacement pas conforme à la position"
+        get_distance_avant = BOARD_SIZE - old_position
         recule_de = dice_value - get_distance_avant
-        get_position_apres = 56 - recule_de
+        get_position_apres = BOARD_SIZE - recule_de
         assert (
             old_position < get_position_apres
         ), f"Déplacement pas conforme à la position, {old_position} < {get_position_apres}, dice_value : {dice_value}"
@@ -394,7 +390,7 @@ class GameLogic:
         assert (
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
-        assert old_position + dice_value < 63, "Déplacement pas conforme à la position"
+        assert old_position + dice_value < FINAL_POSITION, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
@@ -402,12 +398,12 @@ class GameLogic:
         assert (
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
-        assert old_position + dice_value >= 63, "Déplacement pas conforme à la position"
+        assert old_position + dice_value >= FINAL_POSITION, "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][-1] += 1
 
     def is_there_pawn_to_kill(self, player_id, target_position):
-        assert target_position in range(1, 57), "Position incorrecte"  # TODO MERGE
+        assert target_position in range(1, N_FIRST_STEP), "Position incorrecte"  # TODO MERGE
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -421,7 +417,7 @@ class GameLogic:
         self, player_id, old_position, target_position
     ):
         assert target_position in range(
-            1, 57
+            1, N_FIRST_STEP
         ), f"Position incorrecte {target_position}"  # TODO MERGE
         # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
         for pos in range(old_position + 1, target_position):
@@ -443,8 +439,8 @@ class GameLogic:
                 self.sortir_pion(player_id, dice_value)
             elif action == Action_NO_EXACT.GET_STUCK_BEHIND:  # TODO TEST
                 target_position = old_position + dice_value
-                if target_position >= 57:
-                    target_position = 56
+                if target_position >= N_FIRST_STEP:
+                    target_position = BOARD_SIZE
                 valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(
                     player_id, old_position, target_position
                 )
@@ -476,8 +472,8 @@ class GameLogic:
 
             elif action == Action_EXACT.GET_STUCK_BEHIND:  # TODO TEST TODO MERGE
                 target_position = old_position + dice_value
-                if target_position >= 57:
-                    target_position = 56
+                if target_position >= N_FIRST_STEP:
+                    target_position = BOARD_SIZE
                 valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(
                     player_id, old_position, target_position
                 )
@@ -516,8 +512,8 @@ class GameLogic:
 
             elif action == Action_EXACT_ASCENSION.GET_STUCK_BEHIND:  # TODOTEST
                 target_position = old_position + dice_value
-                if target_position >= 57:
-                    target_position = 56
+                if target_position >= N_FIRST_STEP:
+                    target_position = BOARD_SIZE
                 valeur_de_avec_obstacle = self.get_dice_value_because_of_obstacle(
                     player_id, old_position, target_position
                 )
@@ -587,7 +583,7 @@ class GameLogic:
                         valid_actions.append(Action_NO_EXACT.MOVE_OUT)
 
             elif state == State_NO_EXACT.CHEMIN:  # TODO TEST VALID ACTIONS
-                if target_position < 57:  # limite avant zone protégée
+                if target_position < N_FIRST_STEP:  # limite avant zone protégée
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
                             player_id, position, target_position
@@ -608,15 +604,15 @@ class GameLogic:
                                 valid_actions.append(Action_NO_EXACT.KILL)
                         else:
                             valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
-                elif target_position >= 57:
+                elif target_position >= N_FIRST_STEP:
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                     )
                     if obstacle:
                         nb_cases_avancer = self.get_dice_value_because_of_obstacle(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                         if nb_cases_avancer > 0:
                             valid_actions.append(Action_NO_EXACT.GET_STUCK_BEHIND)
@@ -624,9 +620,9 @@ class GameLogic:
                         valid_actions.append(Action_NO_EXACT.ENTER_SAFEZONE)
 
             elif state == State_NO_EXACT.ESCALIER:
-                if target_position <= 62:
+                if target_position <= N_LAST_STEP:
                     valid_actions.append(Action_NO_EXACT.MOVE_IN_SAFE_ZONE)
-                if target_position >= 63:
+                if target_position >= FINAL_POSITION:
                     valid_actions.append(Action_NO_EXACT.REACH_GOAL)
 
             elif state == State_NO_EXACT.OBJECTIF:
@@ -646,7 +642,7 @@ class GameLogic:
 
             elif state == State_EXACT.CHEMIN:
                 # TODOTEST TODO ZOE : si quelquun sur la route alors je suis bloquée dans tous les cas
-                if target_position < 56:
+                if target_position < BOARD_SIZE:
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
                             player_id, position, target_position
@@ -668,15 +664,15 @@ class GameLogic:
                         else:
                             valid_actions.append(Action_EXACT.MOVE_FORWARD)
 
-                elif target_position == 56:
+                elif target_position == BOARD_SIZE:
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                     )
                     if obstacle:
                         nb_cases_avancer = self.get_dice_value_because_of_obstacle(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                         if nb_cases_avancer > 0:
                             valid_actions.append(Action_EXACT.GET_STUCK_BEHIND)
@@ -692,24 +688,24 @@ class GameLogic:
                         else:
                             valid_actions.append(Action_EXACT.REACH_PIED_ESCALIER)
 
-                else:  # > 56
+                else:  # > BOARD_SIZE
                     # pour chacune des cases entre moi et l'escalier : est ce qu'il y a un pion adverse ou un pion à moi ?
                     # si oui -> get stuck si dé > 1
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                     )
                     if obstacle:
                         nb_cases_avancer = self.get_dice_value_because_of_obstacle(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                         if nb_cases_avancer > 0:
                             valid_actions.append(Action_EXACT.GET_STUCK_BEHIND)
                     else:  # si non -> on s'assure qu'on ne reculera pas
-                        distance_avant = 56 - position
+                        distance_avant = BOARD_SIZE - position
                         recule_de = dice_value - distance_avant
-                        position_apres = 56 - recule_de
+                        position_apres = BOARD_SIZE - recule_de
                         if position_apres > position:
                             valid_actions.append(
                                 Action_EXACT.AVANCE_RECULE_PIED_ESCALIER
@@ -720,9 +716,9 @@ class GameLogic:
                 valid_actions.append(Action_EXACT.MOVE_IN_SAFE_ZONE)
 
             elif state == State_EXACT.ESCALIER:
-                if target_position <= 62:
+                if target_position <= N_LAST_STEP:
                     valid_actions.append(Action_EXACT.MOVE_IN_SAFE_ZONE)
-                if target_position >= 63:
+                if target_position >= FINAL_POSITION:
                     valid_actions.append(Action_EXACT.REACH_GOAL)
 
             elif state == State_EXACT.OBJECTIF:
@@ -744,7 +740,7 @@ class GameLogic:
                         valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT)
 
             elif state == State_EXACT.CHEMIN:
-                if target_position < 56:
+                if target_position < BOARD_SIZE:
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
                             player_id, position, target_position
@@ -768,15 +764,15 @@ class GameLogic:
                         else:
                             valid_actions.append(Action_EXACT_ASCENSION.MOVE_FORWARD)
 
-                elif target_position == 56:
+                elif target_position == BOARD_SIZE:
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                     )
                     if obstacle:
                         nb_cases_avancer = self.get_dice_value_because_of_obstacle(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                         if nb_cases_avancer > 0:
                             valid_actions.append(
@@ -796,24 +792,24 @@ class GameLogic:
                                 Action_EXACT_ASCENSION.REACH_PIED_ESCALIER
                             )
 
-                else:  # > 56
+                else:  # > BOARD_SIZE
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                     )
                     if obstacle:
                         nb_cases_avancer = self.get_dice_value_because_of_obstacle(
-                            player_id, position, 56
+                            player_id, position, BOARD_SIZE
                         )
                         if nb_cases_avancer > 0:
                             valid_actions.append(
                                 Action_EXACT_ASCENSION.GET_STUCK_BEHIND
                             )
                     else:
-                        distance_avant = 56 - position
+                        distance_avant = BOARD_SIZE - position
                         recule_de = dice_value - distance_avant
-                        position_apres = 56 - recule_de
+                        position_apres = BOARD_SIZE - recule_de
                         if position_apres > position:
                             valid_actions.append(
                                 Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER
@@ -824,7 +820,7 @@ class GameLogic:
                     valid_actions.append(Action_EXACT_ASCENSION.MARCHE_1)
 
             elif state == State_EXACT.ESCALIER:
-                if position == 57 and dice_value == 2:
+                if position == N_FIRST_STEP and dice_value == 2:
                     valid_actions.append(Action_EXACT_ASCENSION.MARCHE_2)
                 elif position == 58 and dice_value == 3:
                     valid_actions.append(Action_EXACT_ASCENSION.MARCHE_3)
@@ -834,7 +830,7 @@ class GameLogic:
                     valid_actions.append(Action_EXACT_ASCENSION.MARCHE_5)
                 elif position == 61 and dice_value == 6:
                     valid_actions.append(Action_EXACT_ASCENSION.MARCHE_6)
-                elif position == 62 and dice_value == 6:
+                elif position == N_LAST_STEP and dice_value == 6:
                     valid_actions.append(Action_EXACT_ASCENSION.REACH_GOAL)
 
             elif state == State_EXACT.OBJECTIF:
@@ -1027,19 +1023,19 @@ class GameLogic:
         """
         assert self.num_players > 2, "Nombre de joueurs incorrect."
 
-        chemin = [[] for _ in range(56)]
+        chemin = [[] for _ in range(BOARD_SIZE)]
 
         # Déterminer l'ordre des joueurs selon la perspective
         player_order = self.get_player_order(perspective_player)
 
         i = 0
         for p in player_order:
-            for j in range(1, 57):  # Cases du plateau
+            for j in range(1, N_FIRST_STEP):  # Cases du plateau
                 for _ in range(self.board[p][j]):
                     relative_position = self.get_relative_position(
                         p, perspective_player, j
                     )
-                    relative_position_chemin = relative_position - 1  # 1 à 56 -> 0 à 55
+                    relative_position_chemin = relative_position - 1  # 1 à BOARD_SIZE -> 0 à 55
                     # Calcul de l'indice selon l'ordre des joueurs et l'offset
                     chemin[relative_position_chemin].append(p)
             i = (i + 1) % self.num_players
@@ -1054,14 +1050,14 @@ class GameLogic:
         """
         assert self.num_players == 2, "Nombre de joueurs incorrect."
 
-        chemin = [[] for _ in range(56)]
+        chemin = [[] for _ in range(BOARD_SIZE)]
 
         # Déterminer l'ordre des joueurs selon la perspective
         player_order = self.get_player_order(perspective_player)
 
         i = 0
         for p in player_order:
-            for j in range(1, 57):
+            for j in range(1, N_FIRST_STEP):
                 for _ in range(self.board[p][j]):
                     relative_position = self.get_relative_position(
                         p, perspective_player, j
@@ -1102,8 +1098,8 @@ class GameLogic:
         other_player_ids = [0, 1, 2, 3]
         other_player_ids.remove(player_id)
 
-        result = [0 for _ in range(56)]
-        for i in range(56):
+        result = [0 for _ in range(BOARD_SIZE)]
+        for i in range(BOARD_SIZE):
             # assert len(chemin[i]) <= 1, "Erreur dans la logique du jeu"
             if player_id in chemin[i]:
                 assert set(chemin[i]) == {player_id}, "Erreur dans la logique du jeu"
@@ -1119,7 +1115,7 @@ class GameLogic:
         return result
 
     def get_observation_my_escalier(self, player_id):
-        return self.board[player_id][57:63]
+        return self.board[player_id][N_FIRST_STEP:FINAL_POSITION]
 
     def get_observation_my_goal(self, player_id) -> int:
         return self.board[player_id][-1]
@@ -1128,7 +1124,7 @@ class GameLogic:
         if self.mode_protect != "activé":
             raise ValueError("Mode protect non activé")
         nb = 0
-        for i in self.board[player_id][1:57]:
+        for i in self.board[player_id][1:N_FIRST_STEP]:
             if i > 2:
                 nb += i
         return nb 
