@@ -1,4 +1,4 @@
-# Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
+# Ajouter la racine du projet (game) au chemin Python
 import sys
 from pathlib import Path
 

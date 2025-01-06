@@ -3,15 +3,15 @@ import os
 import sys
 import rules
 from itertools import permutations
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux/reinforcement_learning/agents"))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game/reinforcement_learning/agents"))
 
 
-racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux/reinforcement_learning"))
+racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game/reinforcement_learning"))
 sys.path.append(racine_dir)
 
 from config import config_param
 
-racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux/"))
+racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game/"))
 sys.path.append(racine_dir)
 from ludo_env.reward import AgentType
 

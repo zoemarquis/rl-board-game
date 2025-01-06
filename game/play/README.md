@@ -1,4 +1,4 @@
-pour tester de jouer (1 humain) contre le modele avec multi input PPO, dans le dossier zoe-petits-chevaux : 
+pour tester de jouer (1 humain) contre le modele avec multi input PPO, dans le dossier game : 
 
     python3 tests/test_modele_MuliInputPPO.py
 

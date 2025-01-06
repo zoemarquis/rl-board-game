@@ -12,7 +12,7 @@ from stable_baselines3 import PPO
 from config_game import config_param, generate_game_config
 from insert import store_final_game_data, PlayerToInsert, SetOfRulesToInsert
 
-racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../zoe-petits-chevaux"))
+racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game"))
 sys.path.append(racine_dir)
 
 from ludo_env import LudoEnv

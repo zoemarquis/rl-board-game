@@ -13,7 +13,7 @@ project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 
-# Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
+# Ajouter la racine du projet (game) au chemin Python
 
 
 env = LudoEnv(num_players=2, nb_chevaux=2, mode_gym="jeu", mode_fin_partie="tous")
