@@ -1,6 +1,6 @@
 black # formatter
 
-itertools
+# itertools : pas installable par pip, module intégré de python
 
 gymnasium
 
@@ -9,7 +9,8 @@ numpy
 
 pandas
 plotly
-psycopg2-binary # ! pour ubuntu et mac os -binary : TODO tester avec des venv qu'on a bien tous les requirements
+# psycopg2-binary # ! pour ubuntu et mac os -binary : TODO tester avec des venv qu'on a bien tous les requirements
+# NUL PART APPELER 
 pygame
 pytest
 

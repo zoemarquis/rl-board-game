@@ -1,5 +1,5 @@
 import pytest
-from ludo_env import GameLogic, Action_EXACT
+from game.ludo_env import GameLogic, Action_EXACT
 
 
 @pytest.fixture

@@ -1,5 +1,10 @@
 import pytest
-from ludo_env import GameLogic, Action_EXACT, Action_NO_EXACT, Action_EXACT_ASCENSION
+from game.ludo_env import (
+    GameLogic,
+    Action_EXACT,
+    Action_NO_EXACT,
+    Action_EXACT_ASCENSION,
+)
 
 
 @pytest.fixture

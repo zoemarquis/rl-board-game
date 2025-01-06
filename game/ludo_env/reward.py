@@ -1,4 +1,4 @@
-from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
+from .action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
 
 
 # ------------------- REWARD TABLES -------------------

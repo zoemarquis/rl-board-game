@@ -1,6 +1,6 @@
 # renderer.py
 import pygame
-from ludo_env.game_logic import Action_NO_EXACT, Action_EXACT
+from .game_logic import Action_NO_EXACT, Action_EXACT
 
 # Configuration de base de pygame
 pygame.init()

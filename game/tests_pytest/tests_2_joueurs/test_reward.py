@@ -1,5 +1,5 @@
 import pytest
-from ludo_env import *
+from game.ludo_env import *
 
 
 def test_reward():

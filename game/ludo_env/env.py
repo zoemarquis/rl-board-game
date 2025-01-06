@@ -1,15 +1,15 @@
 import gymnasium as gym
 import numpy as np
 
-from ludo_env.game_logic import (
+from .game_logic import (
     GameLogic,
     TOTAL_SIZE,
     BOARD_SIZE,
     SAFE_ZONE_SIZE,
 )
-from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
-from ludo_env.renderer import Renderer
-from ludo_env.reward import AgentType
+from .action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
+from .renderer import Renderer
+from .reward import AgentType
 
 
 class LudoEnv(gym.Env):

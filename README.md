@@ -84,12 +84,12 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
 -> requirements
 -> venv (?, plus compatible que conda pour permettre les tests prof)
 
-<!-- ## Conda environment
+## Conda environment
 
 ```bash
 conda env create -f environment.yml
 conda activate ludo-env
-``` -->
+```
 
 
 
@@ -97,7 +97,7 @@ conda activate ludo-env
 
 TODOCOMM
 
-petits_chevaux/
+game/
 │
 ├── ludo_env/
 │   ├── env.py              # Classe de l'environnement Gymnasium
@@ -108,7 +108,7 @@ petits_chevaux/
 │   ├── notebook_maskedppo.ipynb    # notebook avec un pseudo masked ppo
 │   ├── notebook_ppo.ipynb          # notebook avec ppo
 │   └── notebook_qlearning.ipynb    # notebook avec qlearning : pas fonctionnel juste un brouillon
-└── tests/
+└── streamlit/
 │   └── TODOTEST 
 ---
 

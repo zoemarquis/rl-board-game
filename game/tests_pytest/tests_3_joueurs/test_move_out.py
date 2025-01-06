@@ -1,5 +1,5 @@
 import pytest
-from ludo_env.game_logic import *
+from game.ludo_env import *
 
 
 @pytest.fixture

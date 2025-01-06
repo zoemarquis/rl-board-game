@@ -1,6 +1,6 @@
 import pytest
 
-from ludo_env import LudoEnv
+from game.ludo_env import LudoEnv
 
 
 @pytest.fixture

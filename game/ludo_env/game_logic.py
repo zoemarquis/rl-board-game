@@ -1,9 +1,9 @@
 # ce fichier gère toute la logique du jeu / les règles du jeu
 import numpy as np
 
-from ludo_env.action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
-from ludo_env.state import State_NO_EXACT, State_EXACT
-from ludo_env.reward import get_reward_table, get_default_action_order, AgentType
+from .action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
+from .state import State_NO_EXACT, State_EXACT
+from .reward import get_reward_table, get_default_action_order, AgentType
 
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
