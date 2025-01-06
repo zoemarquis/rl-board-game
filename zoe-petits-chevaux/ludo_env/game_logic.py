@@ -8,13 +8,13 @@ from ludo_env.reward import get_reward_table, get_default_action_order, AgentTyp
 BOARD_SIZE = 56
 SAFE_ZONE_SIZE = 6
 
-ONE_PLAYER_BOARD_SIZE = BOARD_SIZE // 4 # 14
-TWO_PLAYERS_BOARD_SIZE = BOARD_SIZE // 2 # 28
-THIRD_PLAYER_IDX = 3 * ONE_PLAYER_BOARD_SIZE # 42
+ONE_PLAYER_BOARD_SIZE = BOARD_SIZE // 4  # 14
+TWO_PLAYERS_BOARD_SIZE = BOARD_SIZE // 2  # 28
+THIRD_PLAYER_IDX = 3 * ONE_PLAYER_BOARD_SIZE  # 42
 
-N_FIRST_STEP = BOARD_SIZE + 1 # 57
-N_LAST_STEP = BOARD_SIZE + SAFE_ZONE_SIZE # 62
-FINAL_POSITION = BOARD_SIZE + SAFE_ZONE_SIZE + 1 # 63
+N_FIRST_STEP = BOARD_SIZE + 1  # 57
+N_LAST_STEP = BOARD_SIZE + SAFE_ZONE_SIZE  # 62
+FINAL_POSITION = BOARD_SIZE + SAFE_ZONE_SIZE + 1  # 63
 
 TOTAL_SIZE = BOARD_SIZE + SAFE_ZONE_SIZE + 2  # HOME + GOAL
 
@@ -154,7 +154,9 @@ class GameLogic:
             str_game_overview += f"{chemin[i * ONE_PLAYER_BOARD_SIZE: (i + 1) * ONE_PLAYER_BOARD_SIZE]}\n"
 
         for i in range(self.num_players):
-            str_game_overview += f"ESCALIER {i} : {self.board[i][N_FIRST_STEP:FINAL_POSITION]}\n"
+            str_game_overview += (
+                f"ESCALIER {i} : {self.board[i][N_FIRST_STEP:FINAL_POSITION]}\n"
+            )
 
         for i in range(self.num_players):
             str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
@@ -187,7 +189,9 @@ class GameLogic:
             str_game_overview += f"{chemin[i * ONE_PLAYER_BOARD_SIZE: (i + 1) * ONE_PLAYER_BOARD_SIZE]}\n"
 
         for i in range(self.num_players):
-            str_game_overview += f"ESCALIER {i} : {self.board[i][N_FIRST_STEP:FINAL_POSITION]}\n"
+            str_game_overview += (
+                f"ESCALIER {i} : {self.board[i][N_FIRST_STEP:FINAL_POSITION]}\n"
+            )
 
         for i in range(self.num_players):
             str_game_overview += f"OBJECTIF {i} : {self.board[i][-1]}\n"
@@ -229,17 +233,27 @@ class GameLogic:
             board[1:N_FIRST_STEP] = path_board
         elif other_player_id == 1:
             if self.num_players != 2:
-                board[ONE_PLAYER_BOARD_SIZE + 1:N_FIRST_STEP] = path_board[:THIRD_PLAYER_IDX]
-                board[1:ONE_PLAYER_BOARD_SIZE + 1] = path_board[THIRD_PLAYER_IDX:]
+                board[ONE_PLAYER_BOARD_SIZE + 1 : N_FIRST_STEP] = path_board[
+                    :THIRD_PLAYER_IDX
+                ]
+                board[1 : ONE_PLAYER_BOARD_SIZE + 1] = path_board[THIRD_PLAYER_IDX:]
             else:
-                board[TWO_PLAYERS_BOARD_SIZE + 1:N_FIRST_STEP] = path_board[:TWO_PLAYERS_BOARD_SIZE]
-                board[1:TWO_PLAYERS_BOARD_SIZE + 1] = path_board[TWO_PLAYERS_BOARD_SIZE:]
+                board[TWO_PLAYERS_BOARD_SIZE + 1 : N_FIRST_STEP] = path_board[
+                    :TWO_PLAYERS_BOARD_SIZE
+                ]
+                board[1 : TWO_PLAYERS_BOARD_SIZE + 1] = path_board[
+                    TWO_PLAYERS_BOARD_SIZE:
+                ]
         elif other_player_id == 2:
-            board[TWO_PLAYERS_BOARD_SIZE + 1:N_FIRST_STEP] = path_board[:TWO_PLAYERS_BOARD_SIZE]
-            board[1:TWO_PLAYERS_BOARD_SIZE + 1] = path_board[TWO_PLAYERS_BOARD_SIZE:]
+            board[TWO_PLAYERS_BOARD_SIZE + 1 : N_FIRST_STEP] = path_board[
+                :TWO_PLAYERS_BOARD_SIZE
+            ]
+            board[1 : TWO_PLAYERS_BOARD_SIZE + 1] = path_board[TWO_PLAYERS_BOARD_SIZE:]
         elif other_player_id == 3:
-            board[THIRD_PLAYER_IDX + 1:N_FIRST_STEP] = path_board[:ONE_PLAYER_BOARD_SIZE]
-            board[1:THIRD_PLAYER_IDX + 1] = path_board[ONE_PLAYER_BOARD_SIZE:]
+            board[THIRD_PLAYER_IDX + 1 : N_FIRST_STEP] = path_board[
+                :ONE_PLAYER_BOARD_SIZE
+            ]
+            board[1 : THIRD_PLAYER_IDX + 1] = path_board[ONE_PLAYER_BOARD_SIZE:]
         return board
 
     def dice_generator(self):
@@ -252,17 +266,23 @@ class GameLogic:
         if player_id == 0:
             indice = target_position_relative - 1
         elif player_id == 2:
-            indice = (target_position_relative - 1 + TWO_PLAYERS_BOARD_SIZE) % BOARD_SIZE
+            indice = (
+                target_position_relative - 1 + TWO_PLAYERS_BOARD_SIZE
+            ) % BOARD_SIZE
         elif player_id == 3:
             indice = (target_position_relative - 1 + THIRD_PLAYER_IDX) % BOARD_SIZE
 
         if self.num_players == 2:
             if player_id == 1:
-                indice = (target_position_relative - 1 + TWO_PLAYERS_BOARD_SIZE) % BOARD_SIZE
+                indice = (
+                    target_position_relative - 1 + TWO_PLAYERS_BOARD_SIZE
+                ) % BOARD_SIZE
             return self.get_chemin_pdv_2_joueurs(player_id)[indice]
         elif self.num_players == 3 or self.num_players == 4:
             if player_id == 1:
-                indice = (target_position_relative - 1 + ONE_PLAYER_BOARD_SIZE) % BOARD_SIZE
+                indice = (
+                    target_position_relative - 1 + ONE_PLAYER_BOARD_SIZE
+                ) % BOARD_SIZE
             return self.get_chemin_pdv(player_id)[indice]
         else:
             raise ValueError("get_pawns_on_position pas bien implémenté")
@@ -281,7 +301,9 @@ class GameLogic:
     def get_dice_value_because_of_obstacle(
         self, player_id, old_position, target_position
     ):
-        assert target_position in range(1, N_FIRST_STEP), f"Position incorrecte {target_position}"
+        assert target_position in range(
+            1, N_FIRST_STEP
+        ), f"Position incorrecte {target_position}"
         dice_value = 0
         for pos in range(old_position + 1, target_position):
             if (
@@ -295,7 +317,7 @@ class GameLogic:
         raise ValueError(
             f"Pas d'obstacle. Player id : {player_id} Old position :{old_position} target position : {target_position} État du plateau : {self.board}"
         )
-    
+
     # Savoir la position d'un joueur dans la perspective d'un autre joueur
     def get_relative_position(self, from_player, to_player, position):
         if position == 0 or position >= N_FIRST_STEP:
@@ -326,7 +348,9 @@ class GameLogic:
                 num_pawns_to_kill = self.board[other_player][relative_position]
                 if num_pawns_to_kill > 0:
                     if self.mode_protect == "activé" and num_pawns_to_kill > 1:
-                        raise ValueError("Mode protect activé, impossible de tuer plus d'un pion")
+                        raise ValueError(
+                            "Mode protect activé, impossible de tuer plus d'un pion"
+                        )
                     self.board[other_player][relative_position] -= num_pawns_to_kill
                     self.board[other_player][0] += num_pawns_to_kill
 
@@ -369,13 +393,17 @@ class GameLogic:
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
 
-        assert old_position + dice_value < N_FIRST_STEP, "Déplacement pas conforme à la position"
+        assert (
+            old_position + dice_value < N_FIRST_STEP
+        ), "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_recule(self, player_id, old_position, dice_value):
         # TODO MERGE : assert personne sur le chemin devant moi
-        assert old_position + dice_value > BOARD_SIZE, "Déplacement pas conforme à la position"
+        assert (
+            old_position + dice_value > BOARD_SIZE
+        ), "Déplacement pas conforme à la position"
         get_distance_avant = BOARD_SIZE - old_position
         recule_de = dice_value - get_distance_avant
         get_position_apres = BOARD_SIZE - recule_de
@@ -390,7 +418,9 @@ class GameLogic:
         assert (
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
-        assert old_position + dice_value < FINAL_POSITION, "Déplacement pas conforme à la position"
+        assert (
+            old_position + dice_value < FINAL_POSITION
+        ), "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][old_position + dice_value] += 1
 
@@ -398,12 +428,16 @@ class GameLogic:
         assert (
             self.board[player_id][old_position] > 0
         ), "Pas de pion à déplacer à cette position"
-        assert old_position + dice_value >= FINAL_POSITION, "Déplacement pas conforme à la position"
+        assert (
+            old_position + dice_value >= FINAL_POSITION
+        ), "Déplacement pas conforme à la position"
         self.board[player_id][old_position] -= 1
         self.board[player_id][-1] += 1
 
     def is_there_pawn_to_kill(self, player_id, target_position):
-        assert target_position in range(1, N_FIRST_STEP), "Position incorrecte"  # TODO MERGE
+        assert target_position in range(
+            1, N_FIRST_STEP
+        ), "Position incorrecte"  # TODO MERGE
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -576,10 +610,10 @@ class GameLogic:
                     nb_opp_pawns = self.is_opponent_pawn_on(player_id, 1)
                     if nb_opp_pawns > 0:
                         if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                            pass # si protect : ne peut pas kill
-                        else: # soit protect désactivé, soit un seul pion adverse -> kill
+                            pass  # si protect : ne peut pas kill
+                        else:  # soit protect désactivé, soit un seul pion adverse -> kill
                             valid_actions.append(Action_NO_EXACT.MOVE_OUT_AND_KILL)
-                    else: # pas d'adversaire 
+                    else:  # pas d'adversaire
                         valid_actions.append(Action_NO_EXACT.MOVE_OUT)
 
             elif state == State_NO_EXACT.CHEMIN:  # TODO TEST VALID ACTIONS
@@ -596,11 +630,13 @@ class GameLogic:
                         if nb_cases_avancer > 0:
                             valid_actions.append(Action_NO_EXACT.GET_STUCK_BEHIND)
                     else:
-                        nb_opp_pawns = self.is_opponent_pawn_on(player_id, target_position)
+                        nb_opp_pawns = self.is_opponent_pawn_on(
+                            player_id, target_position
+                        )
                         if nb_opp_pawns > 0:
                             if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                                pass # ne peut pas kill si + d'un adversaire
-                            else: 
+                                pass  # ne peut pas kill si + d'un adversaire
+                            else:
                                 valid_actions.append(Action_NO_EXACT.KILL)
                         else:
                             valid_actions.append(Action_NO_EXACT.MOVE_FORWARD)
@@ -634,10 +670,10 @@ class GameLogic:
                     nb_opp_pawns = self.is_opponent_pawn_on(player_id, 1)
                     if nb_opp_pawns > 0:
                         if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                            pass # si protect ne peut pas kill
-                        else: # soit protect désactivé, soit un seul pion adverse -> kill
+                            pass  # si protect ne peut pas kill
+                        else:  # soit protect désactivé, soit un seul pion adverse -> kill
                             valid_actions.append(Action_EXACT.MOVE_OUT_AND_KILL)
-                    else: # pas d'adversaire
+                    else:  # pas d'adversaire
                         valid_actions.append(Action_EXACT.MOVE_OUT)
 
             elif state == State_EXACT.CHEMIN:
@@ -655,10 +691,12 @@ class GameLogic:
                         if nb_cases_avancer > 0:
                             valid_actions.append(Action_EXACT.GET_STUCK_BEHIND)
                     else:
-                        nb_opp_pawns = self.is_opponent_pawn_on(player_id, target_position)
+                        nb_opp_pawns = self.is_opponent_pawn_on(
+                            player_id, target_position
+                        )
                         if nb_opp_pawns > 0:
                             if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                                pass # ne peut pas kill si + d'un adversaire
+                                pass  # ne peut pas kill si + d'un adversaire
                             else:
                                 valid_actions.append(Action_EXACT.KILL)
                         else:
@@ -679,10 +717,12 @@ class GameLogic:
                     else:
                         # if self.is_opponent_pawn_on(player_id, target_position):
                         #     valid_actions.append(Action_EXACT.KILL)
-                        nb_opp_pawns = self.is_opponent_pawn_on(player_id, target_position)
+                        nb_opp_pawns = self.is_opponent_pawn_on(
+                            player_id, target_position
+                        )
                         if nb_opp_pawns > 0:
                             if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                                pass # ne peut pas kill si + d'un adversaire
+                                pass  # ne peut pas kill si + d'un adversaire
                             else:
                                 valid_actions.append(Action_EXACT.KILL)
                         else:
@@ -733,10 +773,12 @@ class GameLogic:
                     nb_opp_pawns = self.is_opponent_pawn_on(player_id, 1)
                     if nb_opp_pawns > 0:
                         if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                            pass # si protect ne peut pas kill
-                        else: # soit protect désactivé, soit un seul pion adverse -> kill
-                            valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL)
-                    else: # pas d'adversaire
+                            pass  # si protect ne peut pas kill
+                        else:  # soit protect désactivé, soit un seul pion adverse -> kill
+                            valid_actions.append(
+                                Action_EXACT_ASCENSION.MOVE_OUT_AND_KILL
+                            )
+                    else:  # pas d'adversaire
                         valid_actions.append(Action_EXACT_ASCENSION.MOVE_OUT)
 
             elif state == State_EXACT.CHEMIN:
@@ -755,11 +797,13 @@ class GameLogic:
                                 Action_EXACT_ASCENSION.GET_STUCK_BEHIND
                             )
                     else:
-                        nb_opp_pawns = self.is_opponent_pawn_on(player_id, target_position)
+                        nb_opp_pawns = self.is_opponent_pawn_on(
+                            player_id, target_position
+                        )
                         if nb_opp_pawns > 0:
                             if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                                pass # ne peut pas kill si + d'un adversaire
-                            else: 
+                                pass  # ne peut pas kill si + d'un adversaire
+                            else:
                                 valid_actions.append(Action_EXACT_ASCENSION.KILL)
                         else:
                             valid_actions.append(Action_EXACT_ASCENSION.MOVE_FORWARD)
@@ -781,11 +825,13 @@ class GameLogic:
                     else:
                         # if self.is_opponent_pawn_on(player_id, target_position):
                         #     valid_actions.append(Action_EXACT_ASCENSION.KILL)
-                        nb_opp_pawns = self.is_opponent_pawn_on(player_id, target_position)
+                        nb_opp_pawns = self.is_opponent_pawn_on(
+                            player_id, target_position
+                        )
                         if nb_opp_pawns > 0:
                             if self.mode_protect == "activé" and nb_opp_pawns > 1:
-                                pass # ne peut pas kill si + d'un adversaire
-                            else: 
+                                pass  # ne peut pas kill si + d'un adversaire
+                            else:
                                 valid_actions.append(Action_EXACT_ASCENSION.KILL)
                         else:
                             valid_actions.append(
@@ -980,7 +1026,9 @@ class GameLogic:
         )  # TODO MERGE reward
         if self.mode_protect == "activé":
             nb_pawns_protect = self.get_nb_pawns_protect()
-            return reward_table[action] * nb_pawns_protect + 10 # TODO : adapter en fonciton du type d'agent (DANIIL)
+            return (
+                reward_table[action] * nb_pawns_protect + 10
+            )  # TODO : adapter en fonciton du type d'agent (DANIIL)
         else:
             return reward_table[action]
 
@@ -1035,7 +1083,9 @@ class GameLogic:
                     relative_position = self.get_relative_position(
                         p, perspective_player, j
                     )
-                    relative_position_chemin = relative_position - 1  # 1 à BOARD_SIZE -> 0 à 55
+                    relative_position_chemin = (
+                        relative_position - 1
+                    )  # 1 à BOARD_SIZE -> 0 à 55
                     # Calcul de l'indice selon l'ordre des joueurs et l'offset
                     chemin[relative_position_chemin].append(p)
             i = (i + 1) % self.num_players
@@ -1127,4 +1177,4 @@ class GameLogic:
         for i in self.board[player_id][1:N_FIRST_STEP]:
             if i > 2:
                 nb += i
-        return nb 
+        return nb

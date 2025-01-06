@@ -1,12 +1,14 @@
 # Ajouter la racine du projet au chemin Python
 import sys
 from pathlib import Path
+
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 from reinforcement_learning.agent import RandomAgent
 import pygame
 import time
+
 
 def handle_mouse_click(event, button_mapping):
     """
@@ -20,17 +22,25 @@ def handle_mouse_click(event, button_mapping):
                 return action  # Return the associated action
     return None  # No button was clicked
 
-env = LudoEnv(with_render=True, num_players=2, nb_chevaux=2, mode_fin_partie="tous", mode_gym="jeu")
+
+env = LudoEnv(
+    with_render=True,
+    num_players=2,
+    nb_chevaux=2,
+    mode_fin_partie="tous",
+    mode_gym="jeu",
+)
 players_type = ["human", "ai"]
+
 
 def play_game(env):
     obs, info = env.reset()
     done = False
     turn = 0
 
-    env.render(env.game, players_type = players_type)
+    env.render(env.game, players_type=players_type)
 
-    while not done: 
+    while not done:
         button_mapping = env.renderer.button_mapping
 
         if env.current_player == 0:
@@ -48,18 +58,20 @@ def play_game(env):
                     action = selected_action
                     obs, reward, done, truncated, info = env.step(action)
                     turn += 1
-                    env.render(env.game, players_type = players_type)
+                    env.render(env.game, players_type=players_type)
                 else:
                     # Print message that need to click on a button
                     env.renderer.show_click_button_message()
-        
+
         elif env.current_player == 1:
             print()
             print("-" * 50)
             print("TOUR DE L'AGENT")
             time.sleep(1)
 
-            valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
+            valid_actions = env.game.get_valid_actions(
+                env.current_player, env.dice_roll
+            )
             encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
 
             # L'agent choisit une action
@@ -75,7 +87,8 @@ def play_game(env):
             )
             turn += 1
 
-            env.render(env.game, players_type = players_type)
+            env.render(env.game, players_type=players_type)
+
 
 agent = RandomAgent(env.action_space)
 

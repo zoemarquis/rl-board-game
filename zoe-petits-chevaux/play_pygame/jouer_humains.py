@@ -1,10 +1,12 @@
 # Ajouter la racine du projet (zoe-petits-chevaux) au chemin Python
 import sys
 from pathlib import Path
+
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
 import pygame
+
 
 def handle_mouse_click(event, button_mapping):
     """
@@ -19,16 +21,23 @@ def handle_mouse_click(event, button_mapping):
     return None  # No button was clicked
 
 
-env = LudoEnv(with_render=True, num_players=2, nb_chevaux=3, mode_fin_partie="tous", mode_gym="jeu")
+env = LudoEnv(
+    with_render=True,
+    num_players=2,
+    nb_chevaux=3,
+    mode_fin_partie="tous",
+    mode_gym="jeu",
+)
 players_type = ["human", "human"]
+
 
 def play_game(env):
     obs, info = env.reset()
     done = False
 
-    env.render(env.game, players_type = players_type)
+    env.render(env.game, players_type=players_type)
 
-    while not done: 
+    while not done:
         button_mapping = env.renderer.button_mapping
 
         for event in pygame.event.get():
@@ -43,10 +52,11 @@ def play_game(env):
                 # Perform the action
                 action = selected_action
                 obs, reward, done, truncated, info = env.step(action)
-                env.render(env.game, players_type = players_type)
+                env.render(env.game, players_type=players_type)
             else:
                 # Print message that need to click on a button
                 env.renderer.show_click_button_message()
+
 
 play_game(env)
 pygame.quit()

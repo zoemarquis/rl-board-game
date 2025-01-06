@@ -1,6 +1,5 @@
-# import pytest 
+# import pytest
 # from ludo_env import GameLogic, Action_EXACT, Action_NO_EXACT, Action_EXACT_ASCENSION
-
 
 
 # @pytest.fixture
@@ -16,7 +15,6 @@
 # @pytest.fixture
 # def game_2chevaux_ascension():
 #     return GameLogic(num_players=3, nb_chevaux=2,  mode_pied_escalier="exact", mode_ascension="avec_contrainte", mode_protect="activé")
-
 
 
 # def test_basique_move_out_and_kill(game_2chevaux):
@@ -88,4 +86,4 @@
 #         Action_EXACT_ASCENSION.NO_ACTION
 #     ]
 
-# TODO ZOE 
+# TODO ZOE

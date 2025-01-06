@@ -12,14 +12,14 @@ def get_human_action(valid_actions):
         try:
             print(f"Actions valides : {valid_actions}")
             choix = input("Choisissez une action : ").strip()
-            
+
             # Vérifier si l'utilisateur n'a rien entré
             if choix == "":
                 raise ValueError("Entrée vide.")
-            
+
             # Convertir en entier
             choix = int(choix)
-            
+
             # Vérifier si l'action est valide
             if choix in valid_actions:
                 print(f"Action choisie : {choix}")
@@ -27,4 +27,6 @@ def get_human_action(valid_actions):
             else:
                 print("Choix invalide. Veuillez sélectionner une action valide.")
         except ValueError:
-            print("Entrée incorrecte. Veuillez entrer un entier correspondant à une action valide.")
+            print(
+                "Entrée incorrecte. Veuillez entrer un entier correspondant à une action valide."
+            )

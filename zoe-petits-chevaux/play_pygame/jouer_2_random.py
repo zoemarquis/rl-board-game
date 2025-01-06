@@ -1,6 +1,7 @@
 # Ajouter la racine du projet au chemin Python
 import sys
 from pathlib import Path
+
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
@@ -8,14 +9,21 @@ from reinforcement_learning.agent import RandomAgent
 import pygame
 import time
 
-env = LudoEnv(with_render=True, num_players=2, nb_chevaux=2, mode_fin_partie="tous", mode_gym="jeu")
+env = LudoEnv(
+    with_render=True,
+    num_players=2,
+    nb_chevaux=2,
+    mode_fin_partie="tous",
+    mode_gym="jeu",
+)
+
 
 def play_game(env, agents):
     obs, info = env.reset()
     done = False
     turn = 0
 
-    env.render(env.game, players_type = ["ai", "ai"])
+    env.render(env.game, players_type=["ai", "ai"])
 
     while not done:
         print("-" * 50)
@@ -39,7 +47,8 @@ def play_game(env, agents):
         )
         turn += 1
 
-        env.render(env.game, players_type = ["ai", "ai"])
+        env.render(env.game, players_type=["ai", "ai"])
+
 
 agent1 = RandomAgent(env.action_space)
 agent2 = RandomAgent(env.action_space)

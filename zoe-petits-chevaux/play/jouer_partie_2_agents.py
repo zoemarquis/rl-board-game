@@ -19,6 +19,7 @@ env = LudoEnv(num_players=2, nb_chevaux=4, mode_gym="jeu", mode_fin_partie="tous
 intentional_actions = defaultdict(int)
 impossible_actions = defaultdict(int)
 
+
 def play_game(env, agents):
     obs, info = env.reset()
     done = False
@@ -27,7 +28,6 @@ def play_game(env, agents):
     while not done:
         valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
         encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
-
 
         if env.current_player == 0:
             print("Agent 1")
@@ -38,7 +38,6 @@ def play_game(env, agents):
 
         else:
             raise ValueError("Nombre de joueurs non supporté")
-        
 
         _, action_type = env.game.decode_action(action)
         print()
@@ -64,13 +63,14 @@ def play_game(env, agents):
 
     print()
 
-    pct_tour_imp = sum(impossible_actions.values()) / (sum(intentional_actions.values()) + sum(impossible_actions.values()))
-    print("Pourcentage coups impossibles : ", round(pct_tour_imp*100,2), "%")
+    pct_tour_imp = sum(impossible_actions.values()) / (
+        sum(intentional_actions.values()) + sum(impossible_actions.values())
+    )
+    print("Pourcentage coups impossibles : ", round(pct_tour_imp * 100, 2), "%")
 
     print()
 
     print("Tour total : ", turn)
-
 
 
 # Lancer la partie
