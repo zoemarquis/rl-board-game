@@ -81,3 +81,15 @@ Ce que j'ai testé :
     ```
 
 TODO : expliquer comment faire pour mettre le venv sur les notebooks
+
+
+### Lancer un notebook
+
+Lorsque vous essayer de lancer un notebook 
+
+sur vscode : 
+- "Run All"
+- "Select Another Kernel..."
+- "Python Environments..."
+- Sélectionner "ludo_venv"
+- (ipykernel)
