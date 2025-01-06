@@ -23,6 +23,7 @@ class LudoEnv(gym.Env):
         mode_pied_escalier="not_exact",
         mode_rejoue_6="non",
         mode_rejoue_marche="non",
+        mode_protect="désactivé",
         mode_gym="entrainement",
         with_render=False,
     ):
@@ -53,6 +54,10 @@ class LudoEnv(gym.Env):
             "oui",
             "non",
         ], "Only 'oui' or 'non' are allowed"
+        assert mode_protect in [
+            "activé",
+            "désactivé",
+        ], "Only 'activé' or 'désactivé' are allowed"
 
         assert (
             (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact")
@@ -80,6 +85,7 @@ class LudoEnv(gym.Env):
         self.mode_ascension = mode_ascension
         self.mode_rejoue_6 = mode_rejoue_6
         self.mode_rejoue_marche = mode_rejoue_marche
+        self.mode_protect = mode_protect
 
         if self.with_render:
             self.renderer = Renderer()
