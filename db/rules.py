@@ -17,13 +17,15 @@ ALL_RULES = {
     14: "Relance avec un 6 interdite",
     15: "Relance après une marche autorisée",
     16: "Relance après une marche interdite",
+    17: "Protection des chevaux activée",
+    18: "Protection des chevaux désactivée"
 }
 
 def generate_rule_description(rule_ids, all_rules):
     descriptions = [all_rules[rule_id] for rule_id in rule_ids if rule_id in all_rules]
     return ", ".join(descriptions)
 
-def determine_rules(num_players, nb_chevaux, mode_fin_partie, mode_ascension, mode_pied_escalier, mode_rejoue_6, mode_rejoue_marche):
+def determine_rules(num_players, nb_chevaux, mode_fin_partie, mode_ascension, mode_pied_escalier, mode_rejoue_6, mode_rejoue_marche, mode_protect):
     rules = []
 
     # Règles pour le nombre de joueurs
@@ -71,5 +73,11 @@ def determine_rules(num_players, nb_chevaux, mode_fin_partie, mode_ascension, mo
         rules.append(15)
     elif mode_rejoue_marche == "non":
         rules.append(16)
+    
+    # Règles pour la protection des chevaux
+    if mode_protect == "activé":
+        rules.append(17)
+    elif mode_protect == "désactivé":
+        rules.append(18)
 
     return rules

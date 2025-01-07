@@ -175,6 +175,7 @@ def main():
         mode_pied_escalier=config["mode_pied_escalier"],
         mode_rejoue_6=config["mode_rejoue_6"],
         mode_rejoue_marche=config["mode_rejoue_marche"],
+        mode_protect=config["mode_protect"],
         mode_gym="stats_game",
     )
 

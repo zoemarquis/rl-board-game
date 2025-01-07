@@ -38,7 +38,8 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
         my_config_param['mode_ascension'],
         my_config_param['mode_pied_escalier'],
         my_config_param['mode_rejoue_6'],
-        my_config_param['mode_rejoue_marche']
+        my_config_param['mode_rejoue_marche'],
+        my_config_param['mode_protect'],
     )
     return {
         "num_players": num_players,
@@ -48,6 +49,7 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
         "mode_pied_escalier": my_config_param['mode_pied_escalier'],
         "mode_rejoue_6": my_config_param['mode_rejoue_6'],
         "mode_rejoue_marche": my_config_param['mode_rejoue_marche'],
+        "mode_protect": my_config_param['mode_protect'],
         "agents": [{"path": agent_paths[i], "name": os.path.basename(agent_paths[i])} for i in range(num_players)],
         "rules_ids": my_ids_rules,
         "nb_train_steps": nb_train_steps,
