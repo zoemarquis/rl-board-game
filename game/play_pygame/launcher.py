@@ -1,3 +1,5 @@
+from game.reinforcement_learning.config import get_config_nb
+
 def setup_game():
     print("Bienvenue dans le jeu ! Configurons votre partie.")
 
@@ -12,13 +14,33 @@ def setup_game():
         except ValueError:
             print("Veuillez entrer un nombre valide.")
 
-    # Type de joueurs (humain ou agent)
+    # Types d'agents disponibles
+    agent_types = [
+        "balanced",  # Structure de récompense équilibrée
+        "aggressive",  # Priorité : attaquer les autres
+        "rusher",  # Priorité : avancer rapidement
+        "defensive",  # Priorité : sécuriser ses pions
+        "spawner",  # Priorité : sortir les pions
+        "suboptimal"  # Choix intentionnellement sous-optimaux
+    ]
+
+    # Type de joueurs (humain ou agent) et type d'agent
     players = []
     for i in range(1, num_players + 1):
         while True:
             player_type = input(f"Le joueur {i} est-il humain ou agent ? (h pour humain / a pour agent) : ").lower()
             if player_type in ["h", "a"]:
-                players.append("humain" if player_type == "h" else "agent")
+                if player_type == "h":
+                    players.append("humain")
+                else:
+                    while True:
+                        print(f"Types d'agents disponibles : {', '.join(agent_types)}")
+                        agent_type = input(f"Choisissez un type pour l'agent {i} : ").lower()
+                        if agent_type in agent_types:
+                            players.append(f"agent ({agent_type})")
+                            break
+                        else:
+                            print("Veuillez entrer un type d'agent valide.")
                 break
             else:
                 print("Veuillez entrer 'h' pour humain ou 'a' pour agent.")
@@ -37,24 +59,24 @@ def setup_game():
     # Mode de victoire
     while True:
         victory_mode = input("Choisissez le mode de victoire (rapide ou complète) : ").lower()
-        if victory_mode in ["rapide", "complete"]:
+        if victory_mode in ["rapide", "complète"]:
             break
         else:
-            print("Veuillez entrer 'rapide' ou 'complete'.")
+            print("Veuillez entrer 'rapide' ou 'complète'.")
 
     # Règles pour l'escalier
     while True:
         stair_rule = input("Règles pour l'escalier (exactitude ou simplifiée) : ").lower()
-        if stair_rule in ["exactitude", "simplifiee"]:
+        if stair_rule in ["exactitude", "simplifiée"]:
             break
         else:
-            print("Veuillez entrer 'exactitude' ou 'simplifiee'.")
+            print("Veuillez entrer 'exactitude' ou 'simplifiée'.")
 
     # Ordre de progression dans l'escalier
     if stair_rule == "exactitude":
         while True:
             progression_order = input("Ordre de progression (simplifié ou strict) : ").lower()
-            if progression_order in ["simplifie", "strict"]:
+            if progression_order in ["simplifié", "strict"]:
                 break
             else:
                 print("Veuillez entrer 'simplifié' ou 'strict'.")
@@ -115,3 +137,45 @@ def setup_game():
 
 # Exemple d'appel
 config = setup_game()
+
+models = []
+for player in config["players"]:
+    url = "reinforcement_learning/agents/"
+    filename = ""
+    if player.startswith("agent"):
+        agent_type = player.split(" (")[1][:-1]
+        filename.append(agent_type + "_")
+
+        if config["num_players"] == 2:
+            url.append("2_joueurs/")
+            filename.append("2j_")
+        elif config["num_players"] == 3:
+            url.append("3_joueurs/")
+            filename.append("3j_")
+        elif config["num_players"] == 4:
+            url.append("4_joueurs/")
+            filename.append("4j_")
+        else: 
+            raise ValueError("Nombre de joueurs invalide.")
+        
+        nb_pawns = config["num_pawns"]
+        filename.append(f"{nb_pawns}c_")
+        
+        config_nb = get_config_nb(
+            config["victory_mode"],
+            config["stair_rule"],
+            config["progression_order"],
+            config["replay_climb"],
+            config["replay_six"],
+            config["protect_pawn"]
+        )
+
+        # + 600 000 steps si balanced
+        # 200 000 steps pour balanced 
+        # TODO CHARLOTTE AIDE 
+
+        models.append(url + filename)
+    else: 
+        models.append("humain")
+
+print(models)

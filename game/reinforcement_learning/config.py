@@ -36,6 +36,8 @@ config_param = {
     32: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
 }
 
+# TODO ici retirer les configs pas possibles 
+
 
 def print_all_configs():
     print("Configurations disponibles :\n")
@@ -44,6 +46,51 @@ def print_all_configs():
         for key, value in config.items():
             print(f"  - {key}: {value}")
         print()
+
+def get_config_nb(victory_mode, stair_rule, progression_order, replay_climb, replay_six, protect_pawn):
+    if victory_mode == "rapide":
+        mode_fin_partie = "un"
+    elif victory_mode == "complète":
+        mode_fin_partie = "tous"
+    else:
+        raise ValueError("Mode de victoire invalide")
+    
+    if stair_rule == "exactitude": # atteindre pied escalier 
+        mode_pied_escalier = "not_exact"
+    elif stair_rule == "simplifiée":
+        mode_pied_escalier = "exact"
+    else:
+        raise ValueError("Règles pour l'escalier invalide")
+    
+    if progression_order == "strict":
+        mode_ascension = "avec_contrainte"
+    elif progression_order == "simplifié":
+        mode_ascension = "sans_contrainte"
+    else:
+        raise ValueError("Ordre de progression invalide")
+    
+    if replay_climb == "oui":
+        mode_rejoue_marche = "oui"
+    elif replay_climb == "non":
+        mode_rejoue_marche = "non"
+    else:
+        raise ValueError("Rejouer pour chaque marche invalide")
+    
+    if replay_six == "oui":
+        mode_rejoue_6 = "oui"
+    elif replay_six == "non":
+        mode_rejoue_6 = "non"
+    else:
+        raise ValueError("Rejouer si 6 invalide")
+    
+    if protect_pawn == "oui":
+        mode_protect = "activé"
+    elif protect_pawn == "non":
+        mode_protect = "désactivé"
+    else:
+        raise ValueError("Protéger un pion invalide")
+    
+    return dict(mode_fin_partie=mode_fin_partie, mode_ascension=mode_ascension, mode_pied_escalier=mode_pied_escalier, mode_rejoue_6=mode_rejoue_6, mode_rejoue_marche=mode_rejoue_marche, mode_protect=mode_protect)
 
 
 # num_players_options = [2]

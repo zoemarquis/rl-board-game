@@ -9,7 +9,7 @@ https://www.logicieleducatif.fr/jeu/les-petits-chevaux
 variantes : 
 
 - 1 pour aller sur case 1 puis 2 case 2 etc OU si on fait 5 on va direct 5 (dans la safe zone)
-- quelqu’un ARRIVE sur case d’un de mes pions → mon pion retour maison mais si j’ai plusieurs pions alors c’est celui qui arrive qui retourne à HOME OU alors je ne le tue juste pas
+- quelqu’un ARRIVE sur case d’un de mes pions → mon pion retour écurie mais si j’ai plusieurs pions alors c’est celui qui arrive qui retourne à HOME OU alors je ne le tue juste pas
 - des cases “safe”
 - 
 
