@@ -68,13 +68,22 @@ class AgentType:
         ]
 
 
-def create_reward_table(agent_type, action_enum):
+def create_reward_table(agent_type, action_enum, str_descr):
     """Creates a reward table based on agent type and action enumeration."""
-    if isinstance(action_enum, type(Action_NO_EXACT)):
+    assert str_descr in ["not_exact", "exact", "exact_ascension"]
+    # if isinstance(action_enum, type(Action_NO_EXACT)):
+    #     base_table = {action: 0 for action in Action_NO_EXACT}
+    # elif isinstance(action_enum, type(Action_EXACT)):
+    #     base_table = {action: 0 for action in Action_EXACT}
+    # elif isinstance(action_enum, type(Action_EXACT_ASCENSION)):
+    #     base_table = {action: 0 for action in Action_EXACT_ASCENSION}
+    # else:
+    #     raise ValueError("Invalid action enumeration type")
+    if str_descr == "not_exact":
         base_table = {action: 0 for action in Action_NO_EXACT}
-    elif isinstance(action_enum, type(Action_EXACT)):
+    elif str_descr == "exact":
         base_table = {action: 0 for action in Action_EXACT}
-    elif isinstance(action_enum, type(Action_EXACT_ASCENSION)):
+    elif str_descr == "exact_ascension":
         base_table = {action: 0 for action in Action_EXACT_ASCENSION}
     else:
         raise ValueError("Invalid action enumeration type")
@@ -154,14 +163,15 @@ def get_reward_table(
             return REWARD_TABLE_MOVE_OUT_NO_EXACT
         elif mode_pied_escalier == "exact":
             return REWARD_TABLE_MOVE_OUT_EXACT
+        
     else:
         # Create custom reward table based on agent type
         if mode_ascension == "avec_contrainte":
-            return create_reward_table(agent_type, Action_EXACT_ASCENSION)
+            return create_reward_table(agent_type, Action_EXACT_ASCENSION, "exact_ascension")
         elif mode_pied_escalier == "not_exact":
-            return create_reward_table(agent_type, Action_NO_EXACT)
+            return create_reward_table(agent_type, Action_NO_EXACT, "not_exact")
         elif mode_pied_escalier == "exact":
-            return create_reward_table(agent_type, Action_EXACT)
+            return create_reward_table(agent_type, Action_EXACT, "exact")
     raise ValueError(
         f"mode_pied_escalier should be 'not_exact' or 'exact', not {mode_pied_escalier}"
     )
