@@ -45,6 +45,7 @@ def play_game(env, agents, agent_names, config):
             intentional_actions[action_type] += 1
         else:
             impossible_actions[action_type] += 1
+            # TODO CHARLOTTE ZOE REWARD ASSOCIEE BONNE ACTION action = ... # prendre une action valide 
 
         obs, reward, done, truncated, info = env.step(action)
         scores[env.current_player] += reward

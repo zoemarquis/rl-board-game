@@ -1,5 +1,6 @@
 # Ce fichier permet de gérer les règles
 
+# TODO : ici y a plus de règles que ça ?
 ALL_RULES = {
     1: "Deux joueurs",
     2: "Trois joueurs",

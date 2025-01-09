@@ -2,41 +2,43 @@
 
 # Toutes les combinaisons possibles de configurations de jeu
 config_param = {
-    1: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="désactivé"),
-    2: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
-    3: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="désactivé"),
-    4: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
-    5: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
-    6: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
-    7: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
-    8: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
-    9: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="désactivé"),
-    10: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
-    11: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="désactivé"),
-    12: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
-    13: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
-    14: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
-    15: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
-    16: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
-    17: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="activé"),
-    18: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
-    19: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="activé"),
-    20: dict(mode_fin_partie="tous", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
-    21: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
-    22: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
-    23: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
-    24: dict(mode_fin_partie="tous", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
-    25: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="activé"),
-    26: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
-    27: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="activé"),
-    28: dict(mode_fin_partie="un", mode_ascension="avec_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
-    29: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
-    30: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
-    31: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
-    32: dict(mode_fin_partie="un", mode_ascension="sans_contrainte", mode_pied_escalier="not_exact", mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
+    1: dict(mode_fin_partie="tous", mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="désactivé"),
+    2: dict(mode_fin_partie="tous", mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
+    3: dict(mode_fin_partie="tous", mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="désactivé"),
+    4: dict(mode_fin_partie="tous", mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
+    5: dict(mode_fin_partie="tous", mode_pied_escalier="exact",     mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
+    6: dict(mode_fin_partie="tous", mode_pied_escalier="exact",     mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
+    7: dict(mode_fin_partie="tous", mode_pied_escalier="not_exact", mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
+    8: dict(mode_fin_partie="tous", mode_pied_escalier="not_exact", mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
+    9: dict(mode_fin_partie="un",   mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="désactivé"),
+    10: dict(mode_fin_partie="un",  mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
+    11: dict(mode_fin_partie="un",  mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="désactivé"),
+    12: dict(mode_fin_partie="un",  mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
+    13: dict(mode_fin_partie="un",  mode_pied_escalier="exact",     mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
+    14: dict(mode_fin_partie="un",  mode_pied_escalier="exact",     mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
+    15: dict(mode_fin_partie="un",  mode_pied_escalier="not_exact", mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="désactivé"),
+    16: dict(mode_fin_partie="un",  mode_pied_escalier="not_exact", mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="désactivé"),
+    17: dict(mode_fin_partie="tous",mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="activé"),
+    18: dict(mode_fin_partie="tous",mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
+    19: dict(mode_fin_partie="tous",mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="activé"),
+    20: dict(mode_fin_partie="tous",mode_pied_escalier="exact",     mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
+    21: dict(mode_fin_partie="tous",mode_pied_escalier="exact",     mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
+    22: dict(mode_fin_partie="tous",mode_pied_escalier="exact",     mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
+    23: dict(mode_fin_partie="tous",mode_pied_escalier="not_exact", mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
+    24: dict(mode_fin_partie="tous",mode_pied_escalier="not_exact", mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
+    25: dict(mode_fin_partie="un", mode_pied_escalier="exact",      mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="oui", mode_protect="activé"),
+    26: dict(mode_fin_partie="un", mode_pied_escalier="exact",      mode_ascension="avec_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
+    27: dict(mode_fin_partie="un", mode_pied_escalier="exact",      mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="oui", mode_protect="activé"),
+    28: dict(mode_fin_partie="un", mode_pied_escalier="exact",      mode_ascension="avec_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
+    29: dict(mode_fin_partie="un", mode_pied_escalier="exact",      mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
+    30: dict(mode_fin_partie="un", mode_pied_escalier="exact",      mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
+    31: dict(mode_fin_partie="un", mode_pied_escalier="not_exact",  mode_ascension="sans_contrainte",  mode_rejoue_6="oui", mode_rejoue_marche="non", mode_protect="activé"),
+    32: dict(mode_fin_partie="un", mode_pied_escalier="not_exact",  mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
 }
 
 # TODO ici retirer les configs pas possibles 
+# ce qui est incompatible : escalier not exact et ascension avec contrainte
+# seul combinaison compatible avec rejoue marche oui : exact et avec contrainte
 
 
 def print_all_configs():
@@ -92,7 +94,7 @@ def get_config_nb(victory_mode, stair_rule, progression_order, replay_climb, rep
     
     return dict(mode_fin_partie=mode_fin_partie, mode_ascension=mode_ascension, mode_pied_escalier=mode_pied_escalier, mode_rejoue_6=mode_rejoue_6, mode_rejoue_marche=mode_rejoue_marche, mode_protect=mode_protect)
 
-
+# TODO SUPPRIME ?
 # num_players_options = [2]
 # nb_chevaux_options = [2]
 # mode_fin_partie_options = ["tous", "un"]

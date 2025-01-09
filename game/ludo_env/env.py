@@ -59,17 +59,16 @@ class LudoEnv(gym.Env):
             "désactivé",
         ], "Only 'activé' or 'désactivé' are allowed"
 
-        assert (
-            (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact")
-            or (
-                mode_ascension == "sans_contrainte"
-                and mode_pied_escalier == "not_exact"
-            )
+        # si escalier not exact alors ascension sans contrainte
+        # si escalier exact alors 2 modes d'ascension tolérées
+        # si exact + avec contrainte alors on peut rejouer marche ou pas 
+        assert ((
+                mode_pied_escalier == "not_exact" and mode_ascension == "sans_contrainte"
+            ) or (mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact")
             or (mode_ascension == "sans_contrainte" and mode_pied_escalier == "exact")
         ), "Only 'avec_contrainte' and 'exact' or 'sans_contrainte' and 'not_exact' or 'sans_contrainte' and 'exact' are allowed"
-
         if mode_rejoue_marche == "oui":
-            assert mode_ascension == "avec_contrainte"
+            assert mode_ascension == "avec_contrainte" and mode_pied_escalier == "exact", "Only 'avec_contrainte' and 'exact' are allowed"
 
         super(LudoEnv, self).__init__()
         self.metadata = {"render.modes": ["human", "rgb_array"], "render_fps": 10}
@@ -191,8 +190,9 @@ class LudoEnv(gym.Env):
             is_auto_action = True
 
             if self.mode_gym == "stats_game":
-                action = self.game.debug_action(encoded_valid_actions)
-                pawn_id, action_type = self.game.decode_action(action)
+                # TODO CHARLOTTE ZOE REWARD ASSOCIEE BONNE ACTION 
+                raise ValueError("Action impossible")
+            
 
             elif self.mode_gym == "jeu":
                 if self.mode_ascension == "avec_contrainte":
