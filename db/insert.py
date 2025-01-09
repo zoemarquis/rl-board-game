@@ -177,12 +177,14 @@ def store_final_game_data(
     rules: SetOfRulesToInsert,
     players: list[PlayerToInsert],
     actions_stats_by_player: dict,
+    nb_pawns: int,
 ):
     with Session() as session:
         set_of_rules_id = rules.get_or_create_set_of_rules(session)
         game = Game(
             set_of_rules_id=set_of_rules_id,
-            nb_participants=len(players)
+            nb_participants=len(players),
+            nb_pawns=nb_pawns,
         )
         session.add(game)
         session.commit()

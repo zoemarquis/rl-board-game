@@ -74,7 +74,7 @@ def play_game(env, agents, agent_names, config):
     ]
 
     actions_stats_by_player = env.export_action_stats()
-    store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player)
+    store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player, nb_pawns=config["nb_chevaux"])
 
 # Main pour lancer une partie en choisissant les paramètres voulu depuis le terminal
 def main():

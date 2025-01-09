@@ -32,8 +32,6 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
     ]
 
     my_ids_rules = rules.determine_rules(
-        num_players,
-        nb_chevaux,
         my_config_param['mode_fin_partie'],
         my_config_param['mode_ascension'],
         my_config_param['mode_pied_escalier'],

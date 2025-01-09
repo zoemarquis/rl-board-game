@@ -82,6 +82,7 @@ class Game(Base):
     )
     played_at = Column(DateTime(timezone=True), server_default=func.now())
     nb_participants = Column(Integer, nullable=False)
+    nb_pawns = Column(Integer, nullable=False)
 
 
 class Participant(Base):
