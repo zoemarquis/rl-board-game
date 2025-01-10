@@ -51,7 +51,8 @@ def generate_game_config(num_players, nb_chevaux, my_config_param, nb_train_step
         "agents": [{"path": agent_paths[i], "name": os.path.basename(agent_paths[i])} for i in range(num_players)],
         "rules_ids": my_ids_rules,
         "nb_train_steps": nb_train_steps,
-        "strategy": agent_types
+        "strategy": agent_types,
+        "num_conf": num_conf
     }
 
 
