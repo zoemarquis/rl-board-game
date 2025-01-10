@@ -53,6 +53,7 @@ class SetOfRules(Base):
     set_of_rules_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
+    num_config = Column(Integer, nullable=False)
 
 
 class IsRuleOf(Base):  # Many to many

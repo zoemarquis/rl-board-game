@@ -74,13 +74,14 @@ class PlayerToInsert:
         return self.player_id
 
 class SetOfRulesToInsert:
-    def __init__(self, rules_ids: list[int], set_of_rules_id: int = None):
+    def __init__(self, rules_ids: list[int], set_of_rules_id: int = None, num_config: int = None):
         if len(rules_ids) == 0:
             assert (
                 set_of_rules_id is not None
             ), "set_of_rules_id must be provided if rules_ids is empty"
         self.set_of_rules_id = set_of_rules_id
         self.rules_ids = rules_ids
+        self.num_config = num_config
 
     def get_or_create_set_of_rules(self, session) -> int:
         if self.set_of_rules_id is not None:
@@ -119,6 +120,7 @@ class SetOfRulesToInsert:
         new_set_of_rules = SetOfRules(
             name=",".join(map(str, self.rules_ids)),
             description=rules.generate_rule_description(self.rules_ids, rules.ALL_RULES),
+            num_config=self.num_config,
         )
         session.add(new_set_of_rules)
         session.commit()
@@ -178,9 +180,12 @@ def store_final_game_data(
     players: list[PlayerToInsert],
     actions_stats_by_player: dict,
     nb_pawns: int,
+    num_config: int,
 ):
     with Session() as session:
+        rules.num_config = num_config
         set_of_rules_id = rules.get_or_create_set_of_rules(session)
+        
         game = Game(
             set_of_rules_id=set_of_rules_id,
             nb_participants=len(players),

@@ -45,7 +45,6 @@ def play_game(env, agents, agent_names, config):
             intentional_actions[action_type] += 1
         else:
             impossible_actions[action_type] += 1
-            # TODO CHARLOTTE ZOE REWARD ASSOCIEE BONNE ACTION action = ... # prendre une action valide 
 
         obs, reward, done, truncated, info = env.step(action)
         scores[env.current_player] += reward
@@ -74,7 +73,7 @@ def play_game(env, agents, agent_names, config):
     ]
 
     actions_stats_by_player = env.export_action_stats()
-    store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player, nb_pawns=config["nb_chevaux"])
+    store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player, nb_pawns=config["nb_chevaux"], num_config=config["num_conf"])
 
 # Main pour lancer une partie en choisissant les paramètres voulu depuis le terminal
 def main():
@@ -127,7 +126,7 @@ def main():
         return
 
     # Affichage des agents disponibles
-    available_agents = list(available_agents)
+    available_agents = sorted(list(available_agents))
     print("\nTypes d'agents disponibles :")
     for idx, agent in enumerate(available_agents, start=1):
         print(f"{idx}. {agent}")
@@ -187,6 +186,7 @@ def main():
     for i in range(1, num_games + 1):
         print(f"\n=== Partie {i}/{num_games} ===")
         play_game(env, agents, agent_names, config)
+
 
 if __name__ == "__main__":
     main()

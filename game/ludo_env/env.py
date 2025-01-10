@@ -190,9 +190,8 @@ class LudoEnv(gym.Env):
             is_auto_action = True
 
             if self.mode_gym == "stats_game":
-                # TODO CHARLOTTE ZOE REWARD ASSOCIEE BONNE ACTION 
-                raise ValueError("Action impossible")
-            
+                action = self.game.debug_action(encoded_valid_actions)
+                pawn_id, action_type = self.game.decode_action(action)          
 
             elif self.mode_gym == "jeu":
                 if self.mode_ascension == "avec_contrainte":
@@ -215,15 +214,19 @@ class LudoEnv(gym.Env):
                 self.change_player(action_type)
                 return self._get_observation(), -10, False, False, {}
 
-        # On ajoute seulement les actions non automatiques aux statistiques
-        if not is_auto_action:
-            if action_type in self.actions_par_type[self.current_player]:
-                self.actions_par_type[self.current_player][action_type] += 1
-
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
         self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
-        reward = self.game.get_reward(action_type, self.agent_type)
+        
+        # On ajoute seulement les actions non automatiques aux statistiques
+        # Et on calcule la récompense correspondante à l'action initiale
+        if not is_auto_action:
+            if action_type in self.actions_par_type[self.current_player]:
+                self.actions_par_type[self.current_player][action_type] += 1
+            reward = self.game.get_reward(action_type, self.agent_type)
+        elif is_auto_action and self.mode_gym == "stats_game" :
+            reward = -10
+
         done = self.game.is_game_over()
 
         if not done:
