@@ -1,4 +1,4 @@
-from game.reinforcement_learning.config import get_config_nb
+from reinforcement_learning.config import get_config_nb
 
 def setup_game():
     print("Bienvenue dans le jeu ! Configurons votre partie.")
@@ -26,18 +26,21 @@ def setup_game():
 
     # Type de joueurs (humain ou agent) et type d'agent
     players = []
+    players_types= []
     for i in range(1, num_players + 1):
         while True:
             player_type = input(f"Le joueur {i} est-il humain ou agent ? (h pour humain / a pour agent) : ").lower()
             if player_type in ["h", "a"]:
                 if player_type == "h":
                     players.append("humain")
+                    players_types.append("humain")
                 else:
                     while True:
                         print(f"Types d'agents disponibles : {', '.join(agent_types)}")
                         agent_type = input(f"Choisissez un type pour l'agent {i} : ").lower()
                         if agent_type in agent_types:
                             players.append(f"agent ({agent_type})")
+                            players_types.append("agent")
                             break
                         else:
                             print("Veuillez entrer un type d'agent valide.")
@@ -90,7 +93,7 @@ def setup_game():
                 else:
                     print("Veuillez entrer 'oui' ou 'non'.")
     else:
-        progression_order = "simplifie"
+        progression_order = "simplifié"
         replay_climb = "non"
 
     # Rejouer si 6
@@ -126,6 +129,7 @@ def setup_game():
     return {
         "num_players": num_players,
         "players": players,
+        "players_types": players_types,
         "num_pawns": num_pawns,
         "victory_mode": victory_mode,
         "stair_rule": stair_rule,
@@ -135,47 +139,66 @@ def setup_game():
         "protect_pawn": protect_pawn,
     }
 
-# Exemple d'appel
-config = setup_game()
 
-models = []
-for player in config["players"]:
-    url = "reinforcement_learning/agents/"
-    filename = ""
-    if player.startswith("agent"):
-        agent_type = player.split(" (")[1][:-1]
-        filename.append(agent_type + "_")
+def get_models(config):
+    models = []
+    for player in config["players"]:
+        # url = "reinforcement_learning/agents/"
+        url = "reinforcement_learning/agents/old/" # TODO decide how it works
+        filename = ""
+        if player.startswith("agent"):
+            agent_type = player.split(" (")[1][:-1]
+            filename += agent_type + "_"
 
-        if config["num_players"] == 2:
-            url.append("2_joueurs/")
-            filename.append("2j_")
-        elif config["num_players"] == 3:
-            url.append("3_joueurs/")
-            filename.append("3j_")
-        elif config["num_players"] == 4:
-            url.append("4_joueurs/")
-            filename.append("4j_")
+            if config["num_players"] == 2:
+                url += "2_joueurs/"
+                filename += "2j_"
+            elif config["num_players"] == 3:
+                url += "3_joueurs/"
+                filename += "3j_"
+            elif config["num_players"] == 4:
+                url += "4_joueurs/"
+                filename.append("4j_")
+            else: 
+                raise ValueError("Nombre de joueurs invalide.")
+            
+            nb_pawns = config["num_pawns"]
+            # url += f"{nb_pawns}_pions/" # TODO decide how it works
+            url += f"{nb_pawns}_pions/conf_16/"
+            filename += f"{nb_pawns}c_conf_16_"
+            
+            config_nb = get_config_nb(
+                config["victory_mode"],
+                config["stair_rule"],
+                config["progression_order"],
+                config["replay_climb"],
+                config["replay_six"],
+                config["protect_pawn"]
+            )
+
+            # + 600 000 steps si balanced
+            # 200 000 steps pour balanced 
+            # TODO CHARLOTTE AIDE
+            filename += "200000_steps.zip"
+
+
+            models.append(url + filename)
         else: 
-            raise ValueError("Nombre de joueurs invalide.")
-        
-        nb_pawns = config["num_pawns"]
-        filename.append(f"{nb_pawns}c_")
-        
-        config_nb = get_config_nb(
-            config["victory_mode"],
-            config["stair_rule"],
-            config["progression_order"],
-            config["replay_climb"],
-            config["replay_six"],
-            config["protect_pawn"]
-        )
+            models.append("humain")
+            # TODO config_nb does not actually return config number but the config itself ???
+            config_nb = get_config_nb(
+                config["victory_mode"],
+                config["stair_rule"],
+                config["progression_order"],
+                config["replay_climb"],
+                config["replay_six"],
+                config["protect_pawn"]
+            )
 
-        # + 600 000 steps si balanced
-        # 200 000 steps pour balanced 
-        # TODO CHARLOTTE AIDE 
+    print(models)
 
-        models.append(url + filename)
-    else: 
-        models.append("humain")
+    return config_nb, models
 
-print(models)
+# Exemple d'appel
+# config = setup_game()
+# models = get_models(config)

@@ -154,18 +154,23 @@ class LudoEnv(gym.Env):
         return self._get_observation(), {}
 
     def render(
-        self, game, mode="human", players_type=["human", "human", "human", "human"]
+        self, game, mode="human", players_type=["human", "human"],game_over=False
     ):
         if self.with_render:
+            actions = []
+            for action in self.game.encode_valid_actions(
+                self.game.get_valid_actions(self.current_player, self.dice_roll)):
+                pawn_id, action_type = self.game.decode_action(action)
+                actions.append((pawn_id, action_type))
+                
             self.renderer.render(
                 self.game,
                 self.current_player,
                 self.dice_roll,
-                self.game.encode_valid_actions(
-                    self.game.get_valid_actions(self.current_player, self.dice_roll)
-                ),
+                actions,
                 self.game.get_pawns_info(self.current_player),
                 players_type,
+                game_over=self.game.is_game_over()
             )
 
     def step(self, action):

@@ -1,6 +1,6 @@
 # renderer.py
 import pygame
-from .game_logic import Action_NO_EXACT, Action_EXACT
+from .action import Action_NO_EXACT, Action_EXACT, Action_EXACT_ASCENSION
 
 # Configuration de base de pygame
 pygame.init()
@@ -38,9 +38,14 @@ class Renderer:
                 image, (3 * SQUARE_SIZE, 3 * SQUARE_SIZE)
             )
             self.dice_images[i] = resized_image
+        
+        gameover_file = pygame.image.load("images/game_over.png")
+        self.gameover_image = pygame.transform.scale(
+            gameover_file, (3 * SQUARE_SIZE, 3 * SQUARE_SIZE)
+        )
 
     def render(
-        self, game, current_player, dice_value, valid_actions, infos, players_type
+        self, game, current_player, dice_value, valid_actions, infos, players_type, game_over=False
     ):
         if game.num_players == 2:
             self.colors = PLAYER_2_COLORS
@@ -62,12 +67,15 @@ class Renderer:
         self.draw_ecurie_player_2(game)
         self.draw_ecurie_player_3(game)
 
-        self.show_current_player(game, current_player)
-        if players_type[current_player] == "human":
-            self.show_valid_actions(
-                valid_actions, current_player, infos, game.num_players
-            )
-        self.show_dice_value(dice_value)
+        if game_over:
+            self.show_winner_message(game, current_player)
+        else:
+            self.show_current_player(game, current_player)
+            if players_type[current_player] == "humain":
+                self.show_valid_actions(
+                    valid_actions, current_player, infos, game.num_players
+                )
+            self.show_dice_value(dice_value)
 
         pygame.display.flip()  # Mettre à jour l'affichage
 
@@ -514,28 +522,67 @@ class Renderer:
         # Blit the image onto the screen
         self.window.blit(dice_image, (18 * SQUARE_SIZE, 11 * SQUARE_SIZE))
 
-    def get_action_text_simple(self, action):
-        match action:
-            case 0:
-                return "Passer son tour"
-            case 1:
-                return "Sortir un pion"
-            case 2:
-                return "Sortir un pion et tuer pion adverse"
+    def show_winner_message(self, game, current_player):
+        if game.num_players == 2:
+            colors = PLAYER_2_COLORS
+        else:
+            colors = PLAYER_4_COLORS
 
-    def get_action_text_complex(self, action, pawn_id):
-        action_num = action - pawn_id * 5
-        match action_num:
-            case 3:
-                return "avancer"
-            case 4:
+        font = pygame.font.SysFont(None, 40)
+        text = font.render("Joueur ", True, BLACK)
+        self.window.blit(text, (16 * SQUARE_SIZE, 2 * SQUARE_SIZE))
+
+        # Render the current player's number in their corresponding color
+        player_text = font.render(str(current_player + 1), True, colors[current_player])
+        self.window.blit(player_text, (18 * SQUARE_SIZE, 2 * SQUARE_SIZE))
+
+        text = font.render(" a gagné !", True, BLACK)
+        self.window.blit(text, (16 * SQUARE_SIZE, 3 * SQUARE_SIZE))
+
+        self.window.blit(self.gameover_image, (18 * SQUARE_SIZE, 5 * SQUARE_SIZE))
+
+            
+    def get_action_text(self, action):
+        action_value = action.value
+
+        if action_value in [0,1,2,3,4]:
+            match action_value:
+                case 0:
+                    return "Passer son tour"
+                case 1:
+                    return "Sortir un pion"
+                case 2:
+                    return "Sortir un pion et tuer pion adverse"
+                case 3:
+                    return "avancer"
+                case 4:
+                    return "rester bloqué derrière un pion"
+        else:
+            if action == Action_NO_EXACT.ENTER_SAFEZONE:
                 return "entrer dans l'escalier"
-            case 5:
+            elif action == Action_NO_EXACT.MOVE_IN_SAFE_ZONE or action == Action_EXACT.MOVE_IN_SAFE_ZONE:
                 return "avancer dans l'escalier"
-            case 6:
+            elif action == Action_NO_EXACT.REACH_GOAL or action == Action_EXACT.REACH_GOAL or Action_EXACT_ASCENSION.REACH_GOAL:
                 return "atteindre l'objectif"
-            case 7:
+            elif action == Action_NO_EXACT.KILL or action == Action_EXACT.KILL or action == Action_EXACT_ASCENSION.KILL:
                 return "tuer pion adverse"
+            elif action == Action_EXACT.REACH_PIED_ESCALIER or action == Action_EXACT_ASCENSION.REACH_PIED_ESCALIER:
+                return "atteindre le pied de l'escalier"
+            elif action == Action_EXACT.AVANCE_RECULE_PIED_ESCALIER or action == Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER:
+                return "avancer ou reculer au pied de l'escalier"
+            elif action == Action_EXACT_ASCENSION.MARCHE_1:
+                return "monter la marche 1"
+            elif action == Action_EXACT_ASCENSION.MARCHE_2:
+                return "monter la marche 2"
+            elif action == Action_EXACT_ASCENSION.MARCHE_3:
+                return "monter la marche 3"
+            elif action == Action_EXACT_ASCENSION.MARCHE_4:
+                return "monter la marche 4"
+            elif action == Action_EXACT_ASCENSION.MARCHE_5:
+                return "monter la marche 5"
+            elif action == Action_EXACT_ASCENSION.MARCHE_6:
+                return "monter la marche 6"
+        
 
     def get_absolute_position(self, position, player_id, num_players):
         if player_id == 0:
@@ -576,60 +623,23 @@ class Renderer:
         y_current = 2
         button_mapping = {}
 
-        for action in valid_actions:
-            if action in [0, 1, 2]:
-                action_text = self.get_action_text_simple(action)
+        for pawn_id, action in valid_actions:
+            if action.value in [0, 1, 2]:
+                action_text = self.get_action_text(action)
                 button_rect = self.render_action_button(action_text, y_current)
-                button_mapping[button_rect] = action
+                button_mapping[button_rect] = action.value
                 y_current += 1.5
-            elif action in [3, 4, 5, 6, 7]:
-                action_text = self.get_action_text_complex(action, 0)
+            else:
+                action_text = self.get_action_text(action)
                 position = self.get_absolute_position(
-                    infos[0]["position"], player_id, num_players
+                    infos[pawn_id]["position"], 
+                    player_id, 
+                    num_players
                 )
                 text = f"Pion pos {position} : {action_text}"
                 button_rect = self.render_action_button(text, y_current)
-                button_mapping[button_rect] = action
+                button_mapping[button_rect] = action.value
                 y_current += 1.5
-            elif action in [8, 9, 10, 11, 12]:
-                action_text = self.get_action_text_complex(action, 1)
-                position = self.get_absolute_position(
-                    infos[1]["position"], player_id, num_players
-                )
-                text = f"Pion pos {position} : {action_text}"
-                button_rect = self.render_action_button(text, y_current)
-                button_mapping[button_rect] = action
-                y_current += 1.5
-            elif action in [13, 14, 15, 16, 17]:
-                action_text = self.get_action_text_complex(action, 2)
-                position = self.get_absolute_position(
-                    infos[2]["position"], player_id, num_players
-                )
-                text = f"Pion pos {position} : {action_text}"
-                button_rect = self.render_action_button(text, y_current)
-                button_mapping[button_rect] = action
-                y_current += 1.5
-            elif action in [18, 19, 20, 21, 22]:
-                action_text = self.get_action_text_complex(action, 3)
-                position = self.get_absolute_position(
-                    infos[3]["position"], player_id, num_players
-                )
-                text = f"Pion pos {position} : {action_text}"
-                button_rect = self.render_action_button(text, y_current)
-                button_mapping[button_rect] = action
-                y_current += 1.5
-            # elif action in [28, 29, 30, 31, 32]:
-            #     action_text = self.get_action_text_complex(action, 5)
-            #     position = self.get_absolute_position(infos[5]["position"], player_id, num_players)
-            #     text = f"Pion pos {position} : {action_text}"
-            #     self.render_action_button(text, y_current)
-            #     y_current += 1
-            # elif action in [23, 24, 25, 26, 27]:
-            #     action_text = self.get_action_text_complex(action, 4)
-            #     position = self.get_absolute_position(infos[4]["position"], player_id, num_players)
-            #     text = f"Pion pos {position} : {action_text}"
-            #     self.render_action_button(text, y_current)
-            #     y_current += 1
 
         self.button_mapping = button_mapping
 

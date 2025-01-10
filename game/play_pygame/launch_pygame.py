@@ -1,18 +1,14 @@
 from stable_baselines3 import PPO
 
-model = PPO.load(
-    "reinforcement_learning/agent_maskedppo_2joueurs_2chevaux_tous"
-)  # notre modele entrainé
-
-# Ajouter la racine du projet au chemin Python
 import sys
-import pygame
-import time
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
+from play_pygame.launcher import setup_game, get_models
+import pygame
+import time
 
 
 def handle_mouse_click(event, button_mapping):
@@ -28,28 +24,18 @@ def handle_mouse_click(event, button_mapping):
     return None  # No button was clicked
 
 
-env = LudoEnv(
-    with_render=True,
-    num_players=2,
-    nb_chevaux=2,
-    mode_fin_partie="tous",
-    mode_gym="jeu",
-)
-
-players_type = ["human", "ai"]
-
-
-def play_game(env):
+def play_game(env, players, players_types):
     obs, info = env.reset()
     done = False
     turn = 0
 
-    env.render(env.game, players_type=players_type)
+    env.render(env.game, players_type=players_types)
 
     while not done:
-        button_mapping = env.renderer.button_mapping
 
-        if env.current_player == 0:
+        if players_types[env.current_player] == "humain":
+            button_mapping = env.renderer.button_mapping
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
@@ -58,37 +44,59 @@ def play_game(env):
                 # Handle mouse click
                 selected_action = handle_mouse_click(event, button_mapping)
                 if selected_action is not None:
-                    # Perform the action (e.g., update the game state)
                     print("-" * 50)
                     print("TOUR DE L'HUMAIN")
-
+                    # Perform the action
                     action = selected_action
                     obs, reward, done, truncated, info = env.step(action)
                     turn += 1
-                    env.render(env.game, players_type=players_type)
+                    env.render(env.game, players_type=players_types)
                 else:
                     # Print message that need to click on a button
                     env.renderer.show_click_button_message()
-
-        elif env.current_player == 1:
+        else:
             print()
             print("-" * 50)
             print("TOUR DE L'AGENT")
             # For humain to be able to see game progress
-            time.sleep(1)
+            time.sleep(0.25)
 
             # L'agent choisit une action via son modèle
-            action_agent = model.predict(obs, deterministic=True)[0]
+            action_agent = players[env.current_player].predict(obs, deterministic=True)[0]
             pawn_id, action_type = env.game.decode_action(action_agent)
 
             print("Action de l'agent : ", action_agent, " action_agent ", action_type)
             obs, reward, done, truncated, info = env.step(action_agent)
 
-            env.render(env.game, players_type=players_type)
+            env.render(env.game, players_type=players_types)
+        if done:
+            time.sleep(2)
 
-        else:
-            raise ValueError("Il n'y a que 2 joueurs dans le jeu")
 
+config = setup_game()
+config_nb, models = get_models(config)
 
-play_game(env)
+env = LudoEnv(
+    with_render=True,
+    num_players=config["num_players"],
+    nb_chevaux=config["num_pawns"],
+    mode_fin_partie=config_nb["mode_fin_partie"],
+    mode_ascension=config_nb["mode_ascension"],
+    mode_pied_escalier=config_nb["mode_pied_escalier"],
+    mode_rejoue_6=config_nb["mode_rejoue_6"],
+    mode_rejoue_marche=config_nb["mode_rejoue_marche"],
+    mode_protect=config_nb["mode_protect"],
+    mode_gym="jeu",
+)
+players_types = config["players_types"]
+
+players = []
+for model in models:
+    if model == "humain":
+        players.append(model)
+    else:
+        agent = PPO.load(model)
+        players.append(agent)
+
+play_game(env, players, players_types)
 pygame.quit()
