@@ -187,6 +187,76 @@ def main():
         print(f"\n=== Partie {i}/{num_games} ===")
         play_game(env, agents, agent_names, config)
 
+# Fonction permettant de lancer des parties automatiquement entre mêmes agents
+def main_auto(num_conf, num_players, nb_chevaux, num_games):
+    # Vérifie si des agents sont entraînés
+    agent_dir = os.path.join(racine_dir, f"reinforcement_learning/agents/{num_players}_joueurs/{nb_chevaux}_pions/conf_{num_conf}")
+    if not os.path.exists(agent_dir):
+        print(f"Erreur : Le répertoire {agent_dir} n'existe pas. Aucun agent n'est disponible pour ces paramètres.")
+        return
+    
+    # Chargement de tous les agents dispo
+    available_agents = sorted([filename for filename in os.listdir(agent_dir) if filename.endswith(".zip")])
+    if not available_agents:
+        print(f"Aucun agent correspondant n'est disponible dans le répertoire {agent_dir}.")
+        return
+
+    #print("\nAgents disponibles :")
+    #for idx, agent in enumerate(available_agents, start=1):
+    #    print(f"{idx}. {agent}")
+    
+    # Chargement des paths
+    agent_paths = [os.path.join(agent_dir, agent) for agent in available_agents]
+    
+    try:
+        agents = [PPO.load(path) for path in agent_paths]
+        agent_names = [os.path.basename(path) for path in agent_paths]
+    except Exception as e:
+        print(f"Erreur lors du chargement des agents : {e}")
+        return
+
+    # Lancement des parties
+    for agent, agent_name in zip(agents, agent_names):
+        print(f"\n=== Partie pour l'agent : {agent_name} ===")
+
+        # Répéter l'agent pour chaque joueur
+        agent_team = [agent] * num_players
+        agent_names_team = [agent_name] * num_players
+
+        # Configuration de l'environnement
+        config_param_for_env = config_param[num_conf]
+        
+        nb_train_steps = [int(agent.split("_")[-2].replace("steps", "")) for agent in available_agents]
+        agent_index = available_agents.index(agent_name)
+        steps = nb_train_steps[agent_index]
+
+        print(nb_train_steps)
+        config = generate_game_config(
+            num_players=num_players,
+            nb_chevaux=nb_chevaux,
+            my_config_param=config_param_for_env,
+            nb_train_steps=[steps] * num_players,
+            num_conf=num_conf,
+            agent_types=[agent_name.split("_")[0]] * num_players
+        )
+
+        env = LudoEnv(
+            num_players=config["num_players"],
+            nb_chevaux=config["nb_chevaux"],
+            mode_fin_partie=config["mode_fin_partie"],
+            mode_ascension=config["mode_ascension"],
+            mode_pied_escalier=config["mode_pied_escalier"],
+            mode_rejoue_6=config["mode_rejoue_6"],
+            mode_rejoue_marche=config["mode_rejoue_marche"],
+            mode_protect=config["mode_protect"],
+            mode_gym="stats_game",
+        )
+
+        for i in range(1, num_games + 1):
+            print(f"\n=== Partie {i}/{num_games} avec l'agent {agent_name} ===")
+            play_game(env, agent_team, agent_names_team, config)
+
+
 
 if __name__ == "__main__":
-    main()
+    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
