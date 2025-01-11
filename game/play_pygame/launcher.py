@@ -171,6 +171,7 @@ def get_models(set_up_config, trad_config):
             num_config = get_config_nb(
                 trad_config
             )
+            url += f"conf_{num_config}/"
             filename += f"conf_{num_config}_"
 
             filename += "200000_steps"
@@ -184,7 +185,3 @@ def get_models(set_up_config, trad_config):
     # TODO raise error si le file n'existe pas, ça veut dire config pas valide (on a pas entrainé tous les agents)
 
     return models
-
-# Exemple d'appel
-# config = setup_game()
-# models = get_models(config)
