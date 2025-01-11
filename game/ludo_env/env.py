@@ -170,7 +170,12 @@ class LudoEnv(gym.Env):
             for action in self.game.encode_valid_actions(
                 self.game.get_valid_actions(self.current_player, self.dice_roll)):
                 pawn_id, action_type = self.game.decode_action(action)
-                actions.append((pawn_id, action_type))
+                actions.append(
+                    {
+                        "pawn_id": pawn_id,
+                        "action_type": action_type,
+                        "encoded_action": action,
+                    })
                 
             self.renderer.render(
                 game = self.game,
@@ -182,7 +187,10 @@ class LudoEnv(gym.Env):
                 game_over=self.game.is_game_over()
             )
 
+
     def step(self, action):
+        print("action : ", action)
+
         obs = self._get_observation()
         if self.mode_gym == "jeu":
             print()
@@ -194,11 +202,14 @@ class LudoEnv(gym.Env):
             print("my_goal : ", obs["my_goal"])
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
+        print("pawn_id : ", pawn_id)
+        print("action_type : ", action_type)
 
         is_auto_action = False
 
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
+
         if action not in encoded_valid_actions:
             self.nb_actions_interdites[self.current_player] += 1
             is_auto_action = True
@@ -208,22 +219,12 @@ class LudoEnv(gym.Env):
                 pawn_id, action_type = self.game.decode_action(action)          
 
             elif self.mode_gym == "jeu":
-                if self.mode_ascension == "avec_contrainte":
-                    print(
-                        f"ACTION INTERDITE : {Action_EXACT_ASCENSION(action%len(Action_EXACT_ASCENSION))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
-                    )
-                elif self.mode_pied_escalier == "exact":
-
-                    print(
-                        f"ACTION INTERDITE : {Action_EXACT(action%len(Action_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
-                    )
-                elif self.mode_pied_escalier == "not_exact":
-                    print(
-                        f"ACTION INTERDITE : {Action_NO_EXACT(action%len(Action_NO_EXACT))} not in valid_actions {valid_actions} : {encoded_valid_actions}"
-                    )
+                print("L'agent a joué une action interdite")
+                print(f"encoded action : {action}, pawn_id : {pawn_id}, action_type : {action_type}")
+                print()
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
-                print("debug : ", action, pawn_id, action_type)
+                
             else:
                 self.change_player(action_type)
                 return self._get_observation(), -10, False, False, {}
@@ -231,15 +232,16 @@ class LudoEnv(gym.Env):
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
         self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
-        
+
         # On ajoute seulement les actions non automatiques aux statistiques
         # Et on calcule la récompense correspondante à l'action initiale
-        if not is_auto_action:
+        if not is_auto_action or self.mode_gym == "jeu":
             if action_type in self.actions_par_type[self.current_player]:
                 self.actions_par_type[self.current_player][action_type] += 1
             reward = self.game.get_reward(action_type, self.agent_type)
         elif is_auto_action and self.mode_gym == "stats_game" :
             reward = -10
+        # TODO CHARLOTTE T'AS OUBLI2 DES CAS 
 
         done = self.game.is_game_over()
 

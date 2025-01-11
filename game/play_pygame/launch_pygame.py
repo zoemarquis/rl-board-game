@@ -59,7 +59,7 @@ def play_game(env, players, players_types):
             print("-" * 50)
             print("TOUR DE L'AGENT")
             # For humain to be able to see game progress
-            time.sleep(0.25)
+            time.sleep(0.5)
 
             # L'agent choisit une action via son modèle
             action_agent = players[env.current_player].predict(obs, deterministic=True)[0]

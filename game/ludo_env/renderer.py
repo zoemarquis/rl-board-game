@@ -661,14 +661,17 @@ class Renderer:
         y_current = 2
         button_mapping = {}
 
-        for pawn_id, action in valid_actions:
-            if action.value in [0, 1, 2]:
-                action_text = self.get_action_text(action)
+        for i in valid_actions:
+            pawn_id = i['pawn_id']
+            action_type = i['action_type']
+            encoded_action = i['encoded_action']
+            if action_type.value in [0, 1, 2]:
+                action_text = self.get_action_text(action_type)
                 button_rect = self.render_action_button(action_text, y_current)
-                button_mapping[button_rect] = action.value
+                button_mapping[button_rect] = encoded_action
                 y_current += 1.5
             else:
-                action_text = self.get_action_text(action)
+                action_text = self.get_action_text(action_type)
                 position = self.get_absolute_position(
                     infos[pawn_id]["position"], 
                     player_id, 
@@ -676,7 +679,7 @@ class Renderer:
                 )
                 text = f"Pion pos {position} : {action_text}"
                 button_rect = self.render_action_button(text, y_current)
-                button_mapping[button_rect] = action.value
+                button_mapping[button_rect] = encoded_action
                 y_current += 1.5
 
         self.button_mapping = button_mapping
