@@ -49,7 +49,7 @@ def print_all_configs():
             print(f"  - {key}: {value}")
         print()
 
-def get_config_nb(victory_mode, stair_rule, progression_order, replay_climb, replay_six, protect_pawn):
+def get_trad_config(victory_mode, stair_rule, progression_order, replay_climb, replay_six, protect_pawn):
     if victory_mode == "rapide":
         mode_fin_partie = "un"
     elif victory_mode == "complète":
@@ -92,10 +92,27 @@ def get_config_nb(victory_mode, stair_rule, progression_order, replay_climb, rep
     else:
         raise ValueError("Protéger un pion invalide")
     
+    return {
+        "mode_fin_partie": mode_fin_partie,
+        "mode_pied_escalier": mode_pied_escalier,
+        "mode_ascension": mode_ascension,
+        "mode_rejoue_6": mode_rejoue_6,
+        "mode_rejoue_marche": mode_rejoue_marche,
+        "mode_protect": mode_protect
+    }
+    
+
+
+def get_config_nb(trad_config):
     # return config_param number correspondant à dict
     # si None raise erros
-    for config_id, config in config_param.items():
-        if config == dict(mode_fin_partie=mode_fin_partie, mode_ascension=mode_ascension, mode_pied_escalier=mode_pied_escalier, mode_rejoue_6=mode_rejoue_6, mode_rejoue_marche=mode_rejoue_marche, mode_protect=mode_protect):
+    for config_id, i in config_param.items():
+        if i == dict(mode_fin_partie=trad_config["mode_fin_partie"], 
+                          mode_ascension=trad_config["mode_ascension"], 
+                          mode_pied_escalier=trad_config["mode_pied_escalier"], 
+                          mode_rejoue_6=trad_config["mode_rejoue_6"], 
+                          mode_rejoue_marche=trad_config["mode_rejoue_marche"], 
+                          mode_protect=trad_config["mode_protect"]):
             return config_id
     raise ValueError("Configuration invalide")
         

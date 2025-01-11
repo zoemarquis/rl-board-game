@@ -86,9 +86,6 @@ class LudoEnv(gym.Env):
         self.mode_rejoue_marche = mode_rejoue_marche
         self.mode_protect = mode_protect
 
-        if self.with_render:
-            self.renderer = Renderer(espace_action=self.espace_action)
-
         if self.mode_ascension == "avec_contrainte":
             self.espace_action = "exact_ascension"
         elif self.mode_pied_escalier == "not_exact":
@@ -97,6 +94,9 @@ class LudoEnv(gym.Env):
             self.espace_action = "exact"
         else:
             raise ValueError("Erreur de paramètrage")
+        
+        if self.with_render:
+            self.renderer = Renderer(espace_action=self.espace_action)
 
         if mode_ascension == "sans_contrainte":
             if mode_pied_escalier == "not_exact":

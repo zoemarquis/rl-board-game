@@ -1,4 +1,4 @@
-from reinforcement_learning.config import get_config_nb
+from reinforcement_learning.config import get_config_nb, get_trad_config
 
 def setup_game():
     print("Bienvenue dans le jeu ! Configurons votre partie.")
@@ -139,54 +139,51 @@ def setup_game():
         "protect_pawn": protect_pawn,
     }
 
+def get_config(set_up_config):
+    return get_trad_config(set_up_config["victory_mode"], set_up_config["stair_rule"], set_up_config["progression_order"], set_up_config["replay_climb"], set_up_config["replay_six"], set_up_config["protect_pawn"])
 
-def get_models(config):
+def get_models(set_up_config, trad_config):
     models = []
-    for player in config["players"]:
-        # url = "reinforcement_learning/agents/"
-        url = "reinforcement_learning/agents/" # TODO decide how it works
+    for player in set_up_config["players"]:
+        url = "reinforcement_learning/agents/"
         filename = ""
         if player.startswith("agent"):
             agent_type = player.split(" (")[1][:-1]
             filename += agent_type + "_"
 
-            if config["num_players"] == 2:
+            if set_up_config["num_players"] == 2:
                 url += "2_joueurs/"
                 filename += "2j_"
-            elif config["num_players"] == 3:
+            elif set_up_config["num_players"] == 3:
                 url += "3_joueurs/"
                 filename += "3j_"
-            elif config["num_players"] == 4:
+            elif set_up_config["num_players"] == 4:
                 url += "4_joueurs/"
                 filename.append("4j_")
             else: 
                 raise ValueError("Nombre de joueurs invalide.")
             
             
-            nb_pawns = config["num_pawns"]
+            nb_pawns = set_up_config["num_pawns"]
             url += f"{nb_pawns}_pions/"
             filename += f"{nb_pawns}c_"
             
-            config_nb = get_config_nb(
-                config["victory_mode"],
-                config["stair_rule"],
-                config["progression_order"],
-                config["replay_climb"],
-                config["replay_six"],
-                config["protect_pawn"]
+            num_config = get_config_nb(
+                trad_config
             )
-            filename += f"conf_{config_nb}_"
+            filename += f"conf_{num_config}_"
 
-            filename += "200000_steps.zip"
+            filename += "200000_steps"
 
             models.append(url + filename)
         else: 
             models.append("humain")
            
-
     print(models)
 
-    return config_nb, models
+    # TODO raise error si le file n'existe pas, ça veut dire config pas valide (on a pas entrainé tous les agents)
+
+    return models
 
 # Exemple d'appel
 # config = setup_game()

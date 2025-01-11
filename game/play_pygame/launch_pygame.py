@@ -6,7 +6,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.append(str(project_root))
 from ludo_env import LudoEnv
-from play_pygame.launcher import setup_game, get_models
+from play_pygame.launcher import setup_game, get_models, get_config
 import pygame
 import time
 
@@ -73,22 +73,25 @@ def play_game(env, players, players_types):
             time.sleep(2)
 
 
-config = setup_game()
-config_nb, models = get_models(config)
+set_up_config = setup_game()
+trad_config = get_config(set_up_config)
+models = get_models(set_up_config=set_up_config, trad_config=trad_config)
+
+print("models", models)
 
 env = LudoEnv(
     with_render=True,
-    num_players=config["num_players"],
-    nb_chevaux=config["num_pawns"],
-    mode_fin_partie=config_nb["mode_fin_partie"],
-    mode_ascension=config_nb["mode_ascension"],
-    mode_pied_escalier=config_nb["mode_pied_escalier"],
-    mode_rejoue_6=config_nb["mode_rejoue_6"],
-    mode_rejoue_marche=config_nb["mode_rejoue_marche"],
-    mode_protect=config_nb["mode_protect"],
+    num_players=set_up_config["num_players"],
+    nb_chevaux=set_up_config["num_pawns"],
+    mode_fin_partie=trad_config["mode_fin_partie"],
+    mode_ascension=trad_config["mode_ascension"],
+    mode_pied_escalier=trad_config["mode_pied_escalier"],
+    mode_rejoue_6=trad_config["mode_rejoue_6"],
+    mode_rejoue_marche=trad_config["mode_rejoue_marche"],
+    mode_protect=trad_config["mode_protect"],
     mode_gym="jeu",
 )
-players_types = config["players_types"]
+players_types = set_up_config["players_types"]
 
 players = []
 for model in models:
