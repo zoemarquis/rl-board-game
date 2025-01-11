@@ -58,7 +58,7 @@ class GameLogic:
             return Action_EXACT
         else:
             raise ValueError("Mode de pied d'escalier non supporté")
-
+        
     def init_board(self):
         """
         Initialisation du plateau de jeu

@@ -24,7 +24,8 @@ PLAYER_2_COLORS = {0: GREEN, 1: RED}
 
 
 class Renderer:
-    def __init__(self):
+    def __init__(self, espace_action):
+        self.espace_action = espace_action
         # Configuration de la fenêtre Pygame
         self.window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Petits Chevaux")
@@ -44,8 +45,16 @@ class Renderer:
             gameover_file, (3 * SQUARE_SIZE, 3 * SQUARE_SIZE)
         )
 
+
     def render(
-        self, game, current_player, dice_value, valid_actions, infos, players_type, game_over=False
+        self, 
+        game, 
+        current_player, 
+        dice_value, 
+        valid_actions, 
+        infos, 
+        players_type, 
+        game_over=False
     ):
         if game.num_players == 2:
             self.colors = PLAYER_2_COLORS
@@ -557,31 +566,60 @@ class Renderer:
                     return "avancer"
                 case 4:
                     return "rester bloqué derrière un pion"
+
+        # else 
+        if self.espace_action == "exact_ascension":
+            match action_value:
+                case 5: 
+                    return "tuer pion adverse"
+                case 6:
+                    return "atteindre le pied de l'escalier"
+                case 7:
+                    return "avancer et reculer au pied de l'escalier"
+                case 8:
+                    return "monter la marche 1"
+                case 9:
+                    return "monter la marche 2"
+                case 10:
+                    return "monter la marche 3"
+                case 11:
+                    return "monter la marche 4"
+                case 12:
+                    return "monter la marche 5"
+                case 13:
+                    return "monter la marche 6"
+                case 14:
+                    return "atteindre l'objectif"
+            raise ValueError("Action invalide")
+
+        elif self.espace_action == "exact":
+            match action_value:
+                case 5: 
+                    return "tuer pion adverse"
+                case 6:
+                    return "atteindre le pied de l'escalier"
+                case 7:
+                    return "avancer et reculer au pied de l'escalier"
+                case 8:
+                    return "avancer dans l'escalier"
+                case 9:
+                    return "atteindre l'objectif"
+            raise ValueError("Action invalide")
+        
+        elif self.espace_action == "not_exact":
+            match action_value:
+                case 5:
+                    return "entrer dans l'escalier"
+                case 6:
+                    return "avancer dans l'escalier"
+                case 7:
+                    return "atteindre l'objectif"
+                case 8:
+                    return "tuer pion adverse"
+            raise ValueError("Action invalide")
+
         else:
-            if action == Action_NO_EXACT.ENTER_SAFEZONE:
-                return "entrer dans l'escalier"
-            elif action == Action_NO_EXACT.MOVE_IN_SAFE_ZONE or action == Action_EXACT.MOVE_IN_SAFE_ZONE:
-                return "avancer dans l'escalier"
-            elif action == Action_NO_EXACT.REACH_GOAL or action == Action_EXACT.REACH_GOAL or Action_EXACT_ASCENSION.REACH_GOAL:
-                return "atteindre l'objectif"
-            elif action == Action_NO_EXACT.KILL or action == Action_EXACT.KILL or action == Action_EXACT_ASCENSION.KILL:
-                return "tuer pion adverse"
-            elif action == Action_EXACT.REACH_PIED_ESCALIER or action == Action_EXACT_ASCENSION.REACH_PIED_ESCALIER:
-                return "atteindre le pied de l'escalier"
-            elif action == Action_EXACT.AVANCE_RECULE_PIED_ESCALIER or action == Action_EXACT_ASCENSION.AVANCE_RECULE_PIED_ESCALIER:
-                return "avancer ou reculer au pied de l'escalier"
-            elif action == Action_EXACT_ASCENSION.MARCHE_1:
-                return "monter la marche 1"
-            elif action == Action_EXACT_ASCENSION.MARCHE_2:
-                return "monter la marche 2"
-            elif action == Action_EXACT_ASCENSION.MARCHE_3:
-                return "monter la marche 3"
-            elif action == Action_EXACT_ASCENSION.MARCHE_4:
-                return "monter la marche 4"
-            elif action == Action_EXACT_ASCENSION.MARCHE_5:
-                return "monter la marche 5"
-            elif action == Action_EXACT_ASCENSION.MARCHE_6:
-                return "monter la marche 6"
+            raise ValueError("Espace d'action invalide")
         
 
     def get_absolute_position(self, position, player_id, num_players):

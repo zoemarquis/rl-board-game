@@ -87,7 +87,16 @@ class LudoEnv(gym.Env):
         self.mode_protect = mode_protect
 
         if self.with_render:
-            self.renderer = Renderer()
+            self.renderer = Renderer(espace_action=self.espace_action)
+
+        if self.mode_ascension == "avec_contrainte":
+            self.espace_action = "exact_ascension"
+        elif self.mode_pied_escalier == "not_exact":
+            self.espace_action = "not_exact"
+        elif self.mode_pied_escalier == "exact":
+            self.espace_action = "exact"
+        else:
+            raise ValueError("Erreur de paramètrage")
 
         if mode_ascension == "sans_contrainte":
             if mode_pied_escalier == "not_exact":
@@ -154,7 +163,7 @@ class LudoEnv(gym.Env):
         return self._get_observation(), {}
 
     def render(
-        self, game, mode="human", players_type=["human", "human"],game_over=False
+        self, game, mode="human", players_type=["human", "human"],game_over=False, 
     ):
         if self.with_render:
             actions = []
@@ -164,12 +173,12 @@ class LudoEnv(gym.Env):
                 actions.append((pawn_id, action_type))
                 
             self.renderer.render(
-                self.game,
-                self.current_player,
-                self.dice_roll,
-                actions,
-                self.game.get_pawns_info(self.current_player),
-                players_type,
+                game = self.game,
+                current_player = self.current_player,
+                dice_value = self.dice_roll,
+                valid_actions = actions,
+                infos = self.game.get_pawns_info(self.current_player),
+                players_type = players_type,
                 game_over=self.game.is_game_over()
             )
 
