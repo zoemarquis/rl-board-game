@@ -144,7 +144,7 @@ def get_models(config):
     models = []
     for player in config["players"]:
         # url = "reinforcement_learning/agents/"
-        url = "reinforcement_learning/agents/old/" # TODO decide how it works
+        url = "reinforcement_learning/agents/" # TODO decide how it works
         filename = ""
         if player.startswith("agent"):
             agent_type = player.split(" (")[1][:-1]
@@ -162,10 +162,10 @@ def get_models(config):
             else: 
                 raise ValueError("Nombre de joueurs invalide.")
             
+            
             nb_pawns = config["num_pawns"]
-            # url += f"{nb_pawns}_pions/" # TODO decide how it works
-            url += f"{nb_pawns}_pions/conf_16/"
-            filename += f"{nb_pawns}c_conf_16_"
+            url += f"{nb_pawns}_pions/"
+            filename += f"{nb_pawns}c_"
             
             config_nb = get_config_nb(
                 config["victory_mode"],
@@ -175,25 +175,14 @@ def get_models(config):
                 config["replay_six"],
                 config["protect_pawn"]
             )
+            filename += f"conf_{config_nb}_"
 
-            # + 600 000 steps si balanced
-            # 200 000 steps pour balanced 
-            # TODO CHARLOTTE AIDE
             filename += "200000_steps.zip"
-
 
             models.append(url + filename)
         else: 
             models.append("humain")
-            # TODO config_nb does not actually return config number but the config itself ???
-            config_nb = get_config_nb(
-                config["victory_mode"],
-                config["stair_rule"],
-                config["progression_order"],
-                config["replay_climb"],
-                config["replay_six"],
-                config["protect_pawn"]
-            )
+           
 
     print(models)
 

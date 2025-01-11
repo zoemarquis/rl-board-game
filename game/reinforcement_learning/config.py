@@ -58,9 +58,9 @@ def get_config_nb(victory_mode, stair_rule, progression_order, replay_climb, rep
         raise ValueError("Mode de victoire invalide")
     
     if stair_rule == "exactitude": # atteindre pied escalier 
-        mode_pied_escalier = "not_exact"
+        mode_pied_escalier = "exact" # TODO pas l'inverse ?
     elif stair_rule == "simplifiée":
-        mode_pied_escalier = "exact"
+        mode_pied_escalier = "not_exact"
     else:
         raise ValueError("Règles pour l'escalier invalide")
     
@@ -92,8 +92,13 @@ def get_config_nb(victory_mode, stair_rule, progression_order, replay_climb, rep
     else:
         raise ValueError("Protéger un pion invalide")
     
-    return dict(mode_fin_partie=mode_fin_partie, mode_ascension=mode_ascension, mode_pied_escalier=mode_pied_escalier, mode_rejoue_6=mode_rejoue_6, mode_rejoue_marche=mode_rejoue_marche, mode_protect=mode_protect)
-
+    # return config_param number correspondant à dict
+    # si None raise erros
+    for config_id, config in config_param.items():
+        if config == dict(mode_fin_partie=mode_fin_partie, mode_ascension=mode_ascension, mode_pied_escalier=mode_pied_escalier, mode_rejoue_6=mode_rejoue_6, mode_rejoue_marche=mode_rejoue_marche, mode_protect=mode_protect):
+            return config_id
+    raise ValueError("Configuration invalide")
+        
 # TODO SUPPRIME ?
 # num_players_options = [2]
 # nb_chevaux_options = [2]
