@@ -259,4 +259,14 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
 
 
 if __name__ == "__main__":
+    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
+
     main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
+
+    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)

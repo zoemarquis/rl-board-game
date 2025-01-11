@@ -89,6 +89,11 @@ class Game(Base):
 class Participant(Base):
     __tablename__ = "participant"
 
+    # TODO : ajouter à la place de score et gérer partout
+    #desired_reward (ça c'est ce que t'as récup là ? genre enfaite juste tu choppes -10 si c'est pas la bonne action ? pcq le code de env c'est pas ce qu'il fait)
+    #played_reward (là c'est si l'action de base, desired, était fausse alors récup la debug action, l'ajouter dans les stats en disant que c'est ce coup qui est joué, et son reward associé )
+    
+
     participant_id = Column(Integer, primary_key=True, autoincrement=True)
     game_id = Column(Integer, ForeignKey("game.game_id", ondelete="CASCADE"), nullable=False)
     player_id = Column(Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False)
