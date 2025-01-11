@@ -50,6 +50,13 @@ def play_game(env, agents, agent_names, config):
         scores[env.current_player] += reward
         moves[env.current_player] += 1
 
+        # ZOE / CHARLOTTE 
+        # reward_action_agent = info["reward_action_agent"] # à sommer pour vérifier qu'à la fin = à scores
+        # reward_rectified = info["reward_rectified"] # à ajouter à une colonne de la db (à sommer en fonction du joueur aussi)
+        # nb_reward += 1 if info["rectified"] else 0 # pour vérifier que t'as la meme chose que le nombre d'impossible actions
+        # action_agent = info["action_agent"] # si tu veux le nombre de coups différents joués par l'agent
+        # action_rectified = info["action_rectified"] # si tu veux compter le nombre de coups différents  réel
+
         turn += 1
 
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 

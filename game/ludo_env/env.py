@@ -189,8 +189,6 @@ class LudoEnv(gym.Env):
 
 
     def step(self, action):
-        print("action : ", action)
-
         obs = self._get_observation()
         if self.mode_gym == "jeu":
             print()
@@ -202,9 +200,13 @@ class LudoEnv(gym.Env):
             print("my_goal : ", obs["my_goal"])
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
-        print("pawn_id : ", pawn_id)
-        print("action_type : ", action_type)
-
+        
+        info["action_agent"] = action_type
+        info["action_rectified"] = None
+        info["reward_action_agent"] = self.game.get_reward(action_type, self.agent_type)
+        info["reward_rectified"] = None
+        info["rectified"] = False
+        
         is_auto_action = False
 
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
@@ -227,7 +229,12 @@ class LudoEnv(gym.Env):
                 
             else:
                 self.change_player(action_type)
-                return self._get_observation(), -10, False, False, {}
+                return self._get_observation(), -10, False, False, info
+            
+            # On ajoute le reward associé à l'action rectifiée
+            info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)       
+            info["rectified"] = True
+            info["action_rectified"] = action_type
 
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
@@ -241,7 +248,7 @@ class LudoEnv(gym.Env):
             reward = self.game.get_reward(action_type, self.agent_type)
         elif is_auto_action and self.mode_gym == "stats_game" :
             reward = -10
-        # TODO CHARLOTTE T'AS OUBLI2 DES CAS 
+        # TODO CHARLOTTE T'AS OUBLIE DES CAS, à voir 
 
         done = self.game.is_game_over()
 
@@ -250,7 +257,7 @@ class LudoEnv(gym.Env):
 
         self.dice_roll = self.game.dice_generator()
         observation = self._get_observation()
-        return observation, reward, done, False, {}
+        return observation, reward, done, False, info
 
     def change_player(self, action_type):
         if self.mode_rejoue_6 == "oui" and self.dice_roll == 6:
