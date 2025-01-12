@@ -101,6 +101,8 @@ class Participant(Base):
     action_stats = Column(Integer, ForeignKey("action_stats.stat_id", ondelete="CASCADE"), nullable=True)
     turn_order = Column(Integer, nullable=False)
     score = Column(Integer, nullable=False, default=0)
+    reward_action_agent = Column(Integer, nullable=False, default=0)
+    reward_rectified = Column(Integer, nullable=False)
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
     nb_actions_interdites = Column(Integer, nullable=False, default=0)

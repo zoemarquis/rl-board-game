@@ -1,0 +1,7 @@
+game_rule_id,name,description
+8,Un seul cheval doit gagner,Description de Un seul cheval doit gagner
+10,Montée de l'escalier sans contrainte,Description de Montée de l'escalier sans contrainte
+12,Montée de l'escalier commence non exacte,Description de Montée de l'escalier commence non exacte
+14,Relance avec un 6 interdite,Description de Relance avec un 6 interdite
+16,Relance après une marche interdite,Description de Relance après une marche interdite
+18,Protection des chevaux désactivée,Description de Protection des chevaux désactivée

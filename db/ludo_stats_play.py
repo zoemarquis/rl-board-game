@@ -27,9 +27,12 @@ def play_game(env, agents, agent_names, config):
     turn = 0
 
     scores = [0] * env.num_players
+    reward_action_agent = [0] * env.num_players
+    reward_rectified = [0] * env.num_players
     moves = [0] * env.num_players
     intentional_actions = defaultdict(int)
     impossible_actions = defaultdict(int)
+    nb_mouvements_interdits = [0] * env.num_players
 
     while not done:
         valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
@@ -40,15 +43,26 @@ def play_game(env, agents, agent_names, config):
         else:
             raise ValueError("Nombre de joueurs non supporté")
 
-        _, action_type = env.game.decode_action(action)
-        if action in encoded_valid_actions:
-            intentional_actions[action_type] += 1
-        else:
-            impossible_actions[action_type] += 1
+        #_, action_type = env.game.decode_action(action)
+        #if action in encoded_valid_actions:
+        #    intentional_actions[action_type] += 1
+        #else:
+        #    impossible_actions[action_type] += 1
 
         obs, reward, done, truncated, info = env.step(action)
         scores[env.current_player] += reward
         moves[env.current_player] += 1
+
+        if info["rectified"]:
+            nb_mouvements_interdits[env.current_player] += 1
+
+        if info["rectified"]:
+            impossible_actions[info["action_rectified"]] += 1
+        else:
+            intentional_actions[info["action_agent"]] += 1  
+
+        reward_action_agent[env.current_player] += info["reward_action_agent"]
+        reward_rectified[env.current_player] += info["reward_rectified"]
 
         # ZOE / CHARLOTTE 
         # reward_action_agent = info["reward_action_agent"] # à sommer pour vérifier qu'à la fin = à scores
@@ -60,7 +74,6 @@ def play_game(env, agents, agent_names, config):
         turn += 1
 
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
-    nb_actions_interdites = [env.nb_actions_interdites[player] for player in range(env.num_players)]
     
     players = [
         PlayerToInsert(
@@ -70,10 +83,12 @@ def play_game(env, agents, agent_names, config):
             nb_moves=moves[i],
             is_winner=(scores[i] == max(scores)),
             score=scores[i],
+            reward_action_agent=reward_action_agent[i],
+            reward_rectified=reward_rectified[i],
             strategy=config["strategy"][i],
             player_id=None,
             nb_train_steps=config["nb_train_steps"][i],
-            nb_actions_interdites=nb_actions_interdites[i],
+            nb_actions_interdites=nb_mouvements_interdits[i],
             # TODO : Ajouter d'autres paramètres
         )
         for i in range(env.num_players)
@@ -266,14 +281,14 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
 
 
 if __name__ == "__main__":
-    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=10)
+    #main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=10)
+    #main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=10)
 
-    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
+    #main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=10)
+    #main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=10)
+    #main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=10)
 
-    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
+    #main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=10)
+    #main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=10)
+    #main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=10)
