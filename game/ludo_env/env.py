@@ -190,6 +190,8 @@ class LudoEnv(gym.Env):
 
     def step(self, action):
         obs = self._get_observation()
+
+        # affichage dans le terminal 
         if self.mode_gym == "jeu":
             print()
             print("joueur : ", self.current_player)
@@ -201,10 +203,14 @@ class LudoEnv(gym.Env):
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
         
+        # définition de l'action que l'agent essaye de jouer
         info["action_agent"] = action_type
-        info["action_rectified"] = None
         info["reward_action_agent"] = self.game.get_reward(action_type, self.agent_type)
-        info["reward_rectified"] = None
+        
+        # définition de l'action que l'agent va réellement jouer
+        info["action_rectified"] = action_type
+        info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)
+        # marqueur pour savoir si l'action a été modifiée ou non
         info["rectified"] = False
         
         is_auto_action = False
@@ -218,7 +224,13 @@ class LudoEnv(gym.Env):
 
             if self.mode_gym == "stats_game":
                 action = self.game.debug_action(encoded_valid_actions)
-                pawn_id, action_type = self.game.decode_action(action)          
+                pawn_id, action_type = self.game.decode_action(action)  
+                # On reward l'action interdite de -10
+                info["reward_action_agent"] = -10
+                # On récupère le reward associé à l'action rectifiée
+                info["action_rectified"] = action_type   
+                info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)       
+                info["rectified"] = True  
 
             elif self.mode_gym == "jeu":
                 print("L'agent a joué une action interdite")
@@ -228,14 +240,10 @@ class LudoEnv(gym.Env):
                 pawn_id, action_type = self.game.decode_action(action)
                 
             else:
+                # mode entrainement, si action pas valide -> changer de joueur et reward -10
                 self.change_player(action_type)
                 return self._get_observation(), -10, False, False, info
             
-            # On ajoute le reward associé à l'action rectifiée
-            info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)       
-            info["rectified"] = True
-            info["action_rectified"] = action_type
-
         pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
 
         self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
@@ -248,7 +256,7 @@ class LudoEnv(gym.Env):
             reward = self.game.get_reward(action_type, self.agent_type)
         elif is_auto_action and self.mode_gym == "stats_game" :
             reward = -10
-        # TODO CHARLOTTE T'AS OUBLIE DES CAS, à voir 
+        # TODO CHARLOTTE T'AS OUBLIE DES CAS, à voir tout est ok pour mode entrainement, mode stat et mode jeu 
 
         done = self.game.is_game_over()
 
