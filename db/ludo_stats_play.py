@@ -71,7 +71,10 @@ def play_game(env, agents, agent_names, config):
 
         turn += 1
 
+    winning_player_id = env.game.is_winner()
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
+
+    assert winning_player_id != -1, "Aucun gagnant"
     
     players = [
         PlayerToInsert(
@@ -79,7 +82,7 @@ def play_game(env, agents, agent_names, config):
             is_human=False, # TODO : Gérer le cas quand c'est un humain
             turn_order=i + 1,
             nb_moves=moves[i],
-            is_winner=(reward_action_agent[i] == max(reward_action_agent)), #TODO : Changer ça
+            is_winner=(i == winning_player_id),
             reward_action_agent=reward_action_agent[i],
             reward_rectified=reward_rectified[i],
             strategy=config["strategy"][i],
@@ -278,7 +281,9 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
 
 
 if __name__ == "__main__":
-    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=10)
+    main()
+    
+    """main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=10)
     main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=10)
     main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=10)
 
@@ -288,4 +293,4 @@ if __name__ == "__main__":
 
     main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=10)
     main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=10)
-    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=10)"""
