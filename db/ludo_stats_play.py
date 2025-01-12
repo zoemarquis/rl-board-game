@@ -26,7 +26,6 @@ def play_game(env, agents, agent_names, config):
     done = False
     turn = 0
 
-    scores = [0] * env.num_players
     reward_action_agent = [0] * env.num_players
     reward_rectified = [0] * env.num_players
     moves = [0] * env.num_players
@@ -50,7 +49,6 @@ def play_game(env, agents, agent_names, config):
         #    impossible_actions[action_type] += 1
 
         obs, reward, done, truncated, info = env.step(action)
-        scores[env.current_player] += reward
         moves[env.current_player] += 1
 
         if info["rectified"]:
@@ -81,8 +79,7 @@ def play_game(env, agents, agent_names, config):
             is_human=False, # TODO : Gérer le cas quand c'est un humain
             turn_order=i + 1,
             nb_moves=moves[i],
-            is_winner=(scores[i] == max(scores)),
-            score=scores[i],
+            is_winner=(reward_action_agent[i] == max(reward_action_agent)), #TODO : Changer ça
             reward_action_agent=reward_action_agent[i],
             reward_rectified=reward_rectified[i],
             strategy=config["strategy"][i],
@@ -282,13 +279,13 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
 
 if __name__ == "__main__":
     main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=10)
-    #main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=10)
-    #main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=10)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=10)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=10)
 
-    #main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=10)
-    #main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=10)
-    #main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=10)
 
-    #main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=10)
-    #main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=10)
-    #main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=10)

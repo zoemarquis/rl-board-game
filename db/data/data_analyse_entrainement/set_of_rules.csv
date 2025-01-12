@@ -1,4 +1,4 @@
 set_of_rules_id,name,description,num_config
-10,"8,10,12,14,16,18","Un seul cheval doit gagner, Montée de l'escalier sans contrainte, Montée de l'escalier commence non exacte, Relance avec un 6 interdite, Relance après une marche interdite, Protection des chevaux désactivée",16
-11,"7,9,11,13,15,17","Tous les chevaux doivent gagner, Montée de l'escalier avec contrainte, Montée de l'escalier commence exacte, Relance avec un 6 autorisée, Relance après une marche autorisée, Protection des chevaux activée",17
-12,"8,9,11,14,16,18","Un seul cheval doit gagner, Montée de l'escalier avec contrainte, Montée de l'escalier commence exacte, Relance avec un 6 interdite, Relance après une marche interdite, Protection des chevaux désactivée",12
+2,"8,10,12,14,16,18","Un seul cheval doit gagner, Montée de l'escalier sans contrainte, Montée de l'escalier commence non exacte, Relance avec un 6 interdite, Relance après une marche interdite, Protection des chevaux désactivée",16
+3,"7,9,11,13,15,17","Tous les chevaux doivent gagner, Montée de l'escalier avec contrainte, Montée de l'escalier commence exacte, Relance avec un 6 autorisée, Relance après une marche autorisée, Protection des chevaux activée",17
+4,"8,9,11,14,16,18","Un seul cheval doit gagner, Montée de l'escalier avec contrainte, Montée de l'escalier commence exacte, Relance avec un 6 interdite, Relance après une marche interdite, Protection des chevaux désactivée",12

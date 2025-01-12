@@ -20,7 +20,6 @@ class PlayerToInsert:
         turn_order: int,
         nb_moves: int,
         is_winner: bool,
-        score: int = None,
         reward_action_agent: int = None,
         reward_rectified: int = None,
         player_id: int = None,
@@ -40,16 +39,15 @@ class PlayerToInsert:
             """
         assert 1 <= turn_order <= 4, "turn_order must be between 1 and 4"
         if is_human is True:
-            assert score is None, "score must be None if is_human is True"
+            assert reward_action_agent is None, "score must be None if is_human is True"
         else:
-            assert score is not None, "score must be provided if is_human is False"
+            assert reward_action_agent is not None, "score must be provided if is_human is False"
         assert nb_moves >= 1, "nb_moves must be greater than or equal to 1"
 
         self.player_id = player_id
         self.name = name
         self.is_human = is_human
         self.turn_order = turn_order
-        self.score = score
         self.reward_action_agent = reward_action_agent
         self.reward_rectified = reward_rectified
         self.nb_moves = nb_moves
@@ -146,7 +144,6 @@ class ParticipantToInsert:
         self.game_id = game_id
         self.player_id = player.player_id
         self.turn_order = player.turn_order
-        self.score = player.score
         self.reward_action_agent = player.reward_action_agent
         self.reward_rectified = player.reward_rectified
         self.nb_moves = player.nb_moves
@@ -167,7 +164,6 @@ class ParticipantToInsert:
                 game_id=self.game_id,
                 player_id=self.player_id,
                 turn_order=self.turn_order,
-                score=self.score,
                 reward_action_agent=self.reward_action_agent,
                 reward_rectified=self.reward_rectified,
                 nb_moves=self.nb_moves,
@@ -252,7 +248,6 @@ def store_final_game_data(
                 game_id=game_id,
                 player_id=player_id,
                 turn_order=player.turn_order,
-                score=player.score,
                 reward_action_agent=player.reward_action_agent,
                 reward_rectified=player.reward_rectified,
                 nb_moves=player.nb_moves,
