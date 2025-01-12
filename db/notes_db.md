@@ -76,10 +76,16 @@ Les configurations des agents sont définies dans le fichier `config_game.py`. =
 
 ---
 
-## 5. Vider la base de données
+## 5. Vider ou supprimer la base de données
 
+Vider :
 ```bash
 truncate table action_stats, game, game_rule, is_rule_of, participant, player, set_of_rules;
+```
+
+Supprimer
+```sql
+DROP DATABASE ludo_stats;
 ```
 
 

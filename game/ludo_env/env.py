@@ -199,56 +199,54 @@ class LudoEnv(gym.Env):
             print("my_escalier : ", obs["my_escalier"])
             print("my_goal : ", obs["my_goal"])
         info = {}
+
         pawn_id, action_type = self.game.decode_action(action)
-        
         info["action_agent"] = action_type
+        info["reward_action_agent"] = 0
         info["action_rectified"] = None
-        info["reward_action_agent"] = self.game.get_reward(action_type, self.agent_type)
-        info["reward_rectified"] = None
+        info["reward_rectified"] = 0
         info["rectified"] = False
-        
-        is_auto_action = False
+        reward = 0
 
         valid_actions = self.game.get_valid_actions(self.current_player, self.dice_roll)
         encoded_valid_actions = self.game.encode_valid_actions(valid_actions)
 
         if action not in encoded_valid_actions:
+
             self.nb_actions_interdites[self.current_player] += 1
-            is_auto_action = True
+            info["reward_action_agent"] = -10
+            reward = -10
 
-            if self.mode_gym == "stats_game":
-                action = self.game.debug_action(encoded_valid_actions)
-                pawn_id, action_type = self.game.decode_action(action)          
+            if self.mode_gym == "stats_game" or self.mode_gym == "jeu":
+                if self.mode_gym == "jeu":
+                    print("L'agent a joué une action interdite")
+                    print(f"encoded action : {action}, pawn_id : {pawn_id}, action_type : {action_type}")
+                    print()
 
-            elif self.mode_gym == "jeu":
-                print("L'agent a joué une action interdite")
-                print(f"encoded action : {action}, pawn_id : {pawn_id}, action_type : {action_type}")
-                print()
+                # On rectifie l'action
                 action = self.game.debug_action(encoded_valid_actions)
                 pawn_id, action_type = self.game.decode_action(action)
-                
+
+                # On ajoute le reward associé à l'action rectifiée
+                info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)       
+                info["rectified"] = True
+                info["action_rectified"] = action_type
+
             else:
                 self.change_player(action_type)
-                return self._get_observation(), -10, False, False, info
+                return self._get_observation(), reward, False, False, info
             
-            # On ajoute le reward associé à l'action rectifiée
-            info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)       
-            info["rectified"] = True
-            info["action_rectified"] = action_type
+        else :
+            reward = self.game.get_reward(action_type, self.agent_type)
+            info["reward_action_agent"] = reward
+            info["reward_rectified"] = reward
 
-        pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
-
-        self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
-
-        # On ajoute seulement les actions non automatiques aux statistiques
-        # Et on calcule la récompense correspondante à l'action initiale
-        if not is_auto_action or self.mode_gym == "jeu":
+            # On ajoute seulement les actions non automatiques aux statistiques
             if action_type in self.actions_par_type[self.current_player]:
                 self.actions_par_type[self.current_player][action_type] += 1
-            reward = self.game.get_reward(action_type, self.agent_type)
-        elif is_auto_action and self.mode_gym == "stats_game" :
-            reward = -10
-        # TODO CHARLOTTE T'AS OUBLIE DES CAS, à voir 
+
+        pawn_pos = self.game.get_pawns_info(self.current_player)[pawn_id]["position"]
+        self.game.move_pawn(self.current_player, pawn_pos, self.dice_roll, action_type)
 
         done = self.game.is_game_over()
 
@@ -261,7 +259,7 @@ class LudoEnv(gym.Env):
 
     def change_player(self, action_type):
         if self.mode_rejoue_6 == "oui" and self.dice_roll == 6:
-            pass
+            return
         elif self.mode_rejoue_marche == "oui" and (
             action_type == Action_EXACT_ASCENSION.MARCHE_1
             or action_type == Action_EXACT_ASCENSION.MARCHE_2
@@ -270,7 +268,7 @@ class LudoEnv(gym.Env):
             or action_type == Action_EXACT_ASCENSION.MARCHE_5
             or action_type == Action_EXACT_ASCENSION.MARCHE_6
         ):
-            pass
+            return
         else:
             self.current_player = (self.current_player + 1) % self.num_players
             if self.current_player == 0:

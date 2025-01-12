@@ -21,6 +21,8 @@ class PlayerToInsert:
         nb_moves: int,
         is_winner: bool,
         score: int = None,
+        reward_action_agent: int = None,
+        reward_rectified: int = None,
         player_id: int = None,
         nb_train_steps: int = None,
         nb_actions_interdites: int = 0,
@@ -48,6 +50,8 @@ class PlayerToInsert:
         self.is_human = is_human
         self.turn_order = turn_order
         self.score = score
+        self.reward_action_agent = reward_action_agent
+        self.reward_rectified = reward_rectified
         self.nb_moves = nb_moves
         self.is_winner = is_winner
         self.nb_train_steps = nb_train_steps
@@ -143,6 +147,8 @@ class ParticipantToInsert:
         self.player_id = player.player_id
         self.turn_order = player.turn_order
         self.score = player.score
+        self.reward_action_agent = player.reward_action_agent
+        self.reward_rectified = player.reward_rectified
         self.nb_moves = player.nb_moves
         self.is_winner = player.is_winner
         self.nb_actions_interdites = nb_actions_interdites
@@ -162,6 +168,8 @@ class ParticipantToInsert:
                 player_id=self.player_id,
                 turn_order=self.turn_order,
                 score=self.score,
+                reward_action_agent=self.reward_action_agent,
+                reward_rectified=self.reward_rectified,
                 nb_moves=self.nb_moves,
                 is_winner=self.is_winner,
                 nb_actions_interdites=self.nb_actions_interdites,
@@ -245,6 +253,8 @@ def store_final_game_data(
                 player_id=player_id,
                 turn_order=player.turn_order,
                 score=player.score,
+                reward_action_agent=player.reward_action_agent,
+                reward_rectified=player.reward_rectified,
                 nb_moves=player.nb_moves,
                 is_winner=player.is_winner,
                 nb_actions_interdites = player.nb_actions_interdites,
