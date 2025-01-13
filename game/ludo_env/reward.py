@@ -71,14 +71,7 @@ class AgentType:
 def create_reward_table(agent_type, action_enum, str_descr):
     """Creates a reward table based on agent type and action enumeration."""
     assert str_descr in ["not_exact", "exact", "exact_ascension"]
-    # if isinstance(action_enum, type(Action_NO_EXACT)):
-    #     base_table = {action: 0 for action in Action_NO_EXACT}
-    # elif isinstance(action_enum, type(Action_EXACT)):
-    #     base_table = {action: 0 for action in Action_EXACT}
-    # elif isinstance(action_enum, type(Action_EXACT_ASCENSION)):
-    #     base_table = {action: 0 for action in Action_EXACT_ASCENSION}
-    # else:
-    #     raise ValueError("Invalid action enumeration type")
+    
     if str_descr == "not_exact":
         base_table = {action: 0 for action in Action_NO_EXACT}
     elif str_descr == "exact":
@@ -88,66 +81,201 @@ def create_reward_table(agent_type, action_enum, str_descr):
     else:
         raise ValueError("Invalid action enumeration type")
 
+    # Common rewards across all rule sets
+    common_rewards = {
+        "NO_ACTION": 0,
+        "MOVE_OUT": 0,
+        "MOVE_OUT_AND_KILL": 0,
+        "MOVE_FORWARD": 0,
+        "GET_STUCK_BEHIND": 0,
+        "KILL": 0,
+        "REACH_GOAL": 0,
+    }
+
     if agent_type == AgentType.AGGRESSIVE:
-        # Prioritizes killing and aggressive moves
-        base_table.update(
-            {
-                "KILL": 50,
-                "MOVE_OUT_AND_KILL": 40,
-                "MOVE_FORWARD": 5,
-                "MOVE_OUT": 10,
-                "REACH_GOAL": 20,
-            }
-        )
+        common_rewards.update({
+            "KILL": 50,
+            "MOVE_OUT_AND_KILL": 40,
+            "MOVE_FORWARD": 5,
+            "MOVE_OUT": 10,
+            "REACH_GOAL": 20,
+        })
+        
+        if str_descr == "not_exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "ENTER_SAFEZONE": 10,
+                "MOVE_IN_SAFE_ZONE": 5,
+            })
+            
+        elif str_descr == "exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 10,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MOVE_IN_SAFE_ZONE": 5,
+            })
+            
+        elif str_descr == "exact_ascension":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 10,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MARCHE_1": 5,
+                "MARCHE_2": 5,
+                "MARCHE_3": 5,
+                "MARCHE_4": 5,
+                "MARCHE_5": 5,
+                "MARCHE_6": 5,
+            })
 
     elif agent_type == AgentType.RUSHER:
-        # Prioritizes advancing quickly towards the goal
-        base_table.update(
-            {
-                "MOVE_FORWARD": 30,
-                "REACH_GOAL": 50,
-                "MOVE_OUT": 20,
-                "KILL": 10,
-                "MOVE_OUT_AND_KILL": 15,
-            }
-        )
+        common_rewards.update({
+            "MOVE_FORWARD": 30,
+            "REACH_GOAL": 50,
+            "MOVE_OUT": 15,
+            "KILL": 10,
+            "MOVE_OUT_AND_KILL": 15,
+        })
+        
+        if str_descr == "not_exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "ENTER_SAFEZONE": 25,
+                "MOVE_IN_SAFE_ZONE": 30,
+            })
+            
+        elif str_descr == "exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 25,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MOVE_IN_SAFE_ZONE": 30,
+            })
+            
+        elif str_descr == "exact_ascension":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 25,
+                "AVANCE_RECULE_PIED_ESCALIER": 15,
+                "MARCHE_1": 10,
+                "MARCHE_2": 12,
+                "MARCHE_3": 15,
+                "MARCHE_4": 17,
+                "MARCHE_5": 20,
+                "MARCHE_6": 25,
+            })
 
     elif agent_type == AgentType.DEFENSIVE:
-        # Prioritizes safe moves and reaching safe zones
-        base_table.update(
-            {
+        common_rewards.update({
+            "MOVE_OUT": 20,
+            "MOVE_FORWARD": 10,
+            "KILL": 5,
+            "REACH_GOAL": 50,
+        })
+        
+        if str_descr == "not_exact":
+            base_table.update(common_rewards)
+            base_table.update({
                 "ENTER_SAFEZONE": 40,
-                "MOVE_IN_SAFE_ZONE": 30,
-                "REACH_GOAL": 50,
-                "MOVE_OUT": 20,
-                "MOVE_FORWARD": 10,
-                "KILL": 5,
-            }
-        )
+                "MOVE_IN_SAFE_ZONE": 1,
+            })
+            
+        elif str_descr == "exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 40,
+                "AVANCE_RECULE_PIED_ESCALIER": 25,
+                "MOVE_IN_SAFE_ZONE": 1,
+            })
+            
+        elif str_descr == "exact_ascension":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 40,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MARCHE_1": 20,
+                "MARCHE_2": 20,
+                "MARCHE_3": 20,
+                "MARCHE_4": 20,
+                "MARCHE_5": 20,
+                "MARCHE_6": 20,
+            })
 
     elif agent_type == AgentType.SPAWNER:
-        # Prioritizes getting pawns out of home
-        base_table.update(
-            {
-                "MOVE_OUT": 50,
-                "MOVE_OUT_AND_KILL": 40,
-                "MOVE_FORWARD": 10,
-                "KILL": 15,
-                "REACH_GOAL": 20,
-            }
-        )
+        common_rewards.update({
+            "MOVE_OUT": 50,
+            "MOVE_OUT_AND_KILL": 40,
+            "MOVE_FORWARD": 5,
+            "KILL": 30,
+            "REACH_GOAL": 20,
+        })
+        
+        if str_descr == "not_exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "ENTER_SAFEZONE": 15,
+                "MOVE_IN_SAFE_ZONE": 10,
+            })
+            
+        elif str_descr == "exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 15,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MOVE_IN_SAFE_ZONE": 10,
+            })
+            
+        elif str_descr == "exact_ascension":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 15,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MARCHE_1": 8,
+                "MARCHE_2": 8,
+                "MARCHE_3": 8,
+                "MARCHE_4": 8,
+                "MARCHE_5": 8,
+                "MARCHE_6": 8,
+            })
 
     elif agent_type == AgentType.SUBOPTIMAL:
-        # Makes intentionally suboptimal choices
-        base_table.update(
-            {
-                "MOVE_FORWARD": 5,
-                "MOVE_OUT": 3,
-                "KILL": 2,
-                "REACH_GOAL": 10,
-                "GET_STUCK_BEHIND": 15,  # Prioritizes getting stuck
-            }
-        )
+        common_rewards.update({
+            "MOVE_FORWARD": 2,
+            "MOVE_OUT": 8,
+            "KILL": 10,
+            "REACH_GOAL": 5,
+            "GET_STUCK_BEHIND": 15,
+        })
+        
+        if str_descr == "not_exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "ENTER_SAFEZONE": 4,
+                "MOVE_IN_SAFE_ZONE": 2,
+            })
+            
+        elif str_descr == "exact":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 4,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                "MOVE_IN_SAFE_ZONE": 2,
+            })
+            
+        elif str_descr == "exact_ascension":
+            base_table.update(common_rewards)
+            base_table.update({
+                "REACH_PIED_ESCALIER": 4,
+                "AVANCE_RECULE_PIED_ESCALIER": 1,
+                # Low rewards for stairs to maintain suboptimal behavior
+                "MARCHE_1": 2,
+                "MARCHE_2": 2,
+                "MARCHE_3": 2,
+                "MARCHE_4": 2,
+                "MARCHE_5": 2,
+                "MARCHE_6": 2,
+            })
 
     return base_table
 

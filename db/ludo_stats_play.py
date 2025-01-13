@@ -278,10 +278,161 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
             print(f"\n=== Partie {i}/{num_games} avec l'agent {agent_name} ===")
             play_game(env, agent_team, agent_names_team, config)
 
+def get_200k_agents(agent_dir):
+    """Get all available agents with 200000 training steps."""
+    available_agents = {}
+    for filename in os.listdir(agent_dir):
+        if filename.endswith(".zip"):
+            parts = filename.split("_")
+            agent_type = parts[0]  # e.g., 'balanced', 'aggressive'
+            steps = int(parts[-2])
+            
+            # Only keep 200000-step agents
+            if steps == 200000:
+                available_agents[agent_type] = filename
+                
+    return available_agents
 
+def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100):
+    """Run games between different agent types, all with 200000 training steps."""
+    agent_dir = os.path.join(racine_dir, 
+        f"reinforcement_learning/agents/{num_players}_joueurs/{nb_chevaux}_pions/conf_{num_conf}")
+    
+    if not os.path.exists(agent_dir):
+        print(f"Error: Directory {agent_dir} doesn't exist.")
+        return
+
+    # Get 200k-step agents
+    available_agents = get_200k_agents(agent_dir)
+    if not available_agents:
+        print("No 200000-step agents found.")
+        return
+        
+    agent_types = list(available_agents.keys())
+    print(f"Found agent types: {agent_types}")
+
+    # For 2 player games
+    if num_players == 2:
+        # Generate all possible pairs of agent types (including same-type matchups)
+        type_matchups = list(itertools.combinations_with_replacement(agent_types, 2))
+        
+        for type1, type2 in type_matchups:
+            print(f"\n=== Running matches: {type1} vs {type2} ===")
+            
+            try:
+                agent1_path = os.path.join(agent_dir, available_agents[type1])
+                agent2_path = os.path.join(agent_dir, available_agents[type2])
+                
+                agent1 = PPO.load(agent1_path)
+                agent2 = PPO.load(agent2_path)
+                agents = [agent1, agent2]
+                agent_names = [
+                    os.path.basename(agent1_path),
+                    os.path.basename(agent2_path)
+                ]
+                
+                # Configure environment
+                config = generate_game_config(
+                    num_players=num_players,
+                    nb_chevaux=nb_chevaux,
+                    my_config_param=config_param[num_conf],
+                    nb_train_steps=[200000, 200000],
+                    num_conf=num_conf,
+                    agent_types=[type1, type2]
+                )
+                
+                env = LudoEnv(
+                    num_players=config["num_players"],
+                    nb_chevaux=config["nb_chevaux"],
+                    mode_fin_partie=config["mode_fin_partie"],
+                    mode_ascension=config["mode_ascension"],
+                    mode_pied_escalier=config["mode_pied_escalier"],
+                    mode_rejoue_6=config["mode_rejoue_6"],
+                    mode_rejoue_marche=config["mode_rejoue_marche"],
+                    mode_protect=config["mode_protect"],
+                    mode_gym="stats_game",
+                )
+                
+                # Run multiple games for this matchup
+                for i in range(1, games_per_matchup + 1):
+                    print(f"Game {i}/{games_per_matchup}")
+                    play_game(env, agents, agent_names, config)
+                    
+            except Exception as e:
+                print(f"Error running matchup: {e}")
+                continue
+    
+    # For 4 player games
+    elif num_players == 4:
+        # Generate interesting 4-player combinations
+        type_matchups = []
+        
+        # Add 1v1v1v1 matchups (all different types)
+        type_matchups.extend(list(itertools.combinations(agent_types, 4)))
+        
+        # Add 2v2 matchups
+        for type1 in agent_types:
+            for type2 in agent_types:
+                if type1 <= type2:  # Avoid duplicates
+                    type_matchups.append((type1, type1, type2, type2))
+        
+        for matchup in type_matchups:
+            print(f"\n=== Running 4-player match: {' vs '.join(matchup)} ===")
+            
+            try:
+                # Load all agents for this matchup
+                agent_paths = [os.path.join(agent_dir, available_agents[agent_type]) 
+                             for agent_type in matchup]
+                agents = [PPO.load(path) for path in agent_paths]
+                agent_names = [os.path.basename(path) for path in agent_paths]
+                
+                # Configure environment
+                config = generate_game_config(
+                    num_players=num_players,
+                    nb_chevaux=nb_chevaux,
+                    my_config_param=config_param[num_conf],
+                    nb_train_steps=[200000] * 4,
+                    num_conf=num_conf,
+                    agent_types=list(matchup)
+                )
+                
+                env = LudoEnv(
+                    num_players=config["num_players"],
+                    nb_chevaux=config["nb_chevaux"],
+                    mode_fin_partie=config["mode_fin_partie"],
+                    mode_ascension=config["mode_ascension"],
+                    mode_pied_escalier=config["mode_pied_escalier"],
+                    mode_rejoue_6=config["mode_rejoue_6"],
+                    mode_rejoue_marche=config["mode_rejoue_marche"],
+                    mode_protect=config["mode_protect"],
+                    mode_gym="stats_game",
+                )
+                
+                for i in range(1, games_per_matchup + 1):
+                    print(f"Game {i}/{games_per_matchup}")
+                    play_game(env, agents, agent_names, config)
+                    
+            except Exception as e:
+                print(f"Error running matchup: {e}")
+                continue
 
 if __name__ == "__main__":
     main()
+    """Run matchups with different configurations
+    configs_to_test = [16, 7, 1]
+    player_counts = [2]
+    pawn_counts = [2]
+    
+    for conf in configs_to_test:
+        for players in player_counts:
+            for pawns in pawn_counts:
+                print(f"\n=== Testing config {conf}, {players} players, {pawns} pawns ===")
+                main_auto_matchups(
+                    num_conf=conf,
+                    num_players=players,
+                    nb_chevaux=pawns,
+                    games_per_matchup=100
+                )"""
     
     """main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=10)
     main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=10)
