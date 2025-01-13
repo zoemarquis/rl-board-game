@@ -105,6 +105,7 @@ class Participant(Base):
     nb_moves = Column(Integer, nullable=False, default=0)
     is_winner = Column(Boolean, nullable=False, default=False)
     nb_actions_interdites = Column(Integer, nullable=False, default=0)
+    nb_pawns_in_goal = Column(Integer, nullable=False, default=0)
 
 class ActionStats(Base):
     __tablename__ = "action_stats"

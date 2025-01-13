@@ -292,3 +292,6 @@ class LudoEnv(gym.Env):
                 action.name: count for action, count in actions.items()
             }
         return action_stats_by_player
+    
+    def get_pawns_in_goal(self):
+        return [self.game.get_pawns_in_goal(player_id) for player_id in range(self.num_players)]
