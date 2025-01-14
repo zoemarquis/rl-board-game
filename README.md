@@ -68,8 +68,9 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
 - TODO DANIIL 
 
 ## Comment lancer une partie (avec interface graphique) :
+Pour jouer avec l'interface graphique, dans le dossier game, lancer le fichier _play.py_ comme ceci:
 
-- TODO KATIA 
+    python3 play_pygame/jouer_humain_random.py
 
 ## Technologies utilisées :
 🐍 Python : Langage principal pour la gestion du jeu et des agents.  

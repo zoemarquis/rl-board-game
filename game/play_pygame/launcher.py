@@ -1,4 +1,5 @@
 from reinforcement_learning.config import get_config_nb, get_trad_config
+import os
 
 def setup_game():
     print("Bienvenue dans le jeu ! Configurons votre partie.")
@@ -159,7 +160,7 @@ def get_models(set_up_config, trad_config):
                 filename += "3j_"
             elif set_up_config["num_players"] == 4:
                 url += "4_joueurs/"
-                filename.append("4j_")
+                filename += "4j_"
             else: 
                 raise ValueError("Nombre de joueurs invalide.")
             
@@ -182,6 +183,11 @@ def get_models(set_up_config, trad_config):
            
     print(models)
 
-    # TODO raise error si le file n'existe pas, ça veut dire config pas valide (on a pas entrainé tous les agents)
+    for model in models:
+        if model != "humain":
+            model_file = model + ".zip"
+            if not os.path.exists(model_file):
+                raise ValueError(f"Le fichier {model_file} n'existe pas. Veuillez entraîner l'agent avant de l'utiliser.")
 
+    
     return models

@@ -220,7 +220,7 @@ class Renderer:
             text = font.render(str(i + 1), True, BLACK)
             self.window.blit(text, (y * SQUARE_SIZE + 12, x * SQUARE_SIZE + 12))
 
-            self.draw_pawns_safezone_player_0(game)
+        self.draw_pawns_safezone_player_0(game)
 
     def draw_safe_zone_player_1(self, game):
         """Dessiner la zone de sécurité du joueur 1 (dans jeu à 4)"""
@@ -386,9 +386,9 @@ class Renderer:
     def draw_pawns_safezone_player_0(self, game):
         position = [(7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (7, 6)]
         escalier = game.board[0][57:63]
-        for i in escalier:
-            if i != 0:
-                x, y = position[i]
+        for index, value in enumerate(escalier):
+            if value != 0:
+                x, y = position[index]
                 pygame.draw.circle(
                     self.window,
                     WHITE,
@@ -401,7 +401,8 @@ class Renderer:
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
-                text = font.render(str(i), True, BLACK)
+
+                text = font.render(str(value), True, BLACK)
 
                 # Position the text in the center of the circle
                 text_rect = text.get_rect(
@@ -416,9 +417,9 @@ class Renderer:
         # fonction pour 3+ joueurs
         position = [(1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7)]
         escalier = game.board[1][57:63]
-        for i in escalier:
-            if i != 0:
-                x, y = position[i]
+        for index, value in enumerate(escalier):
+            if value != 0:
+                x, y = position[index]
                 pygame.draw.circle(
                     self.window,
                     WHITE,
@@ -431,7 +432,7 @@ class Renderer:
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
-                text = font.render(str(i), True, BLACK)
+                text = font.render(str(value), True, BLACK)
 
                 # Position the text in the center of the circle
                 text_rect = text.get_rect(
@@ -450,9 +451,9 @@ class Renderer:
         else:
             escalier = game.board[2][57:63]
 
-        for i in escalier:
-            if i != 0:
-                x, y = position[i]
+        for index, value in enumerate(escalier):
+            if value != 0:
+                x, y = position[index]
                 pygame.draw.circle(
                     self.window,
                     WHITE,
@@ -465,7 +466,7 @@ class Renderer:
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
-                text = font.render(str(i), True, BLACK)
+                text = font.render(str(value), True, BLACK)
 
                 # Position the text in the center of the circle
                 text_rect = text.get_rect(
@@ -479,9 +480,9 @@ class Renderer:
     def draw_pawns_safezone_player_3(self, game):
         position = position = [(13, 7), (12, 7), (11, 7), (10, 7), (9, 7), (8, 7)]
         escalier = game.board[3][57:63]
-        for i in escalier:
-            if i != 0:
-                x, y = position[i]
+        for index, value in enumerate(escalier):
+            if value != 0:
+                x, y = position[index]
                 pygame.draw.circle(
                     self.window,
                     WHITE,
@@ -494,7 +495,7 @@ class Renderer:
 
                 # Create text to represent the pawn count
                 font = pygame.font.Font(None, 24)  # Use a larger font for visibility
-                text = font.render(str(i), True, BLACK)
+                text = font.render(str(value), True, BLACK)
 
                 # Position the text in the center of the circle
                 text_rect = text.get_rect(
@@ -552,70 +553,82 @@ class Renderer:
 
             
     def get_action_text(self, action):
+        stairs = False
         action_value = action.value
 
         if action_value in [0,1,2,3,4]:
             match action_value:
                 case 0:
-                    return "Passer son tour"
+                    return "Passer son tour", stairs
                 case 1:
-                    return "Sortir un pion"
+                    return "Sortir un pion", stairs
                 case 2:
-                    return "Sortir un pion et tuer pion adverse"
+                    return "Sortir un pion et tuer pion adverse", stairs
                 case 3:
-                    return "avancer"
+                    return "avancer", stairs
                 case 4:
-                    return "rester bloqué derrière un pion"
+                    return "rester bloqué derrière un pion", stairs
 
         # else 
         if self.espace_action == "exact_ascension":
             match action_value:
                 case 5: 
-                    return "tuer pion adverse"
+                    return "tuer pion adverse", stairs
                 case 6:
-                    return "atteindre le pied de l'escalier"
+                    return "atteindre le pied de l'escalier", stairs
                 case 7:
-                    return "avancer et reculer au pied de l'escalier"
+                    return "avancer et reculer au pied de l'escalier", stairs
                 case 8:
-                    return "monter la marche 1"
+                    stairs = True
+                    return "monter la marche 1", stairs
                 case 9:
-                    return "monter la marche 2"
+                    stairs = True
+                    return "monter la marche 2", stairs
                 case 10:
-                    return "monter la marche 3"
+                    stairs = True
+                    return "monter la marche 3", stairs
                 case 11:
-                    return "monter la marche 4"
+                    stairs = True
+                    return "monter la marche 4", stairs
                 case 12:
-                    return "monter la marche 5"
+                    stairs = True
+                    return "monter la marche 5", stairs
                 case 13:
-                    return "monter la marche 6"
+                    stairs = True
+                    return "monter la marche 6", stairs
                 case 14:
-                    return "atteindre l'objectif"
+                    stairs = True
+                    return "atteindre l'objectif", stairs
             raise ValueError("Action invalide")
 
         elif self.espace_action == "exact":
             match action_value:
                 case 5: 
-                    return "tuer pion adverse"
+                    return "tuer pion adverse", stairs
                 case 6:
-                    return "atteindre le pied de l'escalier"
+                    return "atteindre le pied de l'escalier", stairs
                 case 7:
-                    return "avancer et reculer au pied de l'escalier"
+                    return "avancer et reculer au pied de l'escalier", stairs
                 case 8:
-                    return "avancer dans l'escalier"
+                    stairs = True
+                    return "avancer dans l'escalier", stairs
                 case 9:
-                    return "atteindre l'objectif"
+                    stairs = True
+                    return "atteindre l'objectif", stairs
             raise ValueError("Action invalide")
         
         elif self.espace_action == "not_exact":
             match action_value:
                 case 5:
-                    return "entrer dans l'escalier"
+                    return "entrer dans l'escalier", stairs
                 case 6:
-                    return "avancer dans l'escalier"
+                    stairs = True
+                    return "avancer dans l'escalier", stairs
                 case 7:
-                    return "atteindre l'objectif"
+                    stairs = True
+                    return "atteindre l'objectif", stairs
                 case 8:
-                    return "tuer pion adverse"
+                    return "tuer pion adverse", stairs
             raise ValueError("Action invalide")
 
         else:
@@ -624,16 +637,24 @@ class Renderer:
 
     def get_absolute_position(self, position, player_id, num_players):
         if player_id == 0:
-            return position
+            absolute_position = position
         elif player_id == 1:
             if num_players == 2:
-                return (position + 28) % 56
+                absolute_position = (position + 28) % 56
             else:
-                return (position + 14) % 56
+                absolute_position = (position + 14) % 56
         elif player_id == 2:
-            return (position + 28) % 56
+            absolute_position = (position + 28) % 56
         elif player_id == 3:
-            return (position + 42) % 56
+            absolute_position = (position + 42) % 56
+        
+        if absolute_position == 0:
+            return 56
+        else:
+            return absolute_position
+        
+    def get_stairs_position(self, position, player_id):
+        return position - 56
 
     def render_action_button(self, text, y):
         """
@@ -665,19 +686,23 @@ class Renderer:
             pawn_id = i['pawn_id']
             action_type = i['action_type']
             encoded_action = i['encoded_action']
+            action_text, is_stairs = self.get_action_text(action_type)
             if action_type.value in [0, 1, 2]:
-                action_text = self.get_action_text(action_type)
                 button_rect = self.render_action_button(action_text, y_current)
                 button_mapping[button_rect] = encoded_action
                 y_current += 1.5
             else:
-                action_text = self.get_action_text(action_type)
-                position = self.get_absolute_position(
-                    infos[pawn_id]["position"], 
-                    player_id, 
-                    num_players
-                )
-                text = f"Pion pos {position} : {action_text}"
+                if is_stairs:
+                    position = self.get_stairs_position(infos[pawn_id]["position"], player_id)
+                    text = f"Pion pos {position} (escalier): {action_text}"
+                else:
+                    position = self.get_absolute_position(
+                        infos[pawn_id]["position"], 
+                        player_id, 
+                        num_players
+                    )
+                    text = f"Pion pos {position} : {action_text}"
+                
                 button_rect = self.render_action_button(text, y_current)
                 button_mapping[button_rect] = encoded_action
                 y_current += 1.5
