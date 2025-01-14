@@ -71,6 +71,7 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
 Pour jouer avec l'interface graphique, dans le dossier game, lancer le fichier _play.py_ comme ceci:
 
     python3 play_pygame/play.py
+![Demo of the app](demo.gif)
 
 ## Technologies utilisées :
 🐍 Python : Langage principal pour la gestion du jeu et des agents.  
