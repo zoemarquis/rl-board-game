@@ -227,24 +227,45 @@ def store_final_game_data(
             stats = actions_stats_by_player.get(player.turn_order - 1, {})
 
             action_stats = ActionStats(
-                nb_no_action=stats.get('NO_ACTION', 0),
-                nb_move_out=stats.get('MOVE_OUT', 0),
-                nb_move_out_and_kill=stats.get('MOVE_OUT_AND_KILL', 0),
-                nb_move_forward=stats.get('MOVE_FORWARD', 0),
-                nb_get_stuck_behind=stats.get('GET_STUCK_BEHIND', 0),
-                nb_enter_safezone=stats.get('ENTER_SAFEZONE', 0),
-                nb_move_in_safe_zone=stats.get('MOVE_IN_SAFE_ZONE', 0),
-                nb_reach_goal=stats.get('REACH_GOAL', 0),
-                nb_kill=stats.get('KILL', 0),
-                nb_reach_pied_escalier = stats.get('REACH_PIED_ESCALIER', 0),
-                nb_avance_recule_pied_escalier = stats.get('AVANCE_RECULE_PIED_ESCALIER', 0),
-                nb_marche_1 = stats.get('MARCHE_1', 0),
-                nb_marche_2 = stats.get('MARCHE_2', 0),
-                nb_marche_3 = stats.get('MARCHE_3', 0),
-                nb_marche_4 = stats.get('MARCHE_4', 0),
-                nb_marche_5 = stats.get('MARCHE_5', 0),
-                nb_marche_6 = stats.get('MARCHE_6', 0),
+                # Actions demandées
+                nb_no_action_d = stats["requested"].get('Action_NO_EXACT.NO_ACTION', 0),
+                nb_move_out_d = stats["requested"].get('Action_NO_EXACT.MOVE_OUT', 0),
+                nb_move_out_and_kill_d = stats["requested"].get('Action_NO_EXACT.MOVE_OUT_AND_KILL', 0),
+                nb_move_forward_d = stats["requested"].get('Action_NO_EXACT.MOVE_FORWARD', 0),
+                nb_get_stuck_behind_d = stats["requested"].get('Action_NO_EXACT.GET_STUCK_BEHIND', 0),
+                nb_enter_safezone_d = stats["requested"].get('Action_NO_EXACT.ENTER_SAFEZONE', 0),
+                nb_move_in_safe_zone_d = stats["requested"].get('Action_NO_EXACT.MOVE_IN_SAFE_ZONE', 0),
+                nb_reach_goal_d = stats["requested"].get('Action_NO_EXACT.REACH_GOAL', 0),
+                nb_kill_d = stats["requested"].get('Action_NO_EXACT.KILL', 0),
+                nb_reach_pied_escalier_d = stats["requested"].get('Action_NO_EXACT.REACH_PIED_ESCALIER', 0),
+                nb_avance_recule_pied_escalier_d = stats["requested"].get('Action_NO_EXACT.AVANCE_RECULE_PIED_ESCALIER', 0),
+                nb_marche_1_d = stats["requested"].get('Action_NO_EXACT.MARCHE_1', 0),
+                nb_marche_2_d = stats["requested"].get('Action_NO_EXACT.MARCHE_2', 0),
+                nb_marche_3_d = stats["requested"].get('Action_NO_EXACT.MARCHE_3', 0),
+                nb_marche_4_d = stats["requested"].get('Action_NO_EXACT.MARCHE_4', 0),
+                nb_marche_5_d = stats["requested"].get('Action_NO_EXACT.MARCHE_5', 0),
+                nb_marche_6_d = stats["requested"].get('Action_NO_EXACT.MARCHE_6', 0),
+                
+                # Actions réalisées
+                nb_no_action_e = stats["realized"].get('Action_NO_EXACT.NO_ACTION', 0),
+                nb_move_out_e = stats["realized"].get('Action_NO_EXACT.MOVE_OUT', 0),
+                nb_move_out_and_kill_e = stats["realized"].get('Action_NO_EXACT.MOVE_OUT_AND_KILL', 0),
+                nb_move_forward_e = stats["realized"].get('Action_NO_EXACT.MOVE_FORWARD', 0),
+                nb_get_stuck_behind_e = stats["realized"].get('Action_NO_EXACT.GET_STUCK_BEHIND', 0),
+                nb_enter_safezone_e = stats["realized"].get('Action_NO_EXACT.ENTER_SAFEZONE', 0),
+                nb_move_in_safe_zone_e = stats["realized"].get('Action_NO_EXACT.MOVE_IN_SAFE_ZONE', 0),
+                nb_reach_goal_e = stats["realized"].get('Action_NO_EXACT.REACH_GOAL', 0),
+                nb_kill_e = stats["realized"].get('Action_NO_EXACT.KILL', 0),
+                nb_reach_pied_escalier_e = stats["realized"].get('Action_NO_EXACT.REACH_PIED_ESCALIER', 0),
+                nb_avance_recule_pied_escalier_e = stats["realized"].get('Action_NO_EXACT.AVANCE_RECULE_PIED_ESCALIER', 0),
+                nb_marche_1_e = stats["realized"].get('Action_NO_EXACT.MARCHE_1', 0),
+                nb_marche_2_e = stats["realized"].get('Action_NO_EXACT.MARCHE_2', 0),
+                nb_marche_3_e = stats["realized"].get('Action_NO_EXACT.MARCHE_3', 0),
+                nb_marche_4_e = stats["realized"].get('Action_NO_EXACT.MARCHE_4', 0),
+                nb_marche_5_e = stats["realized"].get('Action_NO_EXACT.MARCHE_5', 0),
+                nb_marche_6_e = stats["realized"].get('Action_NO_EXACT.MARCHE_6', 0),
             )
+
             session.add(action_stats)
             session.commit()
 

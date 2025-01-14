@@ -29,11 +29,15 @@ def play_game(env, agents, agent_names, config):
     reward_action_agent = [0] * env.num_players
     reward_rectified = [0] * env.num_players
     moves = [0] * env.num_players
-    intentional_actions = defaultdict(int)
-    impossible_actions = defaultdict(int)
     nb_mouvements_interdits = [0] * env.num_players
 
+    actions_stats_resquested = [defaultdict(int) for _ in range(env.num_players)]
+    actions_stats_realized = [defaultdict(int) for _ in range(env.num_players)]
+
     while not done:
+        
+        current_player = env.current_player # car on a pas encore appelé env.step
+
         valid_actions = env.game.get_valid_actions(env.current_player, env.dice_roll)
         encoded_valid_actions = env.game.encode_valid_actions(valid_actions)
 
@@ -42,32 +46,24 @@ def play_game(env, agents, agent_names, config):
         else:
             raise ValueError("Nombre de joueurs non supporté")
 
-        #_, action_type = env.game.decode_action(action)
-        #if action in encoded_valid_actions:
-        #    intentional_actions[action_type] += 1
-        #else:
-        #    impossible_actions[action_type] += 1
+        action_type_requested = env.game.decode_action(action)[1]
+        actions_stats_resquested[env.current_player][action_type_requested] += 1
 
         obs, reward, done, truncated, info = env.step(action)
-        moves[env.current_player] += 1
+
+        current_player = info["current_player"] # on a appelé env.step donc on a changé de joueur
+        
+        
+        moves[current_player] += 1
 
         if info["rectified"]:
-            nb_mouvements_interdits[env.current_player] += 1
+            nb_mouvements_interdits[current_player] += 1
 
-        if info["rectified"]:
-            impossible_actions[info["action_rectified"]] += 1
-        else:
-            intentional_actions[info["action_agent"]] += 1  
+        action_type_realized = info["action_rectified"]
+        actions_stats_realized[current_player][action_type_realized] += 1
 
-        reward_action_agent[env.current_player] += info["reward_action_agent"]
-        reward_rectified[env.current_player] += info["reward_rectified"]
-
-        # ZOE / CHARLOTTE 
-        # reward_action_agent = info["reward_action_agent"] # à sommer pour vérifier qu'à la fin = à scores
-        # reward_rectified = info["reward_rectified"] # à ajouter à une colonne de la db (à sommer en fonction du joueur aussi)
-        # nb_reward += 1 if info["rectified"] else 0 # pour vérifier que t'as la meme chose que le nombre d'impossible actions
-        # action_agent = info["action_agent"] # si tu veux le nombre de coups différents joués par l'agent
-        # action_rectified = info["action_rectified"] # si tu veux compter le nombre de coups différents  réel
+        reward_action_agent[current_player] += info["reward_action_agent"]
+        reward_rectified[current_player] += info["reward_rectified"]
 
         turn += 1
 
@@ -96,7 +92,13 @@ def play_game(env, agents, agent_names, config):
         for i in range(env.num_players)
     ]
 
-    actions_stats_by_player = env.export_action_stats()
+    actions_stats_by_player = {}
+    for i in range(env.num_players):
+        actions_stats_by_player[i] = {
+            "requested": {str(k): v for k, v in actions_stats_resquested[i].items()},
+            "realized": {str(k): v for k, v in actions_stats_realized[i].items()},
+        }
+
     store_final_game_data(players=players, rules=rules, actions_stats_by_player=actions_stats_by_player, nb_pawns=config["nb_chevaux"], num_config=config["num_conf"])
 
 # Main pour lancer une partie en choisissant les paramètres voulu depuis le terminal

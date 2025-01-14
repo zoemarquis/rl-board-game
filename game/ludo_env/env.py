@@ -202,6 +202,8 @@ class LudoEnv(gym.Env):
             print("my_goal : ", obs["my_goal"])
         info = {}
         pawn_id, action_type = self.game.decode_action(action)
+
+        info["current_player"] = self.current_player
         
         # définition de l'action que l'agent essaye de jouer
         info["action_agent"] = action_type
