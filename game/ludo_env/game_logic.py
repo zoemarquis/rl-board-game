@@ -1027,12 +1027,14 @@ class GameLogic:
         agent_type = agent_type if agent_type is not None else self.agent_type
         reward_table = get_reward_table(
             self.mode_pied_escalier, self.mode_ascension, agent_type
-        )  # TODO MERGE reward
-        if self.mode_protect == "activé":
+        )  
+        if self.mode_protect == "activé" and (agent_type == AgentType.DEFENSIVE or agent_type == "defensive"):
+            # pour defensive : reward de base de l'action
+            # + 5 * nombre de pions protégés 
             nb_pawns_protect = self.get_nb_pawns_protect()
             return (
-                reward_table[action] * nb_pawns_protect + 10
-            )  # TODO : adapter en fonciton du type d'agent (DANIIL)
+                reward_table[action] + 5 * nb_pawns_protect
+            ) 
         else:
             return reward_table[action]
 
