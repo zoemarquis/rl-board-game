@@ -92,6 +92,10 @@ class GameLogic:
                 )
         assert len(pawns_info) == self.nb_chevaux, "Nombre de pions incorrect"
         return pawns_info
+    
+    def get_pawns_in_goal(self, player_id):
+        pawns_info = self.get_pawns_info(player_id)
+        return sum(1 for pawn in pawns_info if pawn["state"] == State_NO_EXACT.OBJECTIF or pawn["state"] == State_EXACT.OBJECTIF)
 
     def get_ecurie_overview(self):
         """

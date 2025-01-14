@@ -72,6 +72,7 @@ def play_game(env, agents, agent_names, config):
         turn += 1
 
     winning_player_id = env.game.is_winner()
+    pawns_in_goal = env.get_pawns_in_goal()
     rules = SetOfRulesToInsert(rules_ids=config["rules_ids"]) 
 
     assert winning_player_id != -1, "Aucun gagnant"
@@ -89,6 +90,7 @@ def play_game(env, agents, agent_names, config):
             player_id=None,
             nb_train_steps=config["nb_train_steps"][i],
             nb_actions_interdites=nb_mouvements_interdits[i],
+            nb_pawns_in_goal=pawns_in_goal[i],
             # TODO : Ajouter d'autres paramètres
         )
         for i in range(env.num_players)

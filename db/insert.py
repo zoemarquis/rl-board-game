@@ -26,6 +26,7 @@ class PlayerToInsert:
         nb_train_steps: int = None,
         nb_actions_interdites: int = 0,
         strategy: str = None,
+        nb_pawns_in_goal: int = 0,
     ):
         assert name is not None, "name must be provided"
         assert is_human is not None, "is_human must be provided"
@@ -55,6 +56,7 @@ class PlayerToInsert:
         self.nb_train_steps = nb_train_steps
         self.nb_actions_interdites = nb_actions_interdites
         self.strategy = strategy
+        self.nb_pawns_in_goal = nb_pawns_in_goal
 
     def get_or_create_human_player(self, session) -> int:
         if not self.is_human:
@@ -149,6 +151,7 @@ class ParticipantToInsert:
         self.nb_moves = player.nb_moves
         self.is_winner = player.is_winner
         self.nb_actions_interdites = nb_actions_interdites
+        self.nb_pawns_in_goal = player.nb_pawns_in_goal
 
     def create_participant(self, session) -> int:
         participant = (
@@ -169,6 +172,7 @@ class ParticipantToInsert:
                 nb_moves=self.nb_moves,
                 is_winner=self.is_winner,
                 nb_actions_interdites=self.nb_actions_interdites,
+                nb_pawns_in_goal=self.nb_pawns_in_goal,
             )
             session.add(participant)
             print(
@@ -254,6 +258,7 @@ def store_final_game_data(
                 is_winner=player.is_winner,
                 nb_actions_interdites = player.nb_actions_interdites,
                 action_stats=action_stats.stat_id,
+                nb_pawns_in_goal = player.nb_pawns_in_goal
             )
             participant.num_player_game = num_player_game
             session.add(participant)
