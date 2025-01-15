@@ -20,3 +20,4 @@ streamlit
 sqlalchemy 
 
 # TODO SUPPR ??
+# TODO au moins mettre pour chaque quelle version est nécessaire
