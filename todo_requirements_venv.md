@@ -1,5 +1,7 @@
 # REQUIREMENTS VENV
 
+TODO METTRE ÇA DANS README 
+
 Nous avons utilisé python3.11
  ?? # TODO
 

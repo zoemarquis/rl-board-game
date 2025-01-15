@@ -21,7 +21,7 @@ fonttools==4.55.3
 fsspec==2024.12.0
 gitdb==4.0.12
 GitPython==3.1.44
-gymnasium==1.0.0
+gymnasium==0.29.1
 idna==3.10
 iniconfig==2.0.0
 ipykernel==6.29.5
@@ -43,7 +43,7 @@ mypy-extensions==1.0.0
 narwhals==1.21.0
 nest-asyncio==1.6.0
 networkx==3.4.2
-numpy==1.26.4
+numpy==2.0.2
 packaging==24.2
 pandas==2.2.3
 parso==0.8.4
@@ -75,7 +75,7 @@ seaborn==0.13.2
 six==1.17.0
 smmap==5.0.2
 SQLAlchemy==2.0.36
-stable_baselines3==2.4.0
+stable_baselines3==2.3.2
 stack-data==0.6.3
 streamlit==1.41.1
 sympy==1.13.1
