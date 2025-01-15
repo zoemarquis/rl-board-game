@@ -438,14 +438,16 @@ if __name__ == "__main__":
                     games_per_matchup=100
                 )"""
     
-    """main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=10)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=10)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=10)
+    """
+    # TODO Charlotte : Relancer ça avec au moins 100 parties
+    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=1)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=1)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=1)
 
-    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=10)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=10)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=10)
+    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=1)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=1)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=1)
 
-    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=10)
-    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=10)
-    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=10)"""
+    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=1)
+    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=1)
+    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=1)"""
