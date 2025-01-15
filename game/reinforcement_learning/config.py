@@ -36,7 +36,6 @@ config_param = {
     32: dict(mode_fin_partie="un", mode_pied_escalier="not_exact",  mode_ascension="sans_contrainte",  mode_rejoue_6="non", mode_rejoue_marche="non", mode_protect="activé"),
 }
 
-# TODO ici retirer les configs pas possibles 
 # ce qui est incompatible : escalier not exact et ascension avec contrainte
 # seul combinaison compatible avec rejoue marche oui : exact et avec contrainte
 
@@ -116,7 +115,7 @@ def get_config_nb(trad_config):
             return config_id
     raise ValueError("Configuration invalide")
         
-# TODO SUPPRIME ?
+# TODO CHARLOTTE SUPPRIME ?
 # num_players_options = [2]
 # nb_chevaux_options = [2]
 # mode_fin_partie_options = ["tous", "un"]

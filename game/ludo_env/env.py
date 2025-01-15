@@ -258,8 +258,6 @@ class LudoEnv(gym.Env):
             reward = self.game.get_reward(action_type, self.agent_type)
         elif is_auto_action and self.mode_gym == "stats_game" :
             reward = -10
-        # TODO CHARLOTTE T'AS OUBLIE DES CAS, à voir tout est ok pour mode entrainement, mode stat et mode jeu 
-
         done = self.game.is_game_over()
 
         if not done:

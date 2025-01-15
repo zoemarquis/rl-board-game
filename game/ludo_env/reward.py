@@ -311,8 +311,6 @@ def get_reward_table(
 def get_default_action_order(
     nb_chevaux, mode_pied_escalier, mode_ascension="sans_contrainte"
 ):
-    # TODO : scénario c'est toujours le premier cheval qui bouge...
-
     result = [0]  # commun aux 2 Action
     # favoriser move out
     result.append(1)  # commun aux 2 Action
