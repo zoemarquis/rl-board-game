@@ -12,11 +12,7 @@ from stable_baselines3 import PPO
 from config_game import config_param, generate_game_config
 from insert import store_final_game_data, PlayerToInsert, SetOfRulesToInsert
 
-racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game"))
-sys.path.append(racine_dir)
-
 from ludo_env import LudoEnv
-from ludo_env.action import Action_NO_EXACT, Action_EXACT
 from ludo_env.reward import AgentType
 from config import config_param, print_all_configs
 
@@ -421,7 +417,7 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
                 continue
 
 if __name__ == "__main__":
-    main()
+    #main()
     """Run matchups with different configurations
     configs_to_test = [16, 7, 1]
     player_counts = [2]
@@ -438,16 +434,15 @@ if __name__ == "__main__":
                     games_per_matchup=100
                 )"""
     
-    """
     # TODO Charlotte : Relancer ça avec au moins 100 parties
-    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=1)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=1)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=1)
+    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
 
-    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=1)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=1)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=1)
+    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
 
-    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=1)
-    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=1)
-    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=1)"""
+    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
