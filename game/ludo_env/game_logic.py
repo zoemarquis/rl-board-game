@@ -74,7 +74,7 @@ class GameLogic:
         for i in range(self.num_players):
             self.board[i] = [0 for _ in range(TOTAL_SIZE)]
             self.board[i][0] = self.nb_chevaux  # on met les pions dans l'écurie
-        self.tour = 0  # TODO : compter les tours pour les stats + TODOTEST
+        self.tour = 0  # compter les tours pour les stats
 
     def get_pawns_info(self, player_id):
         """
@@ -292,7 +292,6 @@ class GameLogic:
             raise ValueError("get_pawns_on_position pas bien implémenté")
 
     def is_opponent_pawn_on(self, player_id, target_position_relative):
-        # TODO MERGE ZOE assert target_position_relative in range(1, 57), f"Position incorrecte {target_position_relative}" # TODO MERGE
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -343,7 +342,7 @@ class GameLogic:
     # Tuer un pion adverse si on arrive sur sa case
     # Supprimer le pion de sa case et le renvoyer à l'écurie
     def kill_pawn(self, player_id, position):
-        assert position in range(1, N_FIRST_STEP), "Position incorrecte"  # TODO MERGE
+        assert position in range(1, N_FIRST_STEP), "Position incorrecte"  
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -404,7 +403,6 @@ class GameLogic:
         self.board[player_id][old_position + dice_value] += 1
 
     def avance_recule(self, player_id, old_position, dice_value):
-        # TODO MERGE : assert personne sur le chemin devant moi
         assert (
             old_position + dice_value > BOARD_SIZE
         ), "Déplacement pas conforme à la position"
@@ -414,7 +412,6 @@ class GameLogic:
         assert (
             old_position < get_position_apres
         ), f"Déplacement pas conforme à la position, {old_position} < {get_position_apres}, dice_value : {dice_value}"
-        # TODOTEST TODO ZOE TEST il manque des assert + mettre des tests sur les actions possibles
         self.board[player_id][old_position] -= 1
         self.board[player_id][get_position_apres] += 1
 
@@ -441,7 +438,7 @@ class GameLogic:
     def is_there_pawn_to_kill(self, player_id, target_position):
         assert target_position in range(
             1, N_FIRST_STEP
-        ), "Position incorrecte"  # TODO MERGE
+        ), "Position incorrecte" 
         for other_player in range(self.num_players):
             if other_player != player_id:
                 relative_position = self.get_relative_position(
@@ -456,8 +453,7 @@ class GameLogic:
     ):
         assert target_position in range(
             1, N_FIRST_STEP
-        ), f"Position incorrecte {target_position}"  # TODO MERGE
-        # TODO : mettre un if si on veut autoriser le doublement ici par exemple ?
+        ), f"Position incorrecte {target_position}"  
         for pos in range(old_position + 1, target_position):
             if (
                 self.is_opponent_pawn_on(player_id, pos)
@@ -475,7 +471,7 @@ class GameLogic:
             elif action == Action_NO_EXACT.MOVE_OUT_AND_KILL:
                 self.kill_pawn(player_id, 1)
                 self.sortir_pion(player_id, dice_value)
-            elif action == Action_NO_EXACT.GET_STUCK_BEHIND:  # TODO TEST
+            elif action == Action_NO_EXACT.GET_STUCK_BEHIND: 
                 target_position = old_position + dice_value
                 if target_position >= N_FIRST_STEP:
                     target_position = BOARD_SIZE
@@ -508,7 +504,7 @@ class GameLogic:
                 self.kill_pawn(player_id, 1)
                 self.sortir_pion(player_id, dice_value)
 
-            elif action == Action_EXACT.GET_STUCK_BEHIND:  # TODO TEST TODO MERGE
+            elif action == Action_EXACT.GET_STUCK_BEHIND:  
                 target_position = old_position + dice_value
                 if target_position >= N_FIRST_STEP:
                     target_position = BOARD_SIZE
@@ -524,7 +520,6 @@ class GameLogic:
                 action == Action_EXACT.MOVE_FORWARD
                 or action == Action_EXACT.REACH_PIED_ESCALIER
             ):
-                # TODO ZOE : tester si il faut kill parce que c'est une action aussi
                 self.kill_pawn(player_id, old_position + dice_value)
 
                 self.avance_pion_path(player_id, old_position, dice_value)
@@ -594,7 +589,7 @@ class GameLogic:
             elif action == Action_EXACT_ASCENSION.REACH_GOAL:
                 assert (
                     dice_value == 6
-                ), "Déplacement pas conforme à la position"  # TODO MERGE TODO TEST ZOE 6 pour reach goal dans cette version
+                ), "Déplacement pas conforme à la position"  
                 self.securise_pion_goal(player_id, old_position, dice_value)
             elif action == Action_EXACT_ASCENSION.NO_ACTION:
                 pass
@@ -620,7 +615,7 @@ class GameLogic:
                     else:  # pas d'adversaire
                         valid_actions.append(Action_NO_EXACT.MOVE_OUT)
 
-            elif state == State_NO_EXACT.CHEMIN:  # TODO TEST VALID ACTIONS
+            elif state == State_NO_EXACT.CHEMIN: 
                 if target_position < N_FIRST_STEP:  # limite avant zone protégée
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
@@ -681,7 +676,6 @@ class GameLogic:
                         valid_actions.append(Action_EXACT.MOVE_OUT)
 
             elif state == State_EXACT.CHEMIN:
-                # TODOTEST TODO ZOE : si quelquun sur la route alors je suis bloquée dans tous les cas
                 if target_position < BOARD_SIZE:
                     obstacle = (
                         self.is_there_pawn_between_my_position_and_target_position(
@@ -754,7 +748,6 @@ class GameLogic:
                             valid_actions.append(
                                 Action_EXACT.AVANCE_RECULE_PIED_ESCALIER
                             )
-                        # TODO MERGE
 
             elif state == State_EXACT.PIED_ESCALIER:
                 valid_actions.append(Action_EXACT.MOVE_IN_SAFE_ZONE)
@@ -972,7 +965,6 @@ class GameLogic:
                 for action in actions:
                     encoded_actions.append(self.encode_action(i, action))
             return list(set(encoded_actions))
-        # TODO MERGE : simplifier
         else:
             raise ValueError("Action non valide")
 
@@ -1095,9 +1087,6 @@ class GameLogic:
                     # Calcul de l'indice selon l'ordre des joueurs et l'offset
                     chemin[relative_position_chemin].append(p)
             i = (i + 1) % self.num_players
-
-        # TODO TEST
-
         return chemin
 
     def get_chemin_pdv_2_joueurs(self, perspective_player):

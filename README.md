@@ -33,6 +33,7 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
                 - Rejoindre ce pion si la valeur du dé est égale à la distance.
                 - S'arrêter sur la case du pion si la valeur du dé est supérieure. : TODO vérifier
 - Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
+- TODO : ajouter explications du rester coincé derriere
 
 - **Disposition des écuries selon le nombre de joueurs** :
     - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.

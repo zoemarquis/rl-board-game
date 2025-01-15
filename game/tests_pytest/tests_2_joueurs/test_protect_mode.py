@@ -309,3 +309,39 @@ def test_avance_recule_tue(game_protect):
 
     # on ne peut pas kill en reculant, puisqu'on reste forcément coincer derrière : pas de problème
     
+
+@pytest.fixture
+def game_pas_protect():
+    return GameLogic(num_players=2, nb_chevaux=2, mode_protect="désactivé", mode_pied_escalier="exact")
+
+
+def test_avance_recule_tue(game_pas_protect):
+    game_pas_protect.board[0] = [
+        1,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,1,0,0,0,
+        0,0,0,0,0,0,
+        0 ]
+    game_pas_protect.board[1] = [
+        0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,2,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0 ]
+    
+    assert game_pas_protect.get_valid_actions(0, 3) == [[], [Action_EXACT.KILL],False]
+    
+    game_pas_protect.board[1] = [
+        0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,2,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0 ]
+    
+    assert game_pas_protect.get_valid_actions(0, 4) == [[], [Action_EXACT.GET_STUCK_BEHIND], False]
