@@ -89,11 +89,6 @@ class Game(Base):
 class Participant(Base):
     __tablename__ = "participant"
 
-    # TODO : ajouter à la place de score et gérer partout
-    #desired_reward (ça c'est ce que t'as récup là ? genre enfaite juste tu choppes -10 si c'est pas la bonne action ? pcq le code de env c'est pas ce qu'il fait)
-    #played_reward (là c'est si l'action de base, desired, était fausse alors récup la debug action, l'ajouter dans les stats en disant que c'est ce coup qui est joué, et son reward associé )
-    
-
     participant_id = Column(Integer, primary_key=True, autoincrement=True)
     game_id = Column(Integer, ForeignKey("game.game_id", ondelete="CASCADE"), nullable=False)
     player_id = Column(Integer, ForeignKey("player.player_id", ondelete="CASCADE"), nullable=False)
@@ -165,80 +160,6 @@ def display_schema():
             print(
                 f"  Column: {column['name']}, Type: {column['type']}, Nullable: {column['nullable']}"
             )
-
-
-def add_players():
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    try:
-
-        human_players = [
-            Player(name="Zoé"),
-            Player(name="Charlotte"),
-            Player(name="Katia"),
-            Player(name="Daniil"),
-        ]
-
-        session.add_all(human_players)
-        session.commit()
-        print("Players have been added successfully.")
-
-    except Exception as e:
-        print(f"Error during adding players: {e}")
-        session.rollback()
-
-    finally:
-        session.close()
-
-
-def add_agents():
-    Session = sessionmaker(bind=engine)
-    session = Session()
-
-    try:
-
-        agents = [
-            Player(
-                name="Agent Collecteur",
-                is_human=False,
-                strategy="Collecteur",
-                difficulty=1,
-                description="Collecte les trésors le plus vite possible. \
-                    Il gagne des points de récompense en fonction de la distance entre son pion et son objectif.\
-                        ",  # TODO : prendre en compte le jnombre de cout nécessaire à l'obtention du trésor
-                # reward si il gagne
-            ),
-            Player(
-                name="Agent Emmureur",
-                is_human=False,
-                strategy="Emmureur",
-                difficulty=1,
-                description="Bloque les autres joueurs pour les empêcher de gagner des points.\
-                    Il gagne des points de récompense en fonction de la distance que peuvent parcourir les joueurs.\
-                    Si il réduit considérablement les chemins possibles, il gagne des points de récompense.\
-                        ",  # TODO : prendre en compte 1 2 ou 3 agents ?, prendre en compte quelque chose pour l'amener un eptit peu vers la victoire aussi
-            ),
-            Player(
-                name="Agent Stable",
-                is_human=False,
-                strategy="Stable",
-                difficulty=1,
-                description="N'aime pas s'arreter sur une case qui bouge. Il aime la stabilité, il déteste donc être sur une case mouvante et encore plus être au bord.\
-                        ",  # TODO : prendre en compte le nombre de tour nécessaire à l'obtention du trésor
-            ),
-        ]
-
-        session.add_all(agents)
-        session.commit()
-        print("Agents have been added successfully.")
-
-    except Exception as e:
-        print(f"Error during adding agents: {e}")
-        session.rollback()
-
-    finally:
-        session.close()
 
 
 if __name__ == "__main__":

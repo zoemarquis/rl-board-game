@@ -35,14 +35,6 @@ class PlayerToInsert:
     ):
         assert name is not None, "name must be provided"
         assert is_human is not None, "is_human must be provided"
-        # TODO : Erreur car player_id est None au début (voir si on enlève ce assert)
-        """if player_id is None:
-            assert is_human == True, "player_id must be provided if is_human is False"
-        else:
-            assert (
-                is_human == False
-            ), "player_id must not be provided if is_human is True"
-            """
         assert 1 <= turn_order <= 4, "turn_order must be between 1 and 4"
         if is_human is True:
             assert reward_action_agent is None, "score must be None if is_human is True"

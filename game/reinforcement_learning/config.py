@@ -57,7 +57,7 @@ def get_trad_config(victory_mode, stair_rule, progression_order, replay_climb, r
         raise ValueError("Mode de victoire invalide")
     
     if stair_rule == "exactitude": # atteindre pied escalier 
-        mode_pied_escalier = "exact" # TODO pas l'inverse ?
+        mode_pied_escalier = "exact"
     elif stair_rule == "simplifiée":
         mode_pied_escalier = "not_exact"
     else:
@@ -114,29 +114,3 @@ def get_config_nb(trad_config):
                           mode_protect=trad_config["mode_protect"]):
             return config_id
     raise ValueError("Configuration invalide")
-        
-# TODO CHARLOTTE SUPPRIME ?
-# num_players_options = [2]
-# nb_chevaux_options = [2]
-# mode_fin_partie_options = ["tous", "un"]
-# mode_ascension_options = ["avec_contrainte", "sans_contrainte"]
-# mode_pied_escalier_options = ["exact", "not_exact"]
-# mode_rejoue_6_options = ["oui", "non"]
-# mode_rejoue_marche_options = ["oui", "non"]
-# mode_gym_options = ["entrainement"]
-#
-# configurations = []
-# config_id = 1
-# for (num_players, nb_chevaux, mode_fin_partie, mode_ascension, mode_pied_escalier, mode_rejoue_6, mode_rejoue_marche, mode_gym) in product(num_players_options, nb_chevaux_options, mode_fin_partie_options, mode_ascension_options, mode_pied_escalier_options, mode_rejoue_6_options, mode_rejoue_marche_options, mode_gym_options,):
-#     if mode_ascension == "avec_contrainte" and mode_pied_escalier != "exact":
-#         continue
-#     if mode_rejoue_marche == "oui" and mode_ascension != "avec_contrainte":
-#         continue
-#     if mode_ascension == "sans_contrainte" and mode_pied_escalier not in ["exact", "not_exact"]:
-#         continue
-#
-#     configurations.append(f"""env_{config_id} = LudoEnv(num_players={num_players}, nb_chevaux={nb_chevaux}, mode_fin_partie="{mode_fin_partie}", mode_ascension="{mode_ascension}", mode_pied_escalier="{mode_pied_escalier}", mode_rejoue_6="{mode_rejoue_6}", mode_rejoue_marche="{mode_rejoue_marche}", mode_gym="{mode_gym}", with_render=False)""")
-#     config_id += 1
-#
-# for config in configurations:
-#     print(config)

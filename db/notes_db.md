@@ -69,10 +69,9 @@ Les configurations des agents sont définies dans le fichier `config_game.py`. =
 
 ---
 
-## 4. Importer et exporter les données de la base de données
+## 4. Exporter les données de la base de données
 
 - **Exporter la base de données en CSV** : Utilisez `export.py`.
-- **Importer des données depuis un CSV** : Utilisez `import.py`.
 
 ---
 

@@ -1,21 +1,15 @@
 # INFO :  Script à lancer depuis le répertoire db
 # Permet d'enregistrer les statistiques d'une partie dans la base de données
 
-# TODO : Ajouter la possibilité de faire jouer des joueurs avec des timesteps différents
-
 import sys
 import os
 import itertools
-
 from collections import defaultdict
 from stable_baselines3 import PPO
 from config_game import config_param, generate_game_config
 from insert import store_final_game_data, PlayerToInsert, SetOfRulesToInsert
-
 racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game"))
 sys.path.append(racine_dir)
-
-
 from ludo_env import LudoEnv
 from ludo_env.reward import AgentType
 from config import config_param, print_all_configs
@@ -94,7 +88,7 @@ def play_game(env, agents, agent_names, config):
     players = [
         PlayerToInsert(
             name=agent_names[i],
-            is_human=False, # TODO : Gérer le cas quand c'est un humain
+            is_human=False,
             turn_order=i + 1,
             nb_moves=moves[i],
             is_winner=(i == winning_player_id),
@@ -105,7 +99,6 @@ def play_game(env, agents, agent_names, config):
             nb_train_steps=config["nb_train_steps"][i],
             nb_actions_interdites=nb_mouvements_interdits[i],
             nb_pawns_in_goal=pawns_in_goal[i],
-            # TODO : Ajouter d'autres paramètres
         )
         for i in range(env.num_players)
     ]
@@ -234,6 +227,7 @@ def main():
         print(f"\n=== Partie {i}/{num_games} ===")
         play_game(env, agents, agent_names, config)
 
+
 # Fonction permettant de lancer des parties automatiquement entre mêmes agents
 def main_auto(num_conf, num_players, nb_chevaux, num_games):
     # Vérifie si des agents sont entraînés
@@ -277,6 +271,7 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
         agent_index = available_agents.index(agent_name)
         steps = nb_train_steps[agent_index]
 
+        # TODO : A fix
         agent_types_enums = [convert_to_agent_type(agent.split("_")[0]) for agent in selected_agents]
 
         print(nb_train_steps)
@@ -450,10 +445,27 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
                 print(f"Error running matchup: {e}")
                 continue
 
+def main_lancer_parties_pour_analyse_entrainement() :
+    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
+    
+    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
+
+    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
+    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
+
+# TODO : Mettre main() comment fonction principale
 if __name__ == "__main__":
     #main()
+    main_lancer_parties_pour_analyse_entrainement()
+
+
     # Run matchups with different configurations
-    configs_to_test = [16, 7, 1]
+    """configs_to_test = [16, 7, 1]
     player_counts = [4]
     pawn_counts = [2]
     
@@ -466,17 +478,4 @@ if __name__ == "__main__":
                     num_players=players,
                     nb_chevaux=pawns,
                     games_per_matchup=100
-                )
-    
-    # TODO Charlotte : Relancer ça avec au moins 100 parties
-    # main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
-    # main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
-    # main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
-
-    # main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
-    # main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
-    # main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
-
-    # main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
-    # main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
-    # main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
+                )"""
