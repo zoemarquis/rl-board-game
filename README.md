@@ -74,6 +74,8 @@ Pour jouer avec l'interface graphique, dans le dossier game, lancer le fichier _
     python3 play_pygame/play.py
 ![Demo of the app](demo.gif)
 
+# TODO : Si agent par entrainé ça plante
+
 ## Technologies utilisées :
 🐍 Python : Langage principal pour la gestion du jeu et des agents.  
 🛠️ Gymnasium : Environnements personnalisés pour l'apprentissage par renforcement.  

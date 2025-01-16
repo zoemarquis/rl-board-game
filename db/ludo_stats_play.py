@@ -270,11 +270,11 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
         nb_train_steps = [int(agent.split("_")[-2].replace("steps", "")) for agent in available_agents]
         agent_index = available_agents.index(agent_name)
         steps = nb_train_steps[agent_index]
+        
+        # Type d'agent identique pour tous les joueurs
+        agent_type = available_agents[0].split("_")[0]
+        agent_types_enums = [convert_to_agent_type(agent_type) for _ in range(num_players)] 
 
-        # TODO : A fix
-        agent_types_enums = [convert_to_agent_type(agent.split("_")[0]) for agent in selected_agents]
-
-        print(nb_train_steps)
         config = generate_game_config(
             num_players=num_players,
             nb_chevaux=nb_chevaux,
