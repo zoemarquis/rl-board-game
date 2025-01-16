@@ -12,9 +12,31 @@ from stable_baselines3 import PPO
 from config_game import config_param, generate_game_config
 from insert import store_final_game_data, PlayerToInsert, SetOfRulesToInsert
 
+racine_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../game"))
+sys.path.append(racine_dir)
+
+
 from ludo_env import LudoEnv
 from ludo_env.reward import AgentType
 from config import config_param, print_all_configs
+
+def convert_to_agent_type(agent_str):
+    """Convert string agent type to AgentType enum value"""
+    agent_str = agent_str.lower()
+    if agent_str == "balanced":
+        return AgentType.BALANCED
+    elif agent_str == "aggressive":
+        return AgentType.AGGRESSIVE
+    elif agent_str == "rusher":
+        return AgentType.RUSHER
+    elif agent_str == "defensive":
+        return AgentType.DEFENSIVE
+    elif agent_str == "spawner":
+        return AgentType.SPAWNER
+    elif agent_str == "suboptimal":
+        return AgentType.SUBOPTIMAL
+    else:
+        raise ValueError(f"Unknown agent type: {agent_str}")
 
 # Fonction pour faire jouer des agents les uns contre les autres
 def play_game(env, agents, agent_names, config):
@@ -178,6 +200,8 @@ def main():
         print(f"Erreur lors du chargement des agents : {e}")
         return
 
+    agent_types_enums = [convert_to_agent_type(agent.split("_")[0]) for agent in selected_agents]
+
     # Configuration de l'env
     config_param_for_env = config_param[num_conf]
     config = generate_game_config(
@@ -192,6 +216,7 @@ def main():
     env = LudoEnv(
         num_players=config["num_players"],
         nb_chevaux=config["nb_chevaux"],
+        agent_types=agent_types_enums,
         mode_fin_partie=config["mode_fin_partie"],
         mode_ascension=config["mode_ascension"],
         mode_pied_escalier=config["mode_pied_escalier"],
@@ -252,6 +277,8 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
         agent_index = available_agents.index(agent_name)
         steps = nb_train_steps[agent_index]
 
+        agent_types_enums = [convert_to_agent_type(agent.split("_")[0]) for agent in selected_agents]
+
         print(nb_train_steps)
         config = generate_game_config(
             num_players=num_players,
@@ -265,6 +292,7 @@ def main_auto(num_conf, num_players, nb_chevaux, num_games):
         env = LudoEnv(
             num_players=config["num_players"],
             nb_chevaux=config["nb_chevaux"],
+            agent_types=agent_types_enums,
             mode_fin_partie=config["mode_fin_partie"],
             mode_ascension=config["mode_ascension"],
             mode_pied_escalier=config["mode_pied_escalier"],
@@ -330,6 +358,8 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
                     os.path.basename(agent1_path),
                     os.path.basename(agent2_path)
                 ]
+
+                agent_types_enums = [convert_to_agent_type(type1), convert_to_agent_type(type2)]
                 
                 # Configure environment
                 config = generate_game_config(
@@ -344,6 +374,7 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
                 env = LudoEnv(
                     num_players=config["num_players"],
                     nb_chevaux=config["nb_chevaux"],
+                    agent_types=agent_types_enums,
                     mode_fin_partie=config["mode_fin_partie"],
                     mode_ascension=config["mode_ascension"],
                     mode_pied_escalier=config["mode_pied_escalier"],
@@ -385,6 +416,8 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
                              for agent_type in matchup]
                 agents = [PPO.load(path) for path in agent_paths]
                 agent_names = [os.path.basename(path) for path in agent_paths]
+
+                agent_types_enums = [convert_to_agent_type(agent_type) for agent_type in matchup]
                 
                 # Configure environment
                 config = generate_game_config(
@@ -399,6 +432,7 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
                 env = LudoEnv(
                     num_players=config["num_players"],
                     nb_chevaux=config["nb_chevaux"],
+                    agent_types=agent_types_enums,
                     mode_fin_partie=config["mode_fin_partie"],
                     mode_ascension=config["mode_ascension"],
                     mode_pied_escalier=config["mode_pied_escalier"],
@@ -418,9 +452,9 @@ def main_auto_matchups(num_conf, num_players, nb_chevaux, games_per_matchup=100)
 
 if __name__ == "__main__":
     #main()
-    """Run matchups with different configurations
+    # Run matchups with different configurations
     configs_to_test = [16, 7, 1]
-    player_counts = [2]
+    player_counts = [4]
     pawn_counts = [2]
     
     for conf in configs_to_test:
@@ -432,17 +466,17 @@ if __name__ == "__main__":
                     num_players=players,
                     nb_chevaux=pawns,
                     games_per_matchup=100
-                )"""
+                )
     
     # TODO Charlotte : Relancer ça avec au moins 100 parties
-    main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
+    # main_auto(num_conf=16, num_players=2, nb_chevaux=2, num_games=100)
+    # main_auto(num_conf=17, num_players=2, nb_chevaux=2, num_games=100)
+    # main_auto(num_conf=12, num_players=2, nb_chevaux=2, num_games=100)
 
-    main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
+    # main_auto(num_conf=16, num_players=2, nb_chevaux=4, num_games=100)
+    # main_auto(num_conf=17, num_players=2, nb_chevaux=4, num_games=100)
+    # main_auto(num_conf=12, num_players=2, nb_chevaux=4, num_games=100)
 
-    main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
-    main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
+    # main_auto(num_conf=16, num_players=4, nb_chevaux=4, num_games=100)
+    # main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
+    # main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)

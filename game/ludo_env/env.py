@@ -18,6 +18,7 @@ class LudoEnv(gym.Env):
         num_players,
         nb_chevaux,
         agent_type=AgentType.BALANCED,
+        agent_types=None,
         mode_fin_partie="tous",
         mode_ascension="sans_contrainte",
         mode_pied_escalier="not_exact",
@@ -75,6 +76,11 @@ class LudoEnv(gym.Env):
         self.with_render = with_render
         self.mode_gym = mode_gym
 
+        if agent_types is not None:
+            assert len(agent_types) == num_players, "Number of agent types must match number of players"
+            self.agent_types = agent_types
+        else:
+            self.agent_types = [agent_type] * num_players
         self.agent_type = agent_type
 
         self.num_players = num_players
@@ -204,14 +210,16 @@ class LudoEnv(gym.Env):
         pawn_id, action_type = self.game.decode_action(action)
 
         info["current_player"] = self.current_player
+
+        current_agent_type = self.agent_types[self.current_player]
         
         # définition de l'action que l'agent essaye de jouer
         info["action_agent"] = action_type
-        info["reward_action_agent"] = self.game.get_reward(action_type, self.agent_type)
+        info["reward_action_agent"] = self.game.get_reward(action_type, current_agent_type)
         
         # définition de l'action que l'agent va réellement jouer
         info["action_rectified"] = action_type
-        info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)
+        info["reward_rectified"] = self.game.get_reward(action_type, current_agent_type)
         # marqueur pour savoir si l'action a été modifiée ou non
         info["rectified"] = False
         
@@ -231,7 +239,7 @@ class LudoEnv(gym.Env):
                 info["reward_action_agent"] = -10
                 # On récupère le reward associé à l'action rectifiée
                 info["action_rectified"] = action_type   
-                info["reward_rectified"] = self.game.get_reward(action_type, self.agent_type)       
+                info["reward_rectified"] = self.game.get_reward(action_type, current_agent_type)       
                 info["rectified"] = True  
 
             elif self.mode_gym == "jeu":
@@ -255,7 +263,7 @@ class LudoEnv(gym.Env):
         if not is_auto_action or self.mode_gym == "jeu":
             if action_type in self.actions_par_type[self.current_player]:
                 self.actions_par_type[self.current_player][action_type] += 1
-            reward = self.game.get_reward(action_type, self.agent_type)
+            reward = self.game.get_reward(action_type, current_agent_type)
         elif is_auto_action and self.mode_gym == "stats_game" :
             reward = -10
         done = self.game.is_game_over()
