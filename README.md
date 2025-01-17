@@ -12,6 +12,14 @@ Ce projet explore l'apprentissage par renforcement appliqué à des jeux de plat
 
 Nous avons conçu plusieurs agents et défini différentes variations de règles, afin d'étudier leurs interactions et performances dans divers contextes de jeu.
 
+---
+
+TODO (énoncé): Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
+
+---
+
+TODO ZOE ajouter rester coincé derriere / pas de depassement 
+
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
 ⚙️ Entraînement des agents : Les agents ont été entraînés sur des environnements simulés, avec des règles variées pour modéliser différents scénarios de jeu.  
@@ -68,13 +76,7 @@ Nous avons conçu plusieurs agents et défini différentes variations de règles
 
 - TODO DANIIL 
 
-## Comment lancer une partie (avec interface graphique) :
-Pour jouer avec l'interface graphique, dans le dossier game, lancer le fichier _play.py_ comme ceci:
-
-    python3 play_pygame/play.py
-![Demo of the app](demo.gif)
-
-# TODO : Si agent par entrainé ça plante
+---
 
 ## Technologies utilisées :
 🐍 Python : Langage principal pour la gestion du jeu et des agents.  
@@ -85,20 +87,177 @@ Pour jouer avec l'interface graphique, dans le dossier game, lancer le fichier _
 🎨 Pygame : Interface graphique pour visualiser les parties en temps réel.  
 ✅ Pytest : Tests unitaires pour garantir la fiabilité du code.  
 
-# packages, excéuter le jeu ... TODOCOMM 
--> requirements
--> venv (?, plus compatible que conda pour permettre les tests prof)
+--- 
 
+## Installation 
+
+#### Version de Python 
+Nous avons utilisé **Python 3.11** pour ce projet.
+Assurez-vous que cette version est installée sur votre machine : 
+
+##### Installation de Python 3.11
+- MacOS (via Homebrew) : 
+```bash
+brew install python@3.11
+```
+
+- Linux (Ubuntu):
+```bash
+sudo apt update
+sudo apt install python3.11
+```
+
+##### Vérification de l'installation : 
+```bash
+python3.11 --version
+```
+
+#### Création de l'environnement virtuel
+Pour garantir la compatibilité et faciliter les tests, nous avons utilisé `venv`.
+
+##### Vérifier la disponibilité de `venv``
+```bash
+python3.11 -m venv --help
+```
+- Si cette commande fonctionne, vous pouvez continuer.
+- Sinon installez `venv`:
+    - Sous MacOS, lorsque Python 3.11 est installé via Homebrew, le module `venv`est inclus par défaut. Si la commande précédent a généré une erreur : 
+    ```bash
+    brew update
+    brew upgrade python
+    brew reinstall python@3.11
+    ```
+
+    - Linux (Ubuntu)
+    ```bash
+    sudo apt update
+    sudo apt install python3-venv
+    ```
+
+
+##### Étapes pour créer et configurer l'environnement virtuel 
+- Créer l'environnement virtuel
+Depuis la racine du projet : 
+```bash
+python3.11 -m venv ludo_venv
+```
+
+- Activer l'environnement virtuel 
+    ```bash
+    source ludo_venv/bin/activate
+    ```
+
+- Mettre à jour `pip` dans l'environnement virtuel
+```bash
+pip install --upgrade pip
+```
+
+- Installer les dépendances 
+```bash
+pip install -r requirements_venv.txt
+```
+
+##### Désactiver l'environnement virtuel
+Une fois que vous avez terminé vos tests ou que vous n'avez plus besoin d'utiliser l'environnement virtuel, vous pouvez le désactiver facilement. Cela vous permettra de revenir à votre environnement Python global ou de système.
+
+Pour désactiver l'environnement virtuel, exécutez simplement la commande suivante :
+```bash
+deactivate
+```
+
+Cela désactive l'environnement virtuel actif sans supprimer ses fichiers. Vous pourrez le réactiver ultérieurement si nécessaire.
+
+### Utilisation de l'environnement virtuel dans les notebooks 
+
+Pour les analyses, expérimentations et entraînements, nous avons utilisé des notebooks Jupyter via VSCode. Si vous souhaitez exécuter un notebook dans le cadre de ce projet, nous vous recommandons d’utiliser VSCode, car nous n'avons pas testé cette configuration avec d'autres outils ou éditeurs.
+
+Le package `ipykernel`, nécessaire pour connecter l'environnement virtuel aux notebooks Jupyter, est déjà inclus dans les dépendances listées dans le fichier `requirements_venv.txt`.
+
+##### Étapes pour configurer le kernel dans VSCode : 
+
+- Ouvrez un notebook `.ipynb` dans VSCode
+- Cliquez sur **Run All** ou sur l'option **Select Kernel** située en haut à droite de l'interface.
+- Dans le menu qui s'affiche, cliquez sur **Select Another Kernel...**
+- Dans la section **Python Envrionments**, choisissez l'environnement virtuel correspondant (`ludo_venv`)
+
+Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'environnement virtuel, et vous pourrez exécuter vos analyses en toute compatibilité avec les dépendances du projet.
+
+
+TODO DANIIL : supprimer tout ce qui est en lien avec conda
 ## Conda environment
-
 ```bash
 conda env create -f environment.yml
 conda activate ludo-env
 ```
 
+---
 
+## Lancer une partie avec interface graphique
+Pour jouer avec l'interface graphique, placer vous dans le dossier `game``
+
+    ```bash
+    cd game
+    ```
+
+Puis exécuter le fichier `play.py` comme ceci:
+
+    ```bash
+    python3 play_pygame/play.py
+    ```
+
+TODO KATIA : ajoute du texte pour dire à quoi ça correspond l'image 
+![Demo of the app](demo.gif)
+
+TODO KATIA expliquer que Si agent pas entrainé ça plante et montrer le message d'erreur attendu 
+
+
+
+---
+
+## Tests avec Pytest
+
+Afin de garantir que la logique du jeu est robuste et fonctionne comme prévu, nous avons mis en place des tests unitaires avec Pytest. Ces tests couvrent différents aspects de la logique du jeu pour s'assurer que chaque fonctionnalité est correctement implémentée.
+
+#### Lancer les tests Pytest 
+Pour exécuter les tests, utilisez la commande suivante à la racine du projet :
+```bash
+pytest game/tests_pytest/
+```
+
+#### Résultat attendu
+Si tous les tests passent avec succès, vous devriez voir une sortie similaire à celle-ci :
+
+```bash
+============================== 79 passed, 1 warning in 1.30s ==============================
+```
+
+Cela indique que 79 tests ont été validés avec succès. Le warning peut être dû à une dépendance ou une configuration et ne devrait pas affecter le fonctionnement principal du jeu.
+
+---
+
+
+## Résultats et analyses
+
+### BD + simulations massives ?
+TODO CHARLOTTE DB 
+inbsérer img
+
+### ? en gros preuve que les agents s'entrainent 
+TODO énoncé : Résultats et analyses.
+TODO CHARLOTTE  TON NOTEBOOK 
+insérer img
+
+### ? 
+TODO énoncé : Résultats et analyses.
+TODO DANIIL CE QUE T'AS FAIT AVEC LES STATS
+insérer img 
+
+
+---
 
 ## Arborescence du projet
+
+TODO (énoncé) : Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
 
 ### À la racine 
 
@@ -225,14 +384,7 @@ L’atteinte de la zone d’arrivée.
 
 TODO CHARLOTTE JE TE LAISSE EXPLIQUER CE QUE TU VEUX EXPLIQUER ICI :) 
 
----
 
-TODO SUPRRIMER CETTE FIN 
+### analyse 
 
-notice des TODO :
-
-TODOTEST : ajouter des tests pour vérifier
-TODODELETE ? : fichier à vérifier puis supprimer si besoin 
-TODOCOMM : commentaires à ajouter 
-TODOREGLE : regle à ajouter / faire varier 
-il reste des TODO tout court 
+TODO DANIIL ICI Décrit à quels endroits sont les notebooks que le prof doit regarder pour les stats 
