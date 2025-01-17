@@ -151,6 +151,3 @@ def test_reward():
         11,
         4,
     ]
-
-
-# TODOTEST : reward avec contrainte ascension

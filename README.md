@@ -18,8 +18,6 @@ TODO (énoncé): Objectifs : ce que fait le projet, une description des différe
 
 ---
 
-TODO ZOE ajouter rester coincé derriere / pas de depassement 
-
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
 ⚙️ Entraînement des agents : Les agents ont été entraînés sur des environnements simulés, avec des règles variées pour modéliser différents scénarios de jeu.  
@@ -35,13 +33,13 @@ TODO ZOE ajouter rester coincé derriere / pas de depassement
 - Une fois sur le plateau, les pions doivent avancer sur un chemin commun de 56 cases, où :
     - Les pions peuvent se croiser ou se faire tuer en arrivant exactement sur une case occupée par un pion adverse.
     - Règles pour les déplacements :
-        - Un pion peut tuer un pion adverse uniquement en tombant exactement sur sa case.
-        - Bloquage derrière un pion : Si la valeur du dé est strictement supérieure au nombre de cases jusqu’au pion suivant, le joueur est bloqué.
-            - Si le pion bloquant appartient au même joueur, on peut :
-                - Rejoindre ce pion si la valeur du dé est égale à la distance.
-                - S'arrêter sur la case du pion si la valeur du dé est supérieure. : TODO vérifier
+        - **Tuer un pion adverse** : Un pion peut éliminer un pion adverse uniquement s’il tombe exactement sur la même case.
+        - **Rejoindre un pion allié** : Un pion appartenant au même joueur peut rejoindre un autre pion uniquement si le lancé de dé correspond exactement à la distance entre les deux.
+        - **Rester bloqué derrière un pion** : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu'à la case précédent l'obstacle. Les dépassements de pions (alliés ou adverses) sont donc interdits. Ces règles ne s'appliquent pas à l'escalier.
 - Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
-- TODO : ajouter explications du rester coincé derriere
+
+
+
 
 - **Disposition des écuries selon le nombre de joueurs** :
     - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.
@@ -58,8 +56,10 @@ TODO ZOE ajouter rester coincé derriere / pas de depassement
 - Conditions de victoire :
     - Victoire rapide : Le premier joueur à atteindre l’objectif avec un seul pion gagne.
     - Victoire complète : Tous les pions d’un joueur doivent atteindre l’objectif pour déclarer sa victoire.
-- Règles pour l'escalier :
-    - Exactitude nécessaire : Un pion doit atteindre exactement le pied de l'escalier pour pouvoir commencer à le gravir.
+- Règles pour atteindre le pied de l'escalier :
+    - Exactitude nécessaire : Un pion doit atteindre exactement la case située au pied de l'escalier pour commencer à le gravir.
+        - Si le lancé de dé dépasse la distance requise pour atteindre cette case, le pion peut avancer puis reculer, à condition que ce mouvement réduise la distance qui le sépare de la case au pied de l'escalier.
+        - Si, en avançant puis reculant selon la valeur du dé, le pion finit par s'éloigner davantage de la case pied de l'escalier, alors il ne peut pas être déplacé.
     - Progression simplifiée : Si la valeur du dé dépasse le pied de l’escalier, le pion grimpe directement comme si l’escalier faisait partie du chemin.
 - Ordre de progression sur l'escalier :
     - Ordre simplifié : Un pion peut monter plusieurs marches de l'escalier en un seul lancé de dé, il suffit qu'il arrive ou dépasse l'objectif pour l'atteindre.
@@ -228,10 +228,10 @@ pytest game/tests_pytest/
 Si tous les tests passent avec succès, vous devriez voir une sortie similaire à celle-ci :
 
 ```bash
-============================== 79 passed, 1 warning in 1.30s ==============================
+============================== 82 passed, 1 warning in 1.30s ==============================
 ```
 
-Cela indique que 79 tests ont été validés avec succès. Le warning peut être dû à une dépendance ou une configuration et ne devrait pas affecter le fonctionnement principal du jeu.
+Cela indique que 82 tests ont été validés avec succès. Le warning peut être dû à une dépendance ou une configuration et ne devrait pas affecter le fonctionnement principal du jeu.
 
 ---
 

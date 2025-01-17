@@ -886,7 +886,6 @@ def test_valid_actions(game_3chevaux):
         False,
     ]
 
-    # TODOTEST tuer sur pied escalier
     game_3chevaux.board[1][56] = 0
     game_3chevaux.board[1][57] = 1
     game_3chevaux.board[0] = [
@@ -991,3 +990,78 @@ def test_valid_actions(game_3chevaux):
         [],
         False,
     ]
+
+
+
+
+def test_meme_case_meme_pion(game_2chevaux):
+    game_2chevaux.board[0] = [
+        0,
+        0,1,0,0,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+    assert game_2chevaux.get_valid_actions(0, 3) == [
+        [Action_EXACT_ASCENSION.MOVE_FORWARD],
+        [Action_EXACT_ASCENSION.MOVE_FORWARD],
+        False,
+    ]
+    game_2chevaux.move_pawn(0, 2, 3, Action_EXACT_ASCENSION.MOVE_FORWARD)
+    assert game_2chevaux.board[0][5] == 2
+
+    game_2chevaux.board[0] = [
+        0,
+        0,1,0,0,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+    assert game_2chevaux.get_valid_actions(0, 4) == [
+        [Action_EXACT_ASCENSION.GET_STUCK_BEHIND],
+        [Action_EXACT_ASCENSION.MOVE_FORWARD],
+        False,
+    ]
+    game_2chevaux.move_pawn(0, 2, 4, Action_EXACT_ASCENSION.GET_STUCK_BEHIND)
+    assert game_2chevaux.board[0][4] == 1
+    assert game_2chevaux.board[0][5] == 1
+
+
+    game_2chevaux.board[0] = [
+        1,
+        0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+    game_2chevaux.board[1] = [
+        1,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+
+    assert game_2chevaux.get_valid_actions(0, 3) == [
+        [],
+        [Action_EXACT_ASCENSION.KILL],
+        False,
+    ]
+
+    assert game_2chevaux.get_valid_actions(0, 4) == [
+        [],
+        [Action_EXACT_ASCENSION.GET_STUCK_BEHIND],
+        False,
+    ]
+
+    game_2chevaux.move_pawn(0, 13, 4, Action_EXACT_ASCENSION.GET_STUCK_BEHIND)
+    assert game_2chevaux.board[0][13] == 0
+    assert game_2chevaux.board[0][15] == 1

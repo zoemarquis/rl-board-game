@@ -978,7 +978,76 @@ def test_valid_actions(game_3chevaux):
     ]
 
 
-# TODOTEST atteindre objectif avec >
 
 
-# TODOTEST : si notre cheval devant et > -> on s'arrete sur la case ?
+def test_meme_case_meme_pion(game_2chevaux):
+    game_2chevaux.board[0] = [
+        0,
+        0,1,0,0,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+    assert game_2chevaux.get_valid_actions(0, 3) == [
+        [Action_EXACT.MOVE_FORWARD],
+        [Action_EXACT.MOVE_FORWARD],
+        False,
+    ]
+    game_2chevaux.move_pawn(0, 2, 3, Action_EXACT.MOVE_FORWARD)
+    assert game_2chevaux.board[0][5] == 2
+
+    game_2chevaux.board[0] = [
+        0,
+        0,1,0,0,1,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+    assert game_2chevaux.get_valid_actions(0, 4) == [
+        [Action_EXACT.GET_STUCK_BEHIND],
+        [Action_EXACT.MOVE_FORWARD],
+        False,
+    ]
+    game_2chevaux.move_pawn(0, 2, 4, Action_EXACT.GET_STUCK_BEHIND)
+    assert game_2chevaux.board[0][4] == 1
+    assert game_2chevaux.board[0][5] == 1
+
+
+    game_2chevaux.board[0] = [
+        1,
+        0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+    game_2chevaux.board[1] = [
+        1,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,1,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,
+        0
+    ]
+
+    assert game_2chevaux.get_valid_actions(0, 3) == [
+        [],
+        [Action_EXACT.KILL],
+        False,
+    ]
+
+    assert game_2chevaux.get_valid_actions(0, 4) == [
+        [],
+        [Action_EXACT.GET_STUCK_BEHIND],
+        False,
+    ]
+
+    game_2chevaux.move_pawn(0, 13, 4, Action_EXACT.GET_STUCK_BEHIND)
+    assert game_2chevaux.board[0][13] == 0
+    assert game_2chevaux.board[0][15] == 1
