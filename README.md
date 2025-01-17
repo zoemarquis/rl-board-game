@@ -206,7 +206,8 @@ Puis exécuter le fichier `play.py` comme ceci:
     ```
 
 TODO KATIA : ajoute du texte pour dire à quoi ça correspond l'image 
-![Demo of the app](demo.gif)
+![Demo of the app](docs/demo_assets/demo_pc_1humain_3agents
+.gif)
 
 TODO KATIA expliquer que Si agent pas entrainé ça plante et montrer le message d'erreur attendu 
 
