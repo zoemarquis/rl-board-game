@@ -213,6 +213,7 @@ Après avoir configuré les règles du jeu selon vos préférences, il est possi
 Dans ce cas, il faut relancer le programme et choisir une configuration de règles différente.
 
 **Message d'Erreur Attendu**
+
 Voici un exemple de message d'erreur qui peut apparaître dans ce cas :
 ```
 "Le fichier <model_file_name> n'existe pas. Veuillez entraîner l'agent avant de l'utiliser."
