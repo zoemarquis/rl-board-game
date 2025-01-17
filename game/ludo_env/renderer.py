@@ -544,10 +544,10 @@ class Renderer:
 
         # Render the current player's number in their corresponding color
         player_text = font.render(str(current_player + 1), True, colors[current_player])
-        self.window.blit(player_text, (18 * SQUARE_SIZE, 2 * SQUARE_SIZE))
+        self.window.blit(player_text, (18.1 * SQUARE_SIZE, 2 * SQUARE_SIZE))
 
         text = font.render(" a gagné !", True, BLACK)
-        self.window.blit(text, (16 * SQUARE_SIZE, 3 * SQUARE_SIZE))
+        self.window.blit(text, (18.5 * SQUARE_SIZE, 2 * SQUARE_SIZE))
 
         self.window.blit(self.gameover_image, (18 * SQUARE_SIZE, 5 * SQUARE_SIZE))
 

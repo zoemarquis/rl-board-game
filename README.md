@@ -205,13 +205,19 @@ Puis exécuter le fichier `play.py` comme ceci:
     python3 play_pygame/play.py
     ```
 
-TODO KATIA : ajoute du texte pour dire à quoi ça correspond l'image 
-![Demo of the app](demo.gif)
+Voici un extrait d'une partie montrant un joueur humain et trois agents en action.
+![Demo of the app](docs/demo_assets/demo_pc_1humain_3agents.gif)
 
-TODO KATIA expliquer que Si agent pas entrainé ça plante et montrer le message d'erreur attendu 
+#### Agents Non Entraînés
+Après avoir configuré les règles du jeu selon vos préférences, il est possible que l'agent correspondant à cette configuration ne soit pas encore entraîné. Si un agent non entraîné est utilisé, le programme échouera.
+Dans ce cas, il faut relancer le programme et choisir une configuration de règles différente.
 
+**Message d'Erreur Attendu**
 
-
+Voici un exemple de message d'erreur qui peut apparaître dans ce cas :
+```
+"Le fichier <model_file_name> n'existe pas. Veuillez entraîner l'agent avant de l'utiliser."
+```
 ---
 
 ## Tests avec Pytest
