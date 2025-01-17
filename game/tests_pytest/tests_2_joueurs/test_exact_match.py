@@ -695,11 +695,6 @@ def test_valid_actions_exact(game_2chevaux_exact):
     ]
 
 
-def test_exact_escalier(game_2chevaux_exact):
-    pass
-    # TODOTEST
-
-
 @pytest.fixture
 def game_3chevaux_exact():
     return GameLogic(num_players=2, nb_chevaux=3, mode_pied_escalier="exact")

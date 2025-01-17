@@ -17,9 +17,6 @@ def game_4chevaux():
     return GameLogic(num_players=3, nb_chevaux=4)
 
 
-## TODOTEST : test_fin_de_partie_tous_chevaux_2chevaux, test_fin_de_partie_tous_chevaux_4chevaux
-
-
 def test_fin_de_partie_tous_chevaux_3chevaux(game_3chevaux):
     game_3chevaux.init_board()
 
@@ -101,10 +98,6 @@ def test_fin_de_partie_tous_chevaux_3chevaux(game_3chevaux):
     assert lines[13] == "OBJECTIF 2 : 0", "OBJECTIF 2 doit être à 0."
 
     assert game_3chevaux.is_game_over() == True
-
-
-# TODOTEST faire comme pour 2 joueurs : 2 chevaux, 4 joueurs
-# TODOTEST ajouter pour faire varier regls : 1 cheval pour gagner, tous les chevaux pour gagner
 
 
 def test_fin_de_partie_un_cheval_gagne_2chevaux(game_2chevaux):

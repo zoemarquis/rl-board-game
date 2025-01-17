@@ -168,7 +168,6 @@ class GameLogic:
         return str_game_overview
 
     def get_opponent_positions_on_my_board(self, player_id):
-        # TODOTEST
         assert (
             self.num_players == 2
         ), "fonction get_opponent_positions_on_my_board pas implémenté pour plus de joueur"
@@ -206,7 +205,6 @@ class GameLogic:
         # mettre tous les home ensemble, puis les safe zone, puis les goal
         # ensuite calculer pour les path
 
-        # TODOTEST
         board = [0 for _ in range(TOTAL_SIZE)]
         count_all_home = self.get_ecurie_overview()
         count_self_home = count_all_home.count(other_player_id)
@@ -261,12 +259,12 @@ class GameLogic:
         return board
 
     def dice_generator(self):
-        valeur = np.random.randint(1, 7)  # TODOTEST : fix avec une seed pour les tests
+        valeur = np.random.randint(1, 7)  
         return valeur
 
     def get_pawns_on_position(
         self, player_id, target_position_relative
-    ):  # TODOTEST multijoueurs 3 4
+    ): 
         if player_id == 0:
             indice = target_position_relative - 1
         elif player_id == 2:
@@ -543,7 +541,7 @@ class GameLogic:
                 self.kill_pawn(player_id, 1)
                 self.sortir_pion(player_id, dice_value)
 
-            elif action == Action_EXACT_ASCENSION.GET_STUCK_BEHIND:  # TODOTEST
+            elif action == Action_EXACT_ASCENSION.GET_STUCK_BEHIND: 
                 target_position = old_position + dice_value
                 if target_position >= N_FIRST_STEP:
                     target_position = BOARD_SIZE
@@ -560,7 +558,6 @@ class GameLogic:
                 or action == Action_EXACT_ASCENSION.REACH_PIED_ESCALIER
             ):
                 # ici on doit aussi mettre le kill pcq avec reach pied escalier on peut tuer un pion adverse
-                # TODOTEST : les 2 actions apparaissent ou pas ?
                 self.kill_pawn(player_id, old_position + dice_value)
 
                 self.avance_pion_path(player_id, old_position, dice_value)
@@ -1128,7 +1125,7 @@ class GameLogic:
                 return action
         assert (
             False
-        ), "Erreur : Aucune action possible dans la liste d'actions par défaut"  # TODOTEST
+        ), "Erreur : Aucune action possible dans la liste d'actions par défaut" 
 
     def get_observation_my_ecurie(self, player_id) -> int:
         return self.board[player_id][0]

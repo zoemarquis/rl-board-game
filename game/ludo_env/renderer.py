@@ -553,6 +553,7 @@ class Renderer:
 
             
     def get_action_text(self, action):
+        # TODO KATIA ET ZOE : voir ensemble comment nommer un peu mieux les actions 
         stairs = False
         action_value = action.value
 
@@ -577,7 +578,7 @@ class Renderer:
                 case 6:
                     return "atteindre le pied de l'escalier", stairs
                 case 7:
-                    return "avancer et reculer au pied de l'escalier", stairs
+                    return "avancer et reculer au pied de l'escalier", stairs 
                 case 8:
                     stairs = True
                     return "monter la marche 1", stairs
