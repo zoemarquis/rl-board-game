@@ -380,9 +380,59 @@ La capture d’un pion adverse.
 L’atteinte de la zone d’arrivée.
 - `state.py`: Définit les états dans lesquels peuvent se trouver les pions.
 
-### `db/``
+### `db/`
 
-TODO CHARLOTTE JE TE LAISSE EXPLIQUER CE QUE TU VEUX EXPLIQUER ICI :) 
+Le dossier `db/` regroupe tous les éléments nécessaires pour gérer la base de données associée au projet, les scripts pour collecter, transformer et analyser les données, ainsi que les données utilisées pour nos analyses.
+
+```bash
+db/
+├── analyse/
+│   ├── analyse_agents.ipynb
+│   └── analyse_entraînement.ipynb
+├── data/
+│   ├── action_stats.csv
+│   ├── game.csv
+│   ├── game_rule.csv
+│   ├── is_rule_of.csv
+│   ├── participant.csv
+│   ├── player.csv
+│   └── set_of_rules.csv
+├── secret/                     # Dossier à créer en local
+│   └── config.py
+├── config_game.py
+├── export.py
+├── insert.py
+├── ludo_stats_play.py
+├── notes_db.md
+├── rules.py
+├── schema.py
+├── test_player.py              # TODO : Supprimer si on supprime le fichier
+└── viz.py                      # TODO : Supprimer si on supprime le fichier
+               
+```
+
+- `analyse/` : Dossier contenant les notebooks d'analyse des agents
+    - `analyse_agents.ipynb` : Notebook d'analyse de l'entrainement des agents
+    - `analyse_entraînement.ipynb` : # TODO Daniil
+- `data/` : Dossier contenant les fichiers csv de données exportées depuis la base de données  et utilisés pour les analyses.
+- `secret/config.py` : Fichier de configuration contenant l'URL de connexion à la base de données PostgreSQL. Ce dossier est à créer localement.
+- `config_game.py` : Fichier contenant les fonctions nécessaires pour générer les configurations de jeu des parties entre agents.
+- `export.py`: Script permettant d'exporter les données de la base de données au format CSV.
+- `insert.py` : Fichier contenant les classes permettant d'insérer les données dans la base de données.
+- `ludo_stats_play.py` : Scripts utilisés pour simuler les parties entre agents et enregistrer les données liées dans la base de données.  
+Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon nos besoins :
+    - `main()` : Permet de lancer une ou plusieurs parties en définissant depuis le terminal : le nombre de joueurs, le nombre de pions, la configuration de règles, les agents a utiliser et le nombre de parties à lancer.
+    - `main_auto()` : Permet de lancer automatiquement plusieurs parties entre des agents identiques (même type et même nombre de pas d'entrainement).  
+    Il faut préciser la configuration de règles, le nombre de joueurs, le nombre de chevaux et le nombre de parties à lancer.  
+    Lance toutes les parties pour tous les agents définis correspondant au nombre de joueurs, de pions et à la configuration spécifiée. 
+    - `main_lancer_parties_pour_analyse_entrainement()` : Permet d'exécuter les parties générant les données nécessaires à l'analyse de l'entrainement des agents.
+    - `MAIN_DANIIL`: TODO Daniil : Expliquer les fonctions que tu as utilisé ??
+- `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
+- `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
+- `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
+
+- `test_player.py` # TODO : Supprimer ?
+- `viz.py` # TODO : Supprimer ?
 
 
 ### analyse 
