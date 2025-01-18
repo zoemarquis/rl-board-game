@@ -10,19 +10,54 @@ Projet realisé dans le cadre de l'UE "Projet Master" en Master 2 Sciences des D
 
 Ce projet explore l'apprentissage par renforcement appliqué à des jeux de plateau, avec un focus sur le célèbre jeu de société Ludo (également connu sous le nom de "Petits Chevaux"). Initialement, nous avions expérimenté avec le jeu Labyrinthe, mais ce choix a été abandonné en raison de contraintes spécifiques, comme expliqué dans la documentation.
 
-Nous avons conçu plusieurs agents et défini différentes variations de règles, afin d'étudier leurs interactions et performances dans divers contextes de jeu.
-
 ---
 
-TODO (énoncé): Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
+### Description reformulée du projet
 
----
+Le projet consiste à développer des agents autonomes capables de jouer à un jeu de plateau simulé informatiquement en utilisant des techniques d’apprentissage par renforcement. L’objectif est double : d’une part,
+entraîner des agents à optimiser leurs stratégies de jeu en fonction des règles, et d’autre part, utiliser ces
+agents comme outils d’analyse pour explorer les différentes règles de jeu.
+
+TODO d'ici à(
+#### Caractéristiques principales
+- Conception de joueurs autonomes : Les agents sont entraînés à naviguer dans un environnement
+complexe et à prendre des décisions stratégiques en temps réel, en s’appuyant sur un environnement
+simulé.
+- Analyse des règles existantes et proposition de nouvelles règles : En modifiant les règles du jeu, explorer leur impact sur l’équilibre, la jouabilité, et l’expérience des joueurs.
+- Personnalisation des comportements : Chaque agent peut être paramétré avec un style de jeu spécifique (agressif, défensif, aléatoire, stratégique, etc.), permettant une diversité de simulations et d’interactions.
+- Application multi-usage :
+    - Formation des agents via l’apprentissage par renforcement.
+    - Simulation massive de parties pour tester de nouvelles mécaniques ou évaluer la difficulté et l’équilibre des règles.
+    - Validation empirique de stratégies pour identifier celles qui conviennent à différents profils de joueurs.
+
+#### Objectifs identifiés
+Le projet repose sur plusieurs objectifs techniques et analytiques, visant à développer des agents autonomes
+tout en approfondissant la compréhension des dynamiques des jeux de plateau :
+1. Entraîner des agents RL pour jouer efficacement
+    - Implémenter un environnement, permettant aux agents d’interagir avec le jeu.
+    - Utiliser des algorithmes d’apprentissage par renforcement pour optimiser les décisions des  agents dans différents scénarios.
+2. Effectuer des simulations massives pour tester différentes mécaniques de jeu
+    - Automatiser des milliers de parties avec des agents divers pour analyser les résultats statistiquement.
+    - Identifier les règles ou configurations qui déséquilibrent le jeu ou le rendent impraticable.
+    - Simuler des parties avec des agents hétérogènes pour évaluer les interactions et l’équilibre général.
+3. Personnaliser les agents selon divers styles de jeu et comportements stratégiques
+    - Créer des agents avec des préférences ou des objectifs spécifiques.
+    - Comparer l’efficacité des styles et identifier ceux favorisés dans différentes configurations.
+4. Tester différentes stratégies et configurations de règles
+    - Étudier les impacts des changements de règles sur le gameplay.
+    - Définir des métriques de ”jouabilité” telles que l’équilibre des forces, la durée des parties, ou la diversité des stratégies possibles.
+5. Développer une interface graphique pour pouvoir jouer contre ces agents
+
+TODO d'ici)
 
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
 ⚙️ Entraînement des agents : Les agents ont été entraînés sur des environnements simulés, avec des règles variées pour modéliser différents scénarios de jeu.  
 🎲 Simulation de parties : Nous avons simulé des affrontements entre agents pour analyser leurs performances dans différents contextes, tout en testant les impacts des variations de règles.  
-📊 Analyse des performances : Une analyse approfondie des résultats a été réalisée à l'aide de techniques statistiques et des outils dédiés.  
+📊 Analyse des performances : Une analyse approfondie des résultats a été réalisée à l'aide de techniques statistiques et des outils dédiés. 
+🎮 Interface graphique interactive : L’interface graphique développée permet à l’utilisateur humain d’affronter les agents directement ou de simuler des parties entre humains.
+
+---
 
 ## Règles du Jeu et Variations 📝🎲
 
@@ -37,9 +72,6 @@ TODO (énoncé): Objectifs : ce que fait le projet, une description des différe
         - **Rejoindre un pion allié** : Un pion appartenant au même joueur peut rejoindre un autre pion uniquement si le lancé de dé correspond exactement à la distance entre les deux.
         - **Rester bloqué derrière un pion** : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu'à la case précédent l'obstacle. Les dépassements de pions (alliés ou adverses) sont donc interdits. Ces règles ne s'appliquent pas à l'escalier.
 - Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
-
-
-
 
 - **Disposition des écuries selon le nombre de joueurs** :
     - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.
@@ -186,14 +218,6 @@ Le package `ipykernel`, nécessaire pour connecter l'environnement virtuel aux n
 
 Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'environnement virtuel, et vous pourrez exécuter vos analyses en toute compatibilité avec les dépendances du projet.
 
-
-TODO DANIIL : supprimer tout ce qui est en lien avec conda
-## Conda environment
-```bash
-conda env create -f environment.yml
-conda activate ludo-env
-```
-
 ---
 
 ## Lancer une partie avec interface graphique
@@ -337,8 +361,6 @@ insérer img
 
 ## Arborescence du projet
 
-TODO (énoncé) : Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
-
 ### À la racine 
 
 Voici la structure des principaux dossiers et fichiers de ce projet, avec une description de leur contenu et rôle.
@@ -349,12 +371,8 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 ├── docs/
 ├── db/
 ├── game/
-├── streamlit/
 ├── ludo_venv/
-├── demo.gif
-├── minmap_regles.png
-├── requirements.txt
-├── requirements_venv.txt
+└── requirements_venv.txt
 ```
 
 #### Description des dossiers et fichiers
@@ -376,7 +394,6 @@ Contient également les fichiers de documentation complémentaires, tels que :
     - Les fichiers nécessaires pour lancer le jeu avec une interface graphique.
     - Des notebooks dédiés à l'apprentissage automatique, permettant d'entraîner et d'évaluer des agents.
     - Des tests en pytest pour garantir que la logique du jeu respecte les règles définies.
-- `requirements.txt` : Liste principale des bibliothèques Python nécessaires pour exécuter le projet.
 - `requirements_venv.txt` : Une version spécifique des dépendances utilisée avec l’environnement virtuel.
 
 ### `game/`
@@ -491,9 +508,7 @@ db/
 ├── ludo_stats_play.py
 ├── notes_db.md
 ├── rules.py
-├── schema.py
-├── test_player.py              # TODO : Supprimer si on supprime le fichier
-└── viz.py                      # TODO : Supprimer si on supprime le fichier
+└── schema.py
                
 ```
 
@@ -517,10 +532,24 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
 
-- `test_player.py` # TODO : Supprimer ?
-- `viz.py` # TODO : Supprimer ?
-
-
 ### analyse 
 
 TODO DANIIL ICI Décrit à quels endroits sont les notebooks que le prof doit regarder pour les stats 
+
+
+
+--- 
+TODO 
+à supprimer : voilà l'énoncé : 
+
+Le code doit inclure au minimum un README.txt (ou mieux un README.md) avec des explications. Le README contiendra les informations suivantes :
+
+- Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
+
+- Installation : comment le tester/compiler, dépendances. Le projet devra être compilable/utilisable par vos évaluateurs.
+
+- Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
+
+- Résultats et analyses.
+
+- Des médias (images, vidéos d'explications) pourront être fournis pour indiquer comment correctement utiliser l'application.
