@@ -280,9 +280,9 @@ Nous avons analysé les données collectées suite aux parties massives, entre a
 - Score moyen des agents
 
 **Configurations**  
-- Configuration 16 : Peu de règles
-- Configuration 12 : Quelques règles
-- Configuration 17 : Toutes les règles
+- Configuration 16 : Règles de base sans contraintes
+- Configuration 12 : Règles intermédiaires avec contraintes
+- Configuration 17 : Règles complètes avec interactions avancées
 
 **Nombre et types d'agents**  
 Tous les agents ont été étudiés (Balanced, Aggressive, Rusher, Defensive, Spawner, et Suboptimal) dans des parties avec : 2 joueurs et 2 pions, 2 joueurs et 4 pions, et 4 joueurs et 4 pions. Nous avons entrainé, fait jouer, et analysé les performances de ces agents avec 50 000, 100 000, 200 000, et 400 000 pas d'entrainement.
