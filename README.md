@@ -76,6 +76,10 @@ TODO (énoncé): Objectifs : ce que fait le projet, une description des différe
 
 - TODO DANIIL 
 
+### Mindmap résumant les différentes configurations
+
+![Mindmap des règles du jeu](/docs/mindmap_setup.png)
+
 ---
 
 ## Technologies utilisées :
