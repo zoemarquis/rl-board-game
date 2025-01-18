@@ -263,9 +263,69 @@ Les simulations de parties sont exécutées de manière automatisée grâce au f
 Les données générées lors des simulations sont enregistrées dans la base de données, puis exportées au format CSV pour faciliter leur analyse dans des notebooks Python. Ces fichiers constituent la base d’analyses détaillées, permettant de visualiser des métriques clés telles que les scores obtenus, les taux d’erreurs, ou encore la répartition des types d’actions effectuées par les agents. Ces analyses visent à démontrer l’efficacité de l’entraînement des agents, leurs performances, mais aussi à identifier les marges d’amélioration dans leurs comportements et stratégies.
 
 ### Analyse de l'entrainement des agents 
-TODO énoncé : Résultats et analyses.
-TODO CHARLOTTE  TON NOTEBOOK 
-insérer img
+
+NB : L'analyse complète de l'entrainement est disponible dans le notebook `db/analyse/analyse_entrainement.ipynb`.
+
+#### Objectif
+
+Étudier l'évolution des performances d'agents RL en fonction du nombre de pas d'entraînement, à travers des configurations de jeu de complexité croissante.
+
+#### Données et paramètres de l'analyse
+**Données**  
+Nous avons analysé les données collectées suite aux parties massives, entre agents identiques (même nombre de pas d'entrainement et même type), lancées avec la fonction `main_lancer_parties_pour_analyse_entrainement()` du fichier `ludo_stats_play.py`.
+
+**Métriques**  
+- Répartition des types d'actions demandées
+- Pourcentage moyen d'erreurs
+- Score moyen des agents
+
+**Configurations**  
+- Configuration 16 : Peu de règles
+- Configuration 12 : Quelques règles
+- Configuration 17 : Toutes les règles
+
+**Nombre et types d'agents**  
+Tous les agents ont été étudiés (Balanced, Aggressive, Rusher, Defensive, Spawner, et Suboptimal) dans des parties avec : 2 joueurs et 2 pions, 2 joueurs et 4 pions, et 4 joueurs et 4 pions. Nous avons entrainé, fait jouer, et analysé les performances de ces agents avec 50 000, 100 000, 200 000, et 400 000 pas d'entrainement.
+
+#### Résultats
+
+Les résultats ont montrés que d'une manière générale, l'entraînement des agents permet l'apprentissage progressif de nouvelles actions, confirmant que le processus d'entraînement fonctionne. Les agents apprennent à s'adapter à leur environnement et à maîtriser les règles associées.
+
+Pour la **configuration 16**, la plus simple, les agents montrent des performances claires et stables. Le pourcentage moyen d'erreurs diminue, et les scores augmentent au cours de l'entrainement, indiquant une bonne capacité d'adaptation à l'environnement. En revanche, l'augmentation du nombre de joueurs et de pions provoque un ralentissement de l'entrainement. 
+
+Exemple pour l'agent aggressive :
+![16-2-2-aggressive](/docs/graphiques_analyse_entrainement/16-2-2-aggressive.png)
+![16-2-4-aggressive](/docs/graphiques_analyse_entrainement/16-2-4-aggressive.png)
+![16-4-4-aggressive](/docs/graphiques_analyse_entrainement/16-4-4-aggressive.png)
+
+Avec l'introduction de règles supplémentaires, les performances des agents deviennent moins stables. Bien que certains agents continuent de progresser, d'autres montrent des fluctuations dans leurs taux d'erreurs et leurs scores. 
+
+Pour la **configuration 12**, l'entraînement reste efficace, mais il est moins concluant que pour la configuration 16. Les agents apprennent certaines actions adaptées aux nouvelles règles, mais leur capacité d'adaptation est moins marquée, et les performances globales restent limitées.
+
+Exemple de l'agent aggressive :
+![12-2-2-aggressive](/docs/graphiques_analyse_entrainement/12-2-2-aggressive.png)
+
+- Actions 50000 pas : NO_ACTION
+- Nouvelles actions 100000 : MOVE_FORWARD, MARCHE_2
+- Nouvelles actions 200000 : KILL
+- Nouvelles actions 400000 : AVANCE_RECULE_PIED_ESCALIER
+
+Exemple de différence entre les agents aggressive et balanced :
+![12-4-4-aggressive](/docs/graphiques_analyse_entrainement/12-4-4-aggressive.png)
+![12-4-4-balanced](/docs/graphiques_analyse_entrainement/12-4-4-balanced.png)
+
+Enfin, dans la **configuration 17**, la plus complexe, les agents rencontrent les plus grandes difficultés. Le pourcentage moyen d'erreurs reste élevé, et les scores moyens restent très faibles, montrant une incapacité des agents à apprendre les règles du jeu. De plus, l'apprentissage de nouvelles actions est plus lent.
+
+Exemple de l'agent aggressive :
+![17-2-2-aggressive](/docs/graphiques_analyse_entrainement/17-2-2-aggressive.png)
+
+- Actions 50000 pas : NO_ACTION
+- Nouvelles actions 100000 : MOVE_FORWARD
+- Nouvelles actions 200000 : MARCHE_6
+- Nouvelles actions 400000 : MOVE_OUT
+
+
+Ces résultats montrent que les agents s'entrainent bien pour des configurations de règles simples, mais mettent cependant en évidence les limites des agents RL à s'adapter à des environnements de plus en plus complexes.
 
 ### ? 
 TODO énoncé : Résultats et analyses.
