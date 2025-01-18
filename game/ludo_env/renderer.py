@@ -378,11 +378,6 @@ class Renderer:
         y = (position // 14) * SQUARE_SIZE + SQUARE_SIZE // 2
         return x, y
 
-    def render_dice_value(self, dice_value):
-        font = pygame.font.SysFont("Arial", 30)
-        text = font.render(f"Dé: {dice_value}", True, WHITE)
-        self.window.blit(text, (WINDOW_WIDTH - 200, 20))
-
     def draw_pawns_safezone_player_0(self, game):
         position = [(7, 1), (7, 2), (7, 3), (7, 4), (7, 5), (7, 6)]
         escalier = game.board[0][57:63]
@@ -553,7 +548,6 @@ class Renderer:
 
             
     def get_action_text(self, action):
-        # TODO KATIA ET ZOE : voir ensemble comment nommer un peu mieux les actions 
         stairs = False
         action_value = action.value
 
@@ -566,70 +560,70 @@ class Renderer:
                 case 2:
                     return "Sortir un pion et tuer pion adverse", stairs
                 case 3:
-                    return "avancer", stairs
+                    return "Avancer", stairs
                 case 4:
-                    return "rester bloqué derrière un pion", stairs
+                    return "Avancer et rester bloqué derrière un pion", stairs
 
         # else 
         if self.espace_action == "exact_ascension":
             match action_value:
                 case 5: 
-                    return "tuer pion adverse", stairs
+                    return "Tuer pion adverse", stairs
                 case 6:
-                    return "atteindre le pied de l'escalier", stairs
+                    return "Atteindre le pied de l'escalier", stairs
                 case 7:
-                    return "avancer et reculer au pied de l'escalier", stairs 
+                    return "Avancer jusqu'au pied de l'escalier et reculer", stairs 
                 case 8:
                     stairs = True
-                    return "monter la marche 1", stairs
+                    return "Monter la marche 1", stairs
                 case 9:
                     stairs = True
-                    return "monter la marche 2", stairs
+                    return "Monter la marche 2", stairs
                 case 10:
                     stairs = True
-                    return "monter la marche 3", stairs
+                    return "Monter la marche 3", stairs
                 case 11:
                     stairs = True
-                    return "monter la marche 4", stairs
+                    return "Monter la marche 4", stairs
                 case 12:
                     stairs = True
-                    return "monter la marche 5", stairs
+                    return "Monter la marche 5", stairs
                 case 13:
                     stairs = True
-                    return "monter la marche 6", stairs
+                    return "Monter la marche 6", stairs
                 case 14:
                     stairs = True
-                    return "atteindre l'objectif", stairs
+                    return "Atteindre l'objectif", stairs
             raise ValueError("Action invalide")
 
         elif self.espace_action == "exact":
             match action_value:
                 case 5: 
-                    return "tuer pion adverse", stairs
+                    return "Tuer pion adverse", stairs
                 case 6:
-                    return "atteindre le pied de l'escalier", stairs
+                    return "Atteindre le pied de l'escalier", stairs
                 case 7:
-                    return "avancer et reculer au pied de l'escalier", stairs
+                    return "Avancer jusqu'au pied de l'escalier et reculer", stairs
                 case 8:
                     stairs = True
-                    return "avancer dans l'escalier", stairs
+                    return "Avancer dans l'escalier", stairs
                 case 9:
                     stairs = True
-                    return "atteindre l'objectif", stairs
+                    return "Atteindre l'objectif", stairs
             raise ValueError("Action invalide")
         
         elif self.espace_action == "not_exact":
             match action_value:
                 case 5:
-                    return "entrer dans l'escalier", stairs
+                    return "Entrer dans l'escalier", stairs
                 case 6:
                     stairs = True
-                    return "avancer dans l'escalier", stairs
+                    return "Avancer dans l'escalier", stairs
                 case 7:
                     stairs = True
-                    return "atteindre l'objectif", stairs
+                    return "Atteindre l'objectif", stairs
                 case 8:
-                    return "tuer pion adverse", stairs
+                    return "Tuer pion adverse", stairs
             raise ValueError("Action invalide")
 
         else:
