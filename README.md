@@ -18,7 +18,8 @@ Le projet consiste à développer des agents autonomes capables de jouer à un j
 entraîner des agents à optimiser leurs stratégies de jeu en fonction des règles, et d’autre part, utiliser ces
 agents comme outils d’analyse pour explorer les différentes règles de jeu.
 
-#### Caractéristiques principales :
+TODO d'ici à(
+#### Caractéristiques principales
 - Conception de joueurs autonomes : Les agents sont entraînés à naviguer dans un environnement
 complexe et à prendre des décisions stratégiques en temps réel, en s’appuyant sur un environnement
 simulé.
@@ -44,8 +45,10 @@ tout en approfondissant la compréhension des dynamiques des jeux de plateau :
     - Comparer l’efficacité des styles et identifier ceux favorisés dans différentes configurations.
 4. Tester différentes stratégies et configurations de règles
     - Étudier les impacts des changements de règles sur le gameplay.
-    - Définir des métriques de ”jouabilité”telles que l’équilibre des forces, la durée des parties, ou la diversité des stratégies possibles.
+    - Définir des métriques de ”jouabilité” telles que l’équilibre des forces, la durée des parties, ou la diversité des stratégies possibles.
 5. Développer une interface graphique pour pouvoir jouer contre ces agents
+
+TODO d'ici)
 
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
@@ -215,14 +218,6 @@ Le package `ipykernel`, nécessaire pour connecter l'environnement virtuel aux n
 
 Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'environnement virtuel, et vous pourrez exécuter vos analyses en toute compatibilité avec les dépendances du projet.
 
-
-TODO DANIIL : supprimer tout ce qui est en lien avec conda
-## Conda environment
-```bash
-conda env create -f environment.yml
-conda activate ludo-env
-```
-
 ---
 
 ## Lancer une partie avec interface graphique
@@ -366,8 +361,6 @@ insérer img
 
 ## Arborescence du projet
 
-TODO (énoncé) : Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
-
 ### À la racine 
 
 Voici la structure des principaux dossiers et fichiers de ce projet, avec une description de leur contenu et rôle.
@@ -379,10 +372,7 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 ├── db/
 ├── game/
 ├── ludo_venv/
-├── demo.gif
-├── minmap_regles.png
-├── requirements.txt
-├── requirements_venv.txt
+└── requirements_venv.txt
 ```
 
 #### Description des dossiers et fichiers
@@ -404,7 +394,6 @@ Contient également les fichiers de documentation complémentaires, tels que :
     - Les fichiers nécessaires pour lancer le jeu avec une interface graphique.
     - Des notebooks dédiés à l'apprentissage automatique, permettant d'entraîner et d'évaluer des agents.
     - Des tests en pytest pour garantir que la logique du jeu respecte les règles définies.
-- `requirements.txt` : Liste principale des bibliothèques Python nécessaires pour exécuter le projet.
 - `requirements_venv.txt` : Une version spécifique des dépendances utilisée avec l’environnement virtuel.
 
 ### `game/`
@@ -550,6 +539,7 @@ TODO DANIIL ICI Décrit à quels endroits sont les notebooks que le prof doit re
 
 
 --- 
+TODO 
 à supprimer : voilà l'énoncé : 
 
 Le code doit inclure au minimum un README.txt (ou mieux un README.md) avec des explications. Le README contiendra les informations suivantes :
