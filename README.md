@@ -45,10 +45,7 @@ tout en approfondissant la compréhension des dynamiques des jeux de plateau :
 4. Tester différentes stratégies et configurations de règles
     - Étudier les impacts des changements de règles sur le gameplay.
     - Définir des métriques de ”jouabilité”telles que l’équilibre des forces, la durée des parties, ou la diversité des stratégies possibles.
-5. Développer une interface graphique pour pouvoir jouer contre ces agents.
-
-
-## TODO ALL : (énoncé): Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
+5. Développer une interface graphique pour pouvoir jouer contre ces agents
 
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
@@ -72,9 +69,6 @@ tout en approfondissant la compréhension des dynamiques des jeux de plateau :
         - **Rejoindre un pion allié** : Un pion appartenant au même joueur peut rejoindre un autre pion uniquement si le lancé de dé correspond exactement à la distance entre les deux.
         - **Rester bloqué derrière un pion** : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu'à la case précédent l'obstacle. Les dépassements de pions (alliés ou adverses) sont donc interdits. Ces règles ne s'appliquent pas à l'escalier.
 - Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
-
-
-
 
 - **Disposition des écuries selon le nombre de joueurs** :
     - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.
@@ -559,3 +553,20 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
 ### analyse 
 
 TODO DANIIL ICI Décrit à quels endroits sont les notebooks que le prof doit regarder pour les stats 
+
+
+
+--- 
+à supprimer : voilà l'énoncé : 
+
+Le code doit inclure au minimum un README.txt (ou mieux un README.md) avec des explications. Le README contiendra les informations suivantes :
+
+- Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
+
+- Installation : comment le tester/compiler, dépendances. Le projet devra être compilable/utilisable par vos évaluateurs.
+
+- Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
+
+- Résultats et analyses.
+
+- Des médias (images, vidéos d'explications) pourront être fournis pour indiquer comment correctement utiliser l'application.
