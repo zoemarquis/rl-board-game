@@ -244,11 +244,21 @@ Cela indique que 82 tests ont été validés avec succès. Le warning peut être
 
 ## Résultats et analyses
 
-### BD + simulations massives ?
-TODO CHARLOTTE DB 
-inbsérer img
+### Base de données et simulations de parties
 
-### ? en gros preuve que les agents s'entrainent 
+#### Base de données
+
+Le projet s’appuie sur une base de données relationnelle PostgreSQL pour collecter, structurer et analyser les données générées lors des simulations de parties. Cette base de données centralise des informations pertinentes sur les joueurs, les parties, les règles et les actions effectuées.
+
+![Schéma de la base de données](docs/schema_db.jpg)
+
+#### Simulations de parties
+
+Les simulations de parties sont exécutées de manière automatisée grâce au fichier `ludo_stats_play.py`. Ce script est conçu pour lancer un grand nombre de parties entre agents, avec pour objectif principal d’enregistrer les données générées lors de chaque partie. Les statistiques collectées, telles que les performances des agents, leurs actions, leurs scores, et les résultats des parties, sont automatiquement sauvegardées dans la base de données. Ces informations servent ensuite à l'analyse des performances et des comportements des agents.
+
+Les données générées lors des simulations sont enregistrées dans la base de données, puis exportées au format CSV pour faciliter leur analyse dans des notebooks Python. Ces fichiers constituent la base d’analyses détaillées, permettant de visualiser des métriques clés telles que les scores obtenus, les taux d’erreurs, ou encore la répartition des types d’actions effectuées par les agents. Ces analyses visent à démontrer l’efficacité de l’entraînement des agents, leurs performances, mais aussi à identifier les marges d’amélioration dans leurs comportements et stratégies.
+
+### Analyse de l'entrainement des agents 
 TODO énoncé : Résultats et analyses.
 TODO CHARLOTTE  TON NOTEBOOK 
 insérer img
@@ -290,7 +300,13 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 Contient également les fichiers de documentation complémentaires, tels que :
     - Des explications techniques sur le projet.
     - Des captures d'écran ou diagrammes pour illustrer les concepts clés.
-- `db/` : Stocke les fichiers relatifs à la gestion des données, comme des bases de données ou fichiers de configuration spécifiques au projet. TODO CHARLOTTE JE TE LAISSE COMPLéter comme tu veux 
+
+- `db/` : Ce dossier stocke les fichiers nécessaires à la gestion et à l’exploitation des données du projet. Il contient :
+    - Les scripts pour initialiser la base de données, insérer des données, et les exporter au format CSV.
+    - Les données exportées utilisées pour les analyses.
+    - Des notebooks pour analyser les performances et l’entraînement des agents.
+    - Les fichiers de configuration de la base PostgreSQL.
+    - Des scripts pour gérer les règles du jeu et les configurations des parties simulées.
 - `game/`: Ce dossier constitue le cœur du projet et contient :
     - La logique interne du jeu, ainsi que l'environnement Gym attaché pour les simulations et l'apprentissage par renforcement.
     - Les fichiers nécessaires pour lancer le jeu avec une interface graphique.
