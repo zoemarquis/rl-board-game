@@ -1,6 +1,5 @@
 # Ce fichier permet de gérer les règles
 
-# TODO : ici y a plus de règles que ça ?
 ALL_RULES = {
     7: "Tous les chevaux doivent gagner",
     8: "Un seul cheval doit gagner",

@@ -458,10 +458,9 @@ def main_lancer_parties_pour_analyse_entrainement() :
     main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
     main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
 
-# TODO : Mettre main() comment fonction principale
 if __name__ == "__main__":
-    #main()
-    main_lancer_parties_pour_analyse_entrainement()
+    main()
+    # main_lancer_parties_pour_analyse_entrainement()
 
 
     # Run matchups with different configurations

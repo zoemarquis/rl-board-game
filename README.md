@@ -378,7 +378,6 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 ├── docs/
 ├── db/
 ├── game/
-├── streamlit/
 ├── ludo_venv/
 ├── demo.gif
 ├── minmap_regles.png
@@ -520,9 +519,7 @@ db/
 ├── ludo_stats_play.py
 ├── notes_db.md
 ├── rules.py
-├── schema.py
-├── test_player.py              # TODO : Supprimer si on supprime le fichier
-└── viz.py                      # TODO : Supprimer si on supprime le fichier
+└── schema.py
                
 ```
 
@@ -545,10 +542,6 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
 - `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
-
-- `test_player.py` # TODO : Supprimer ?
-- `viz.py` # TODO : Supprimer ?
-
 
 ### analyse 
 
