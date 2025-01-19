@@ -220,6 +220,10 @@ Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'env
 
 Veuillez vous référer au fichier suivant pour les instructions complètes sur la configuration de PostgreSQL, la création de la base de données ludo_stats, et l'initialisation de sa structure : `./db/db_configuration_and_setup.md`
 
+Ces instructions sont spécifiquement adaptées pour Windows. Si vous utilisez un autre système d'exploitation, elles peuvent ne pas fonctionner. Dans ce cas, veuillez chercher sur internet comment installer PostgreSQL pour votre environnement.
+
+Notez que **l'installation de PostgreSQL n'est pas obligatoire**, sauf si vous souhaitez enregistrer de nouvelles données. Les données nécessaires pour nos analyses ont déjà été exportées en fichiers CSV et se trouvent dans le dossier `db/data`.
+
 ---
 
 ## Lancer une partie avec interface graphique
