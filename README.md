@@ -12,7 +12,7 @@ Ce projet explore l'apprentissage par renforcement appliqué à des jeux de plat
 
 ---
 
-### Description reformulée du projet
+### Description reformulée du sujet et les objectifs du projet
 
 Ce projet vise à développer différents agents autonomes pour des jeux de plateau en s’appuyant sur des
 techniques d’apprentissage par renforcement. L’objectif principal est double : d’une part, entraîner ces
