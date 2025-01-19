@@ -33,6 +33,7 @@ DATABASE_URL = "postgresql://username:password@localhost:5432/ludo_stats"
 Lancez le script `schema.py` pour créer les tables nécessaires dans la base de données :
 
 ```bash
+cd db
 python schema.py
 ```
 

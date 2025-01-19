@@ -218,9 +218,9 @@ Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'env
 
 ### Étapes pour configurer la base de données
 
-Veuillez vous référer au fichier suivant pour les instructions complètes sur la configuration de PostgreSQL, la création de la base de données ludo_stats, et l'initialisation de sa structure : `./db/db_configuration_and_setup.md`
+Veuillez vous référer au fichier suivant pour les instructions complètes sur la configuration de PostgreSQL, la création de la base de données ludo_stats, et l'initialisation de sa structure : `./db/Windows_db_configuration_and_setup.md` et `./db/Ubuntu_db_configuration_and_setup.md`
 
-Ces instructions sont spécifiquement adaptées pour Windows. Si vous utilisez un autre système d'exploitation, elles peuvent ne pas fonctionner. Dans ce cas, veuillez chercher sur internet comment installer PostgreSQL pour votre environnement.
+Ces instructions sont spécifiquement adaptées pour Windows et Ubuntu. Si vous utilisez un autre système d'exploitation, elles peuvent ne pas fonctionner. Dans ce cas, veuillez chercher sur internet comment installer PostgreSQL pour votre environnement.
 
 Notez que **l'installation de PostgreSQL n'est pas obligatoire**, sauf si vous souhaitez enregistrer de nouvelles données. Les données nécessaires pour nos analyses ont déjà été exportées en fichiers CSV et se trouvent dans le dossier `db/data`.
 
@@ -268,10 +268,10 @@ pytest game/tests_pytest/
 Si tous les tests passent avec succès, vous devriez voir une sortie similaire à celle-ci :
 
 ```bash
-============================== 82 passed, 1 warning in 1.30s ==============================
+============================== 81 passed, 1 warning in 1.30s ==============================
 ```
 
-Cela indique que 82 tests ont été validés avec succès. Le warning peut être dû à une dépendance ou une configuration et ne devrait pas affecter le fonctionnement principal du jeu.
+Cela indique que 81 tests ont été validés avec succès. Le warning peut être dû à une dépendance ou une configuration et ne devrait pas affecter le fonctionnement principal du jeu.
 
 ---
 
@@ -288,7 +288,7 @@ Le projet s’appuie sur une base de données relationnelle PostgreSQL pour coll
 
 #### Simulations de parties
 
-Les simulations de parties sont exécutées de manière automatisée grâce au fichier `ludo_stats_play.py`. Ce script est conçu pour lancer un grand nombre de parties entre agents, avec pour objectif principal d’enregistrer les données générées lors de chaque partie. Les statistiques collectées, telles que les performances des agents, leurs actions, leurs scores, et les résultats des parties, sont automatiquement sauvegardées dans la base de données. Ces informations servent ensuite à l'analyse des performances et des comportements des agents.
+Les simulations de parties sont exécutées de manière automatisée grâce au fichier `ludo_stats_play.py` depuis le dossier `./db`. Ce script est conçu pour lancer un grand nombre de parties entre agents, avec pour objectif principal d’enregistrer les données générées lors de chaque partie. Les statistiques collectées, telles que les performances des agents, leurs actions, leurs scores, et les résultats des parties, sont automatiquement sauvegardées dans la base de données. Ces informations servent ensuite à l'analyse des performances et des comportements des agents.
 
 Les données générées lors des simulations sont enregistrées dans la base de données, puis exportées au format CSV pour faciliter leur analyse dans des notebooks Python. Ces fichiers constituent la base d’analyses détaillées, permettant de visualiser des métriques clés telles que les scores obtenus, les taux d’erreurs, ou encore la répartition des types d’actions effectuées par les agents. Ces analyses visent à démontrer l’efficacité de l’entraînement des agents, leurs performances, mais aussi à identifier les marges d’amélioration dans leurs comportements et stratégies.
 
@@ -560,10 +560,10 @@ db/
 ├── ludo_stats_play.py
 ├── notes_db.md
 ├── rules.py
-└── schema.py
-               
+├── schema.py
+├── Ubuntu_db_configuration_and_setup.md
+└── Windows_db_configuration_and_setup.md
 ```
-
 - `analyse/` : Dossier contenant les notebooks d'analyse des agents
     - `analyse_agents.ipynb` : Notebook d'analyse de performance des agents entraînés en fonction des configurations de jeu.
     - `analyse_entraînement.ipynb` : Notebook d'analyse de l'entrainement des agents
@@ -580,16 +580,11 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
     Lance toutes les parties pour tous les agents définis correspondant au nombre de joueurs, de pions et à la configuration spécifiée. 
     - `main_lancer_parties_pour_analyse_entrainement()` : Permet d'exécuter les parties générant les données nécessaires à l'analyse de l'entrainement des agents.
     - `main_lancer_auto_mathcups()`: Permet d'exécuter les parties générant les données nécessaires à l'analyse de des agents entraînés en fonction des configurations de jeu.
-- `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
+- `Ubuntu_db_configuration_and_setup.md` et `Windows_db_configuration_and_setup.md` : Fichiers fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
 
 
 ---
 
-
-TODO tout a été testé sous winodws et ubuntu, tout sauf installation de postgresql avec macos (car pas nécessaire pour lancer ni le jeu ni les analyses)
-
-TODO : ajouter pour lancer ludo stats play dans qu'il faut etre dansdb  
-
-ajouter le fichier config ubuntu postgre 
+Toutes les installations et fonctionnalités ont été testées sur Windows et Ubuntu. Sur macOS, tout a été vérifié, à l'exception de l'installation de PostgreSQL, qui n'est pas requise pour exécuter le jeu et effectuer les analyses.
