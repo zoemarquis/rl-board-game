@@ -14,41 +14,31 @@ Ce projet explore l'apprentissage par renforcement appliqué à des jeux de plat
 
 ### Description reformulée du projet
 
-Le projet consiste à développer des agents autonomes capables de jouer à un jeu de plateau simulé informatiquement en utilisant des techniques d’apprentissage par renforcement. L’objectif est double : d’une part,
-entraîner des agents à optimiser leurs stratégies de jeu en fonction des règles, et d’autre part, utiliser ces
-agents comme outils d’analyse pour explorer les différentes règles de jeu.
+Ce projet vise à développer différents agents autonomes pour des jeux de plateau en s’appuyant sur des
+techniques d’apprentissage par renforcement. L’objectif principal est double : d’une part, entraîner ces
+agents à adopter des stratégies optimales adaptées aux règles du jeu, et d’autre part, étudier les interactions
+entre différentes règles et différents types d’agents afin d’analyser leur influence sur la jouabilité et l’équilibre
+global du jeu.
 
-TODO d'ici à(
-#### Caractéristiques principales
-- Conception de joueurs autonomes : Les agents sont entraînés à naviguer dans un environnement
-complexe et à prendre des décisions stratégiques en temps réel, en s’appuyant sur un environnement
-simulé.
-- Analyse des règles existantes et proposition de nouvelles règles : En modifiant les règles du jeu, explorer leur impact sur l’équilibre, la jouabilité, et l’expérience des joueurs.
-- Personnalisation des comportements : Chaque agent peut être paramétré avec un style de jeu spécifique (agressif, défensif, aléatoire, stratégique, etc.), permettant une diversité de simulations et d’interactions.
-- Application multi-usage :
-    - Formation des agents via l’apprentissage par renforcement.
-    - Simulation massive de parties pour tester de nouvelles mécaniques ou évaluer la difficulté et l’équilibre des règles.
-    - Validation empirique de stratégies pour identifier celles qui conviennent à différents profils de joueurs.
+1. Modélisation du jeu
+    - Représenter le jeu de manière formelle, avec ses états, actions et espaces d’observation.
+    - Intégrer dès le départ la possibilité d’ajouter des règles ou variantes futures, en prévoyant une
+architecture flexible.
 
-#### Objectifs identifiés
-Le projet repose sur plusieurs objectifs techniques et analytiques, visant à développer des agents autonomes
-tout en approfondissant la compréhension des dynamiques des jeux de plateau :
-1. Entraîner des agents RL pour jouer efficacement
-    - Implémenter un environnement, permettant aux agents d’interagir avec le jeu.
-    - Utiliser des algorithmes d’apprentissage par renforcement pour optimiser les décisions des  agents dans différents scénarios.
-2. Effectuer des simulations massives pour tester différentes mécaniques de jeu
-    - Automatiser des milliers de parties avec des agents divers pour analyser les résultats statistiquement.
-    - Identifier les règles ou configurations qui déséquilibrent le jeu ou le rendent impraticable.
-    - Simuler des parties avec des agents hétérogènes pour évaluer les interactions et l’équilibre général.
-3. Personnaliser les agents selon divers styles de jeu et comportements stratégiques
-    - Créer des agents avec des préférences ou des objectifs spécifiques.
-    - Comparer l’efficacité des styles et identifier ceux favorisés dans différentes configurations.
-4. Tester différentes stratégies et configurations de règles
-    - Étudier les impacts des changements de règles sur le gameplay.
-    - Définir des métriques de ”jouabilité” telles que l’équilibre des forces, la durée des parties, ou la diversité des stratégies possibles.
-5. Développer une interface graphique pour pouvoir jouer contre ces agents
-
-TODO d'ici)
+2. Apprentissage par renforcement
+    - Utiliser des techniques de RL pour entraîner des agents autonomes capables de jouer effica-
+cement au jeu choisi.
+3. Comportements et personnalisation des agents
+    - Développer différents types d’agents, chacun ayant des stratégies distinctes.
+    - Étudier leurs comportements face aux variantes des règles testées.
+4. Ajout de nouvelles règles et variantes
+    - Analyser comment ces variantes influencent les comportements des agents.
+    - Tester l’impact de différentes règles sur la jouabilité et l’équilibre du jeu.
+5. Analyse statistique des parties simulées
+    - Collecter des statistiques détaillées sur les parties jouées par les agents pour évaluer leurs
+performances.
+    - Définir des critères pour comparer les règles ou les variantes afin de déterminer ce qui améliore
+le gameplay.
 
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
