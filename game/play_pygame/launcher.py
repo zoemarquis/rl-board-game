@@ -97,6 +97,10 @@ def setup_game():
         progression_order = "simplifié"
         replay_climb = "non"
 
+    # si replay climb n'est pas défini alors forcer que replay climb = non
+    if "replay_climb" not in locals():
+        replay_climb = "non"
+
     # Rejouer si 6
     while True:
         replay_six = input("Rejouer si un joueur fait un 6 ? (oui ou non) : ").lower()

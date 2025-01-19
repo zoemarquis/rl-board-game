@@ -90,7 +90,21 @@ le gameplay.
 
 ## Différents agents : 
 
-- TODO DANIIL 
+Dans notre projet, nous avons développé six types d'agents distincts, chacun avec sa propre stratégie et son système de récompenses :
+
+- **Agent Balanced (Équilibré)** : Agent utilisant une stratégie équilibrée entre attaque et progression, servant de référence pour comparer les autres agents.
+
+- **Agent Aggressive (Agressif)** : Agent privilégiant les actions offensives avec des récompenses maximales pour l'élimination des pions adverses.
+
+- **Agent Rusher (Pressé)** : Agent focalisé sur la progression rapide vers l'objectif avec un système de récompenses favorisant les mouvements vers l'avant et l'atteinte du but.
+
+- **Agent Defensive (Défensif)** : Agent priorisant la sécurité des pions avec des récompenses importantes pour l'atteinte des zones sûres et la protection mutuelle des pions.
+
+- **Agent Spawner (Sortie rapide)** : Agent concentré sur la sortie rapide des pions de l'écurie avec des récompenses maximales pour les actions de sortie.
+
+- **Agent Suboptimal (Sous-optimal)** : Agent simulant un joueur inexpérimenté avec des récompenses plus élevées pour les actions généralement moins efficaces.
+
+Chaque agent dispose de sa propre table de récompenses, adaptée selon sa stratégie. Cette diversité permet d'explorer différentes approches du jeu et d'étudier leur efficacité relative dans différentes configurations de règles.
 
 ### Mindmap résumant les différentes configurations
 
@@ -207,15 +221,15 @@ Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'env
 ## Lancer une partie avec interface graphique
 Pour jouer avec l'interface graphique, placer vous dans le dossier `game``
 
-    ```bash
-    cd game
-    ```
+```bash
+cd game
+```
 
 Puis exécuter le fichier `play.py` comme ceci:
 
-    ```bash
-    python3 play_pygame/play.py
-    ```
+```bash
+python3 play_pygame/play.py
+```
 
 Voici un extrait d'une partie montrant un joueur humain et trois agents en action.
 ![Demo of the app](docs/demo_assets/demo_pc_1humain_3agents.gif)
@@ -227,7 +241,7 @@ Dans ce cas, il faut relancer le programme et choisir une configuration de règl
 **Message d'Erreur Attendu**
 
 Voici un exemple de message d'erreur qui peut apparaître dans ce cas :
-```
+```bash
 "Le fichier <model_file_name> n'existe pas. Veuillez entraîner l'agent avant de l'utiliser."
 ```
 ---
@@ -335,10 +349,57 @@ Exemple de l'agent aggressive :
 
 Ces résultats montrent que les agents s'entrainent bien pour des configurations de règles simples, mais mettent cependant en évidence les limites des agents RL à s'adapter à des environnements de plus en plus complexes.
 
-### ? 
-TODO énoncé : Résultats et analyses.
-TODO DANIIL CE QUE T'AS FAIT AVEC LES STATS
-insérer img 
+### Analyse des performances des agents
+
+L'analyse complète des performances des agents est disponible dans le notebook `db/analyse/analyse_agents.ipynb`. Nous présentons ici une synthèse des résultats principaux.
+
+L'étude des performances des agents dans notre jeu représente un défi analytique important en raison du nombre considérable de configurations possibles : 32 configurations de règles différentes, parties à 2 ou 4 joueurs, 6 types d'agents, et possibilités de 2 ou 4 pions par joueur. Nous nous sommes donc concentrés sur les configurations les plus représentatives pour illustrer nos analyses.
+
+#### Performance des agents au sein d'une configuration fixe
+
+Pour la configuration 8, qui offre un équilibre intéressant entre les différentes stratégies, nous avons analysé les performances relatives des agents.
+
+![Matrice des taux de victoire entre agents](/docs/graphiques_analyse_agents/taux_victoire_conf8.png)
+
+*Figure 1: Matrice des taux de victoire entre agents (configuration 8)*
+
+Cette matrice révèle des différences significatives dans l'efficacité des stratégies. Par exemple, l'agent aggressive montre une forte domination contre l'agent defensive (62% de victoires) mais peine davantage face à l'agent rusher (49% de victoires).
+
+Dans les parties à quatre joueurs, la dynamique change significativement :
+
+![Distribution des positions finales](/docs/graphiques_analyse_agents/distribution_places_conf8.png)
+
+*Figure 2: Distribution des positions finales par type d'agent en parties à 4 joueurs*
+
+Face à des adversaires multiples, les écarts de performance se réduisent. L'agent defensive atteint la première place aussi souvent que l'agent aggressive, mais montre des performances moindres pour les deuxièmes places.
+
+#### Satisfaction des agents selon les règles
+
+La satisfaction des agents a été évaluée selon des métriques spécifiques à chaque stratégie. Pour l'agent aggressive par exemple :
+
+![Satisfaction de l'agent aggressive](/docs/graphiques_analyse_agents/satisfaction_aggressive.png)
+
+*Figure 3: Nombre moyen d'éliminations par partie selon les configurations*
+
+Les configurations 11 et 12, avec leurs contraintes plus strictes sur la progression vers l'objectif, permettent plus d'éliminations et donc une meilleure satisfaction pour l'agent aggressive. Cependant, ce taux de satisfaction élevé ne correspond pas toujours à un meilleur taux de victoire.
+
+#### Équilibre et jouabilité
+
+L'analyse de la configuration 7 révèle des aspects intéressants sur l'équilibre du jeu :
+
+![Longueur des parties](/docs/graphiques_analyse_agents/longueur_parties_conf7.png)
+
+*Figure 4: Distribution des longueurs de parties selon les types d'agents*
+
+La durée des parties reste remarquablement stable quelle que soit la combinaison d'agents, suggérant un bon équilibre général.
+
+Cependant, l'analyse des parties 2v2 montre une autre réalité :
+
+![Distribution des pions en 2v2](/docs/graphiques_analyse_agents/pions_objectif_2v2.png)
+
+*Figure 5: Distribution du nombre de pions à l'objectif par équipe*
+
+La dispersion des points révèle que certaines combinaisons d'agents sont nettement plus efficaces que d'autres pour atteindre l'objectif, indiquant des déséquilibres dans cette configuration.
 
 
 ---
@@ -384,8 +445,7 @@ Contient également les fichiers de documentation complémentaires, tels que :
 
 ```bash
 game/
-├── __init__.py                    
-├── environment.yml                
+├── __init__.py                  
 ├── images/                        
 ├── ludo_env/                    
 ├── play_pygame/    
@@ -394,7 +454,6 @@ game/
 ```
 
 - `__init__.py` : Fichier d'initialisation pour le module Python.
-- `environment.yml`: Fichier de configuration pour recréer l'environnement conda.
 - `images/` : Contient les images utilisées pour l'interface graphique.
 -  `ludo_env/`: Ce répertoire contient l’implémentation complète de l’environnement Gym pour le jeu Ludo, incluant :
     - La logique du jeu.
@@ -413,7 +472,6 @@ game/
 game/                     
 └── ludo_env/                    
     ├── __init__.py              
-    ├── __pycache__/             
     ├── action.py                
     ├── env.py                   
     ├── game_logic.py            
@@ -497,8 +555,8 @@ db/
 ```
 
 - `analyse/` : Dossier contenant les notebooks d'analyse des agents
-    - `analyse_agents.ipynb` : Notebook d'analyse de l'entrainement des agents
-    - `analyse_entraînement.ipynb` : # TODO Daniil
+    - `analyse_agents.ipynb` : Notebook d'analyse de performance des agents entraînés en fonction des configurations de jeu.
+    - `analyse_entraînement.ipynb` : Notebook d'analyse de l'entrainement des agents
 - `data/` : Dossier contenant les fichiers csv de données exportées depuis la base de données  et utilisés pour les analyses.
 - `secret/config.py` : Fichier de configuration contenant l'URL de connexion à la base de données PostgreSQL. Ce dossier est à créer localement.
 - `config_game.py` : Fichier contenant les fonctions nécessaires pour générer les configurations de jeu des parties entre agents.
@@ -511,29 +569,7 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
     Il faut préciser la configuration de règles, le nombre de joueurs, le nombre de chevaux et le nombre de parties à lancer.  
     Lance toutes les parties pour tous les agents définis correspondant au nombre de joueurs, de pions et à la configuration spécifiée. 
     - `main_lancer_parties_pour_analyse_entrainement()` : Permet d'exécuter les parties générant les données nécessaires à l'analyse de l'entrainement des agents.
-    - `MAIN_DANIIL`: TODO Daniil : Expliquer les fonctions que tu as utilisé ??
+    - `main_lancer_auto_mathcups()`: Permet d'exécuter les parties générant les données nécessaires à l'analyse de des agents entraînés en fonction des configurations de jeu.
 - `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
-
-### analyse 
-
-TODO DANIIL ICI Décrit à quels endroits sont les notebooks que le prof doit regarder pour les stats 
-
-
-
---- 
-TODO 
-à supprimer : voilà l'énoncé : 
-
-Le code doit inclure au minimum un README.txt (ou mieux un README.md) avec des explications. Le README contiendra les informations suivantes :
-
-- Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
-
-- Installation : comment le tester/compiler, dépendances. Le projet devra être compilable/utilisable par vos évaluateurs.
-
-- Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
-
-- Résultats et analyses.
-
-- Des médias (images, vidéos d'explications) pourront être fournis pour indiquer comment correctement utiliser l'application.
