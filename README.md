@@ -155,7 +155,7 @@ python3.11 -m venv --help
 ```
 - Si cette commande fonctionne, vous pouvez continuer.
 - Sinon installez `venv`:
-    - Sous MacOS, lorsque Python 3.11 est installé via Homebrew, le module `venv`est inclus par défaut. Si la commande précédent a généré une erreur : 
+    - Sous MacOS, lorsque Python 3.11 est installé via Homebrew, le module `venv` est inclus par défaut. Si la commande précédent a généré une erreur : 
     ```bash
     brew update
     brew upgrade python
@@ -165,7 +165,7 @@ python3.11 -m venv --help
     - Linux (Ubuntu)
     ```bash
     sudo apt update
-    sudo apt install python3-venv
+    sudo apt install python3.11-venv
     ```
 
 
@@ -583,3 +583,13 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
 - `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
+
+
+---
+
+
+TODO tout a été testé sous winodws et ubuntu, tout sauf installation de postgresql avec macos (car pas nécessaire pour lancer ni le jeu ni les analyses)
+
+TODO : ajouter pour lancer ludo stats play dans qu'il faut etre dansdb  
+
+ajouter le fichier config ubuntu postgre 
