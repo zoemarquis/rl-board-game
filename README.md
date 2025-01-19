@@ -445,8 +445,7 @@ Contient également les fichiers de documentation complémentaires, tels que :
 
 ```bash
 game/
-├── __init__.py                    
-├── environment.yml                
+├── __init__.py                  
 ├── images/                        
 ├── ludo_env/                    
 ├── play_pygame/    
@@ -455,7 +454,6 @@ game/
 ```
 
 - `__init__.py` : Fichier d'initialisation pour le module Python.
-- `environment.yml`: Fichier de configuration pour recréer l'environnement conda.
 - `images/` : Contient les images utilisées pour l'interface graphique.
 -  `ludo_env/`: Ce répertoire contient l’implémentation complète de l’environnement Gym pour le jeu Ludo, incluant :
     - La logique du jeu.
@@ -474,7 +472,6 @@ game/
 game/                     
 └── ludo_env/                    
     ├── __init__.py              
-    ├── __pycache__/             
     ├── action.py                
     ├── env.py                   
     ├── game_logic.py            
