@@ -298,11 +298,13 @@ NB : L'analyse complète de l'entrainement est disponible dans le notebook `db/a
 
 #### Objectif
 
-Étudier l'évolution des performances d'agents RL en fonction du nombre de pas d'entraînement, à travers des configurations de jeu de complexité croissante.
+Étudier l'entrainement des agents RL en analysant l'évolution de leurs performances en fonction du nombre de pas d'entraînement, à travers des configurations de jeu de complexité croissante.
 
 #### Données et paramètres de l'analyse
 **Données**  
-Nous avons analysé les données collectées suite aux parties massives, entre agents identiques (même nombre de pas d'entrainement et même type), lancées avec la fonction `main_lancer_parties_pour_analyse_entrainement()` du fichier `ludo_stats_play.py`.
+
+Les données utilisées pour cette analyse ont été collectées à partir de simulations massives de parties entre
+agents identiques, c’est-à-dire de même type et de même nombre de pas d’entraînement, lancées avec la fonction `main_lancer_parties_pour_analyse_entrainement()` du fichier `ludo_stats_play.py`.
 
 **Métriques**  
 - Répartition des types d'actions demandées
@@ -315,7 +317,7 @@ Nous avons analysé les données collectées suite aux parties massives, entre a
 - Configuration 17 : Règles complètes avec interactions avancées
 
 **Nombre et types d'agents**  
-Tous les agents ont été étudiés (Balanced, Aggressive, Rusher, Defensive, Spawner, et Suboptimal) dans des parties avec : 2 joueurs et 2 pions, 2 joueurs et 4 pions, et 4 joueurs et 4 pions. Nous avons entrainé, fait jouer, et analysé les performances de ces agents avec 50 000, 100 000, 200 000, et 400 000 pas d'entrainement.
+Tous les types agents ont été étudiés (Balanced, Aggressive, Rusher, Defensive, Spawner, et Suboptimal) dans des parties avec : 2 joueurs et 2 pions, 2 joueurs et 4 pions, et 4 joueurs et 4 pions. Nous avons entrainé, fait jouer, et analysé les performances de ces agents avec les nombres pas d'entrainement suivants : 50 000, 100 000, 200 000, et 400 000.
 
 #### Résultats
 
