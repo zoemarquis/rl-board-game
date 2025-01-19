@@ -63,16 +63,13 @@ TODO d'ici)
 
 ### Règles de Base :
 
-- Chaque joueur commence avec tous ses pions dans une écurie.
+- Chaque joueur commence avec tous ses pions dans son écurie.
 - Un 6 au dé est requis pour sortir un pion de l'écurie.
-- Une fois sur le plateau, les pions doivent avancer sur un chemin commun de 56 cases, où :
-    - Les pions peuvent se croiser ou se faire tuer en arrivant exactement sur une case occupée par un pion adverse.
-    - Règles pour les déplacements :
-        - **Tuer un pion adverse** : Un pion peut éliminer un pion adverse uniquement s’il tombe exactement sur la même case.
-        - **Rejoindre un pion allié** : Un pion appartenant au même joueur peut rejoindre un autre pion uniquement si le lancé de dé correspond exactement à la distance entre les deux.
-        - **Rester bloqué derrière un pion** : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu'à la case précédent l'obstacle. Les dépassements de pions (alliés ou adverses) sont donc interdits. Ces règles ne s'appliquent pas à l'escalier.
-- Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
-
+- Une fois sur le plateau, les pions avancent sur un chemin commun de 56 cases menant à un escalier de 6 cases, propre à chaque joueur, qui aboutit à une case objectif.
+- Règles pour les déplacements dans le chemin commun :
+    - Tuer un pion adverse : Un pion peut éliminer un pion adverse uniquement s’il tombe exactement sur la même case.
+    - Rejoindre un pion allié : Un pion d’un joueur peut rejoindre un autre pion du même joueur uniquement si le résultat du lancer de dé correspond exactement à la distance qui les sépare.
+    - Rester bloqué derrière un pion : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu’à la case précédant l’obstacle. Les dépassements de pions sont interdits. Ces règles ne s’appliquent pas à l’escalier.
 - **Disposition des écuries selon le nombre de joueurs** :
     - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.
     - **3 ou 4 joueurs** : Les écuries sont réparties de manière équidistante toutes les 14 cases. Une même case peut être perçue différemment selon le point de vue du joueur :
@@ -93,16 +90,13 @@ TODO d'ici)
         - Si le lancé de dé dépasse la distance requise pour atteindre cette case, le pion peut avancer puis reculer, à condition que ce mouvement réduise la distance qui le sépare de la case au pied de l'escalier.
         - Si, en avançant puis reculant selon la valeur du dé, le pion finit par s'éloigner davantage de la case pied de l'escalier, alors il ne peut pas être déplacé.
     - Progression simplifiée : Si la valeur du dé dépasse le pied de l’escalier, le pion grimpe directement comme si l’escalier faisait partie du chemin.
-- Ordre de progression sur l'escalier :
-    - Ordre simplifié : Un pion peut monter plusieurs marches de l'escalier en un seul lancé de dé, il suffit qu'il arrive ou dépasse l'objectif pour l'atteindre.
-    - Dans le cas de l'exactitude nécessaire pour le pied de l'excalier, on peut utiliser l'ordre simplifié ou alors l'ordre strict : 
-        - Chaque marche de l'escalier nécessite un jet spécifique : 1 pour la première marche, 2 pour la deuxième, ... ainsi que 6 pour atteindre l’objectif.
-- Dans le cas de l'ordre strict pour progresser dans l'escalier : 
-    - Rejouer lors de la montée de chaque marche (oui ou non)
-
-- Rejouer si dé = 6 (oui ou non)
-
-- Pouvoir protéger un pion (oui ou non) : si on a deux pions sur la même case, alors personne ne peut les tuer.
+- Ordre de progression sur l’escalier :
+    - Ordre simplifié : Un pion avance de la distance indiquée par le dé. Cela lui permet de monter plusieurs marches de l’escalier en un seul lancer, et d’atteindre directement la case objectif si la valeur du dé le permet ou la dépasse.
+    - Ordre strict (autorisé uniquement si l’exactitude est requise pour atteindre le pied de l’escalier):
+        - Chaque marche de l’escalier nécessite un lancer spécifique : 1 pour la première marche, 2 pour la deuxième, ..., et 6 pour atteindre la case objectif.
+        - Une règle optionnelle peut être ajoutée pour permettre ou non au pion de rejouer après chaque montée de marche.
+- Rejouer en cas de lancer d’un 6 : Cette règle peut être activée ou désactivée.
+- Protection des pions : Si deux pions d’un même joueur se trouvent sur la même case, ils deviennent invulnérables et ne peuvent pas être éliminés. Cette règle peut être activée ou désactivée.
 
 ## Différents agents : 
 
