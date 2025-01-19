@@ -458,15 +458,11 @@ def main_lancer_parties_pour_analyse_entrainement() :
     main_auto(num_conf=17, num_players=4, nb_chevaux=4, num_games=100)
     main_auto(num_conf=12, num_players=4, nb_chevaux=4, num_games=100)
 
-if __name__ == "__main__":
-    main()
-    # main_lancer_parties_pour_analyse_entrainement()
-
-
+def main_lancer_auto_mathcups():
     # Run matchups with different configurations
-    """configs_to_test = [16, 7, 1]
-    player_counts = [4]
-    pawn_counts = [2]
+    configs_to_test = [16, 7, 1]
+    player_counts = [2, 4]
+    pawn_counts = [2, 4]
     
     for conf in configs_to_test:
         for players in player_counts:
@@ -477,4 +473,10 @@ if __name__ == "__main__":
                     num_players=players,
                     nb_chevaux=pawns,
                     games_per_matchup=100
-                )"""
+                )
+
+if __name__ == "__main__":
+    main()
+    # main_lancer_parties_pour_analyse_entrainement()
+    # main_lancer_auto_mathcups()
+

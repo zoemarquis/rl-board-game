@@ -555,7 +555,7 @@ db/
 ```
 
 - `analyse/` : Dossier contenant les notebooks d'analyse des agents
-    - `analyse_agents.ipynb` : # TODO DANIIL
+    - `analyse_agents.ipynb` : Notebook d'analyse de performance des agents entraînés en fonction des configurations de jeu.
     - `analyse_entraînement.ipynb` : Notebook d'analyse de l'entrainement des agents
 - `data/` : Dossier contenant les fichiers csv de données exportées depuis la base de données  et utilisés pour les analyses.
 - `secret/config.py` : Fichier de configuration contenant l'URL de connexion à la base de données PostgreSQL. Ce dossier est à créer localement.
@@ -569,7 +569,7 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
     Il faut préciser la configuration de règles, le nombre de joueurs, le nombre de chevaux et le nombre de parties à lancer.  
     Lance toutes les parties pour tous les agents définis correspondant au nombre de joueurs, de pions et à la configuration spécifiée. 
     - `main_lancer_parties_pour_analyse_entrainement()` : Permet d'exécuter les parties générant les données nécessaires à l'analyse de l'entrainement des agents.
-    - `MAIN_DANIIL`: TODO Daniil : Expliquer les fonctions que tu as utilisé ?? mashup ? 
+    - `main_lancer_auto_mathcups()`: Permet d'exécuter les parties générant les données nécessaires à l'analyse de des agents entraînés en fonction des configurations de jeu.
 - `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
