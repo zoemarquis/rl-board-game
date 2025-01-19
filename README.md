@@ -12,43 +12,33 @@ Ce projet explore l'apprentissage par renforcement appliqué à des jeux de plat
 
 ---
 
-### Description reformulée du projet
+### Description reformulée du sujet et les objectifs du projet
 
-Le projet consiste à développer des agents autonomes capables de jouer à un jeu de plateau simulé informatiquement en utilisant des techniques d’apprentissage par renforcement. L’objectif est double : d’une part,
-entraîner des agents à optimiser leurs stratégies de jeu en fonction des règles, et d’autre part, utiliser ces
-agents comme outils d’analyse pour explorer les différentes règles de jeu.
+Ce projet vise à développer différents agents autonomes pour des jeux de plateau en s’appuyant sur des
+techniques d’apprentissage par renforcement. L’objectif principal est double : d’une part, entraîner ces
+agents à adopter des stratégies optimales adaptées aux règles du jeu, et d’autre part, étudier les interactions
+entre différentes règles et différents types d’agents afin d’analyser leur influence sur la jouabilité et l’équilibre
+global du jeu.
 
-TODO d'ici à(
-#### Caractéristiques principales
-- Conception de joueurs autonomes : Les agents sont entraînés à naviguer dans un environnement
-complexe et à prendre des décisions stratégiques en temps réel, en s’appuyant sur un environnement
-simulé.
-- Analyse des règles existantes et proposition de nouvelles règles : En modifiant les règles du jeu, explorer leur impact sur l’équilibre, la jouabilité, et l’expérience des joueurs.
-- Personnalisation des comportements : Chaque agent peut être paramétré avec un style de jeu spécifique (agressif, défensif, aléatoire, stratégique, etc.), permettant une diversité de simulations et d’interactions.
-- Application multi-usage :
-    - Formation des agents via l’apprentissage par renforcement.
-    - Simulation massive de parties pour tester de nouvelles mécaniques ou évaluer la difficulté et l’équilibre des règles.
-    - Validation empirique de stratégies pour identifier celles qui conviennent à différents profils de joueurs.
+1. Modélisation du jeu
+    - Représenter le jeu de manière formelle, avec ses états, actions et espaces d’observation.
+    - Intégrer dès le départ la possibilité d’ajouter des règles ou variantes futures, en prévoyant une
+architecture flexible.
 
-#### Objectifs identifiés
-Le projet repose sur plusieurs objectifs techniques et analytiques, visant à développer des agents autonomes
-tout en approfondissant la compréhension des dynamiques des jeux de plateau :
-1. Entraîner des agents RL pour jouer efficacement
-    - Implémenter un environnement, permettant aux agents d’interagir avec le jeu.
-    - Utiliser des algorithmes d’apprentissage par renforcement pour optimiser les décisions des  agents dans différents scénarios.
-2. Effectuer des simulations massives pour tester différentes mécaniques de jeu
-    - Automatiser des milliers de parties avec des agents divers pour analyser les résultats statistiquement.
-    - Identifier les règles ou configurations qui déséquilibrent le jeu ou le rendent impraticable.
-    - Simuler des parties avec des agents hétérogènes pour évaluer les interactions et l’équilibre général.
-3. Personnaliser les agents selon divers styles de jeu et comportements stratégiques
-    - Créer des agents avec des préférences ou des objectifs spécifiques.
-    - Comparer l’efficacité des styles et identifier ceux favorisés dans différentes configurations.
-4. Tester différentes stratégies et configurations de règles
-    - Étudier les impacts des changements de règles sur le gameplay.
-    - Définir des métriques de ”jouabilité” telles que l’équilibre des forces, la durée des parties, ou la diversité des stratégies possibles.
-5. Développer une interface graphique pour pouvoir jouer contre ces agents
-
-TODO d'ici)
+2. Apprentissage par renforcement
+    - Utiliser des techniques de RL pour entraîner des agents autonomes capables de jouer effica-
+cement au jeu choisi.
+3. Comportements et personnalisation des agents
+    - Développer différents types d’agents, chacun ayant des stratégies distinctes.
+    - Étudier leurs comportements face aux variantes des règles testées.
+4. Ajout de nouvelles règles et variantes
+    - Analyser comment ces variantes influencent les comportements des agents.
+    - Tester l’impact de différentes règles sur la jouabilité et l’équilibre du jeu.
+5. Analyse statistique des parties simulées
+    - Collecter des statistiques détaillées sur les parties jouées par les agents pour évaluer leurs
+performances.
+    - Définir des critères pour comparer les règles ou les variantes afin de déterminer ce qui améliore
+le gameplay.
 
 ## Fonctionnalités principales :
 🧠 Création d'agents : Plusieurs agents ont été développés, utilisant notamment l'algorithme Proximal Policy Optimization (PPO) pour optimiser leurs stratégies.  
@@ -63,16 +53,13 @@ TODO d'ici)
 
 ### Règles de Base :
 
-- Chaque joueur commence avec tous ses pions dans une écurie.
+- Chaque joueur commence avec tous ses pions dans son écurie.
 - Un 6 au dé est requis pour sortir un pion de l'écurie.
-- Une fois sur le plateau, les pions doivent avancer sur un chemin commun de 56 cases, où :
-    - Les pions peuvent se croiser ou se faire tuer en arrivant exactement sur une case occupée par un pion adverse.
-    - Règles pour les déplacements :
-        - **Tuer un pion adverse** : Un pion peut éliminer un pion adverse uniquement s’il tombe exactement sur la même case.
-        - **Rejoindre un pion allié** : Un pion appartenant au même joueur peut rejoindre un autre pion uniquement si le lancé de dé correspond exactement à la distance entre les deux.
-        - **Rester bloqué derrière un pion** : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu'à la case précédent l'obstacle. Les dépassements de pions (alliés ou adverses) sont donc interdits. Ces règles ne s'appliquent pas à l'escalier.
-- Chaque joueur possède un escalier unique de 6 cases menant à une case objectif.
-
+- Une fois sur le plateau, les pions avancent sur un chemin commun de 56 cases menant à un escalier de 6 cases, propre à chaque joueur, qui aboutit à une case objectif.
+- Règles pour les déplacements dans le chemin commun :
+    - Tuer un pion adverse : Un pion peut éliminer un pion adverse uniquement s’il tombe exactement sur la même case.
+    - Rejoindre un pion allié : Un pion d’un joueur peut rejoindre un autre pion du même joueur uniquement si le résultat du lancer de dé correspond exactement à la distance qui les sépare.
+    - Rester bloqué derrière un pion : Si la valeur du dé est supérieure au nombre de cases jusqu’au pion suivant sur le plateau (qu’il appartienne au même joueur ou à un adversaire), le pion avancera jusqu’à la case précédant l’obstacle. Les dépassements de pions sont interdits. Ces règles ne s’appliquent pas à l’escalier.
 - **Disposition des écuries selon le nombre de joueurs** :
     - **2 joueurs** : Les écuries sont placées à l'opposé l'une de l'autre sur le plateau. Ainsi, la case 1 du chemin pour un joueur correspond à la case 29 pour l'autre.
     - **3 ou 4 joueurs** : Les écuries sont réparties de manière équidistante toutes les 14 cases. Une même case peut être perçue différemment selon le point de vue du joueur :
@@ -93,16 +80,13 @@ TODO d'ici)
         - Si le lancé de dé dépasse la distance requise pour atteindre cette case, le pion peut avancer puis reculer, à condition que ce mouvement réduise la distance qui le sépare de la case au pied de l'escalier.
         - Si, en avançant puis reculant selon la valeur du dé, le pion finit par s'éloigner davantage de la case pied de l'escalier, alors il ne peut pas être déplacé.
     - Progression simplifiée : Si la valeur du dé dépasse le pied de l’escalier, le pion grimpe directement comme si l’escalier faisait partie du chemin.
-- Ordre de progression sur l'escalier :
-    - Ordre simplifié : Un pion peut monter plusieurs marches de l'escalier en un seul lancé de dé, il suffit qu'il arrive ou dépasse l'objectif pour l'atteindre.
-    - Dans le cas de l'exactitude nécessaire pour le pied de l'excalier, on peut utiliser l'ordre simplifié ou alors l'ordre strict : 
-        - Chaque marche de l'escalier nécessite un jet spécifique : 1 pour la première marche, 2 pour la deuxième, ... ainsi que 6 pour atteindre l’objectif.
-- Dans le cas de l'ordre strict pour progresser dans l'escalier : 
-    - Rejouer lors de la montée de chaque marche (oui ou non)
-
-- Rejouer si dé = 6 (oui ou non)
-
-- Pouvoir protéger un pion (oui ou non) : si on a deux pions sur la même case, alors personne ne peut les tuer.
+- Ordre de progression sur l’escalier :
+    - Ordre simplifié : Un pion avance de la distance indiquée par le dé. Cela lui permet de monter plusieurs marches de l’escalier en un seul lancer, et d’atteindre directement la case objectif si la valeur du dé le permet ou la dépasse.
+    - Ordre strict (autorisé uniquement si l’exactitude est requise pour atteindre le pied de l’escalier):
+        - Chaque marche de l’escalier nécessite un lancer spécifique : 1 pour la première marche, 2 pour la deuxième, ..., et 6 pour atteindre la case objectif.
+        - Une règle optionnelle peut être ajoutée pour permettre ou non au pion de rejouer après chaque montée de marche.
+- Rejouer en cas de lancer d’un 6 : Cette règle peut être activée ou désactivée.
+- Protection des pions : Si deux pions d’un même joueur se trouvent sur la même case, ils deviennent invulnérables et ne peuvent pas être éliminés. Cette règle peut être activée ou désactivée.
 
 ## Différents agents : 
 
