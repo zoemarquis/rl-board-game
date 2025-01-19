@@ -216,13 +216,9 @@ Le package `ipykernel`, nécessaire pour connecter l'environnement virtuel aux n
 
 Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'environnement virtuel, et vous pourrez exécuter vos analyses en toute compatibilité avec les dépendances du projet.
 
-### TODO CHARLOTTE POSTGRE
+### Étapes pour configurer la base de données
 
-étapes pour configurer
-veuillez vous référer à la doc d'installation de postgresql 
-en fonction de votre OS
-
-ça essayer sous windows : lien vers le fichier .md 
+Veuillez vous référer au fichier suivant pour les instructions complètes sur la configuration de PostgreSQL, la création de la base de données ludo_stats, et l'initialisation de sa structure : `./db/db_configuration_and_setup.md`
 
 ---
 

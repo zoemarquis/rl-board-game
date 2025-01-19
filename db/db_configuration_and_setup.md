@@ -1,4 +1,4 @@
-# Configuration et utilisation de la base de données `ludo_stats`
+# Configuration et utilisation de la base de données `ludo_stats` (Windows)
 
 ## 1. Préparation de la base de données
 
