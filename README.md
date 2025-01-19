@@ -106,7 +106,21 @@ TODO d'ici)
 
 ## Différents agents : 
 
-- TODO DANIIL 
+Dans notre projet, nous avons développé six types d'agents distincts, chacun avec sa propre stratégie et son système de récompenses :
+
+- **Agent Balanced (Équilibré)** : Agent utilisant une stratégie équilibrée entre attaque et progression, servant de référence pour comparer les autres agents.
+
+- **Agent Aggressive (Agressif)** : Agent privilégiant les actions offensives avec des récompenses maximales pour l'élimination des pions adverses.
+
+- **Agent Rusher (Pressé)** : Agent focalisé sur la progression rapide vers l'objectif avec un système de récompenses favorisant les mouvements vers l'avant et l'atteinte du but.
+
+- **Agent Defensive (Défensif)** : Agent priorisant la sécurité des pions avec des récompenses importantes pour l'atteinte des zones sûres et la protection mutuelle des pions.
+
+- **Agent Spawner (Sortie rapide)** : Agent concentré sur la sortie rapide des pions de l'écurie avec des récompenses maximales pour les actions de sortie.
+
+- **Agent Suboptimal (Sous-optimal)** : Agent simulant un joueur inexpérimenté avec des récompenses plus élevées pour les actions généralement moins efficaces.
+
+Chaque agent dispose de sa propre table de récompenses, adaptée selon sa stratégie. Cette diversité permet d'explorer différentes approches du jeu et d'étudier leur efficacité relative dans différentes configurations de règles.
 
 ### Mindmap résumant les différentes configurations
 
@@ -351,10 +365,57 @@ Exemple de l'agent aggressive :
 
 Ces résultats montrent que les agents s'entrainent bien pour des configurations de règles simples, mais mettent cependant en évidence les limites des agents RL à s'adapter à des environnements de plus en plus complexes.
 
-### ? 
-TODO énoncé : Résultats et analyses.
-TODO DANIIL CE QUE T'AS FAIT AVEC LES STATS
-insérer img 
+### Analyse des performances des agents
+
+L'analyse complète des performances des agents est disponible dans le notebook `db/analyse/analyse_agents.ipynb`. Nous présentons ici une synthèse des résultats principaux.
+
+L'étude des performances des agents dans notre jeu représente un défi analytique important en raison du nombre considérable de configurations possibles : 32 configurations de règles différentes, parties à 2 ou 4 joueurs, 6 types d'agents, et possibilités de 2 ou 4 pions par joueur. Nous nous sommes donc concentrés sur les configurations les plus représentatives pour illustrer nos analyses.
+
+#### Performance des agents au sein d'une configuration fixe
+
+Pour la configuration 8, qui offre un équilibre intéressant entre les différentes stratégies, nous avons analysé les performances relatives des agents.
+
+![Matrice des taux de victoire entre agents](/docs/graphiques_analyse_agents/taux_victoire_conf8.png)
+
+*Figure 1: Matrice des taux de victoire entre agents (configuration 8)*
+
+Cette matrice révèle des différences significatives dans l'efficacité des stratégies. Par exemple, l'agent aggressive montre une forte domination contre l'agent defensive (62% de victoires) mais peine davantage face à l'agent rusher (49% de victoires).
+
+Dans les parties à quatre joueurs, la dynamique change significativement :
+
+![Distribution des positions finales](/docs/graphiques_analyse_agents/distribution_places_conf8.png)
+
+*Figure 2: Distribution des positions finales par type d'agent en parties à 4 joueurs*
+
+Face à des adversaires multiples, les écarts de performance se réduisent. L'agent defensive atteint la première place aussi souvent que l'agent aggressive, mais montre des performances moindres pour les deuxièmes places.
+
+#### Satisfaction des agents selon les règles
+
+La satisfaction des agents a été évaluée selon des métriques spécifiques à chaque stratégie. Pour l'agent aggressive par exemple :
+
+![Satisfaction de l'agent aggressive](/docs/graphiques_analyse_agents/satisfaction_aggressive.png)
+
+*Figure 3: Nombre moyen d'éliminations par partie selon les configurations*
+
+Les configurations 11 et 12, avec leurs contraintes plus strictes sur la progression vers l'objectif, permettent plus d'éliminations et donc une meilleure satisfaction pour l'agent aggressive. Cependant, ce taux de satisfaction élevé ne correspond pas toujours à un meilleur taux de victoire.
+
+#### Équilibre et jouabilité
+
+L'analyse de la configuration 7 révèle des aspects intéressants sur l'équilibre du jeu :
+
+![Longueur des parties](/docs/graphiques_analyse_agents/longueur_parties_conf7.png)
+
+*Figure 4: Distribution des longueurs de parties selon les types d'agents*
+
+La durée des parties reste remarquablement stable quelle que soit la combinaison d'agents, suggérant un bon équilibre général.
+
+Cependant, l'analyse des parties 2v2 montre une autre réalité :
+
+![Distribution des pions en 2v2](/docs/graphiques_analyse_agents/pions_objectif_2v2.png)
+
+*Figure 5: Distribution du nombre de pions à l'objectif par équipe*
+
+La dispersion des points révèle que certaines combinaisons d'agents sont nettement plus efficaces que d'autres pour atteindre l'objectif, indiquant des déséquilibres dans cette configuration.
 
 
 ---
