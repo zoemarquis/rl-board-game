@@ -216,10 +216,18 @@ Le package `ipykernel`, nécessaire pour connecter l'environnement virtuel aux n
 
 Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'environnement virtuel, et vous pourrez exécuter vos analyses en toute compatibilité avec les dépendances du projet.
 
+### TODO CHARLOTTE POSTGRE
+
+étapes pour configurer
+veuillez vous référer à la doc d'installation de postgresql 
+en fonction de votre OS
+
+ça essayer sous windows : lien vers le fichier .md 
+
 ---
 
 ## Lancer une partie avec interface graphique
-Pour jouer avec l'interface graphique, placer vous dans le dossier `game``
+Pour jouer avec l'interface graphique, placer vous dans le dossier `game`
 
 ```bash
 cd game
