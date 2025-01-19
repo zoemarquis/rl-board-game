@@ -221,15 +221,15 @@ Une fois ces étapes terminées, le notebook sera configuré pour utiliser l'env
 ## Lancer une partie avec interface graphique
 Pour jouer avec l'interface graphique, placer vous dans le dossier `game``
 
-    ```bash
-    cd game
-    ```
+```bash
+cd game
+```
 
 Puis exécuter le fichier `play.py` comme ceci:
 
-    ```bash
-    python3 play_pygame/play.py
-    ```
+```bash
+python3 play_pygame/play.py
+```
 
 Voici un extrait d'une partie montrant un joueur humain et trois agents en action.
 ![Demo of the app](docs/demo_assets/demo_pc_1humain_3agents.gif)
@@ -241,7 +241,7 @@ Dans ce cas, il faut relancer le programme et choisir une configuration de règl
 **Message d'Erreur Attendu**
 
 Voici un exemple de message d'erreur qui peut apparaître dans ce cas :
-```
+```bash
 "Le fichier <model_file_name> n'existe pas. Veuillez entraîner l'agent avant de l'utiliser."
 ```
 ---
