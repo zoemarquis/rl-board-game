@@ -555,8 +555,8 @@ db/
 ```
 
 - `analyse/` : Dossier contenant les notebooks d'analyse des agents
-    - `analyse_agents.ipynb` : Notebook d'analyse de l'entrainement des agents
-    - `analyse_entraînement.ipynb` : # TODO Daniil
+    - `analyse_agents.ipynb` : # TODO DANIIL
+    - `analyse_entraînement.ipynb` : Notebook d'analyse de l'entrainement des agents
 - `data/` : Dossier contenant les fichiers csv de données exportées depuis la base de données  et utilisés pour les analyses.
 - `secret/config.py` : Fichier de configuration contenant l'URL de connexion à la base de données PostgreSQL. Ce dossier est à créer localement.
 - `config_game.py` : Fichier contenant les fonctions nécessaires pour générer les configurations de jeu des parties entre agents.
@@ -569,29 +569,7 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
     Il faut préciser la configuration de règles, le nombre de joueurs, le nombre de chevaux et le nombre de parties à lancer.  
     Lance toutes les parties pour tous les agents définis correspondant au nombre de joueurs, de pions et à la configuration spécifiée. 
     - `main_lancer_parties_pour_analyse_entrainement()` : Permet d'exécuter les parties générant les données nécessaires à l'analyse de l'entrainement des agents.
-    - `MAIN_DANIIL`: TODO Daniil : Expliquer les fonctions que tu as utilisé ??
+    - `MAIN_DANIIL`: TODO Daniil : Expliquer les fonctions que tu as utilisé ?? mashup ? 
 - `db_configuration_and_setup.md` : Fichier fournissant les informations pour configurer et utiliser la base de données *ludo_stats*.
 - `rules.py` : Fichier permettant de gérer les règles (définition, description et détermination dynamique).
 - `schema.py` : Script permettant d'initialiser la base de données en créant les tables nécessaires.
-
-### analyse 
-
-TODO DANIIL ICI Décrit à quels endroits sont les notebooks que le prof doit regarder pour les stats 
-
-
-
---- 
-TODO 
-à supprimer : voilà l'énoncé : 
-
-Le code doit inclure au minimum un README.txt (ou mieux un README.md) avec des explications. Le README contiendra les informations suivantes :
-
-- Objectifs : ce que fait le projet, une description des différentes fonctionnalités disponibles.
-
-- Installation : comment le tester/compiler, dépendances. Le projet devra être compilable/utilisable par vos évaluateurs.
-
-- Organisation et explications du code, explication de ce que font chaque exécutable/parties des données : comment les récupérer, etc.
-
-- Résultats et analyses.
-
-- Des médias (images, vidéos d'explications) pourront être fournis pour indiquer comment correctement utiliser l'application.
