@@ -4,7 +4,7 @@
 </div>
 
 # Autonomous agents development and new rule creation for board games using reinforcement learning
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
 ## Project Description 🎮🤖
 
 This project explores reinforcement learning applied to board games, focusing on the popular board game Ludo (also known as "Petits chevaux" in French). Initially, we experimented with the Labyrinth game, but this choice was abandoned due to specific constraints, as explained in the documentation.
