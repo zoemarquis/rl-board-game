@@ -436,6 +436,7 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 - `README.fr.md`: Contient la documentation principale du projet, y compris les objectifs, instructions d'installation et exemples d'utilisation en français.
 - `project-presentation-slideshow-fr.pdf`: Diaporama de présentation du projet en français.
 - `project-report-fr.pdf`: Rapport complet du projet rédigé en français.
+- `project-assignment-fr.pdf`: Énoncé initial du projet en français.
 - `docs/` : Utilisé tout au long du semestre pour centraliser les recherches, notes, explications, choix d'équipe et toute trace écrite utile à communiquer.
 Contient également les fichiers de documentation complémentaires, tels que :
     - Des explications techniques sur le projet.

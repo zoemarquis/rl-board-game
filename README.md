@@ -432,6 +432,7 @@ Here is the structure of the main folders and files of this project, with a desc
 - `README.fr.md`: Contains the main project documentation, including objectives, installation instructions, and usage examples in french.
 - `project-presentation-slideshow-fr.pdf`: Slideshow presentation of the project in french.
 - `project-report-fr.pdf`: Full project report written in french.
+- `project-assignment-fr.pdf`: Initial project statement in French.
 - `docs/`: Used throughout the semester to centralize research, notes, explanations, team choices, and any useful written trace to communicate.
 Also contains complementary documentation files, such as:
     - Technical explanations about the project.
