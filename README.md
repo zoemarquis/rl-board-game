@@ -417,12 +417,10 @@ Here is the structure of the main folders and files of this project, with a desc
 .
 ├── README.md
 ├── README.fr.md
-├── project-presentation-slideshow-fr.pdf
-├── project-report-fr.pdf
 ├── docs/
 ├── db/
 ├── game/
-├── ludo_venv/
+├── ressources/
 └── requirements_venv.txt
 ```
 
@@ -430,9 +428,6 @@ Here is the structure of the main folders and files of this project, with a desc
 
 - `README.md`: Contains the main project documentation, including objectives, installation instructions, and usage examples in english.
 - `README.fr.md`: Contains the main project documentation, including objectives, installation instructions, and usage examples in french.
-- `project-presentation-slideshow-fr.pdf`: Slideshow presentation of the project in french.
-- `project-report-fr.pdf`: Full project report written in french.
-- `project-assignment-fr.pdf`: Initial project statement in French.
 - `docs/`: Used throughout the semester to centralize research, notes, explanations, team choices, and any useful written trace to communicate.
 Also contains complementary documentation files, such as:
     - Technical explanations about the project.
@@ -449,6 +444,10 @@ Also contains complementary documentation files, such as:
     - Files necessary to launch the game with a graphical interface.
     - Notebooks dedicated to machine learning, allowing training and evaluation of agents.
     - Pytest tests to ensure that the game logic respects the defined rules.
+- `ressources/`: Contains project-related documents in French:
+    - `project-presentation-slideshow-fr.pdf`: Slideshow presentation of the project in french.
+    - `project-report-fr.pdf`: Full project report written in french.
+    - `project-assignment-fr.pdf`: Initial project statement in French.
 - `requirements_venv.txt`: A specific version of dependencies used with the virtual environment.
 
 ### `game/`
@@ -589,7 +588,7 @@ This file contains several main functions that we used according to our needs:
 All installations and features have been tested on Windows and Ubuntu. On macOS, everything has been verified, except for the installation of PostgreSQL, which is not required to run the game and perform analyses.
 
 ## 📑 Full documentation
-For complete methodology, pedagogical and technical objectives, implementation choices, results analysis, and detailed discussion, please refer to the comprehensive [project report (in French)](project-report-fr.pdf) included in this repository.
+For complete methodology, pedagogical and technical objectives, implementation choices, results analysis, and detailed discussion, please refer to the comprehensive [project report (in French)](./ressources/project-report-fr.pdf) included in this repository.
 
 ## 👷 Contributors
 - MARQUIS Zoé

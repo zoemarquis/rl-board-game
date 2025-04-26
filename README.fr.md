@@ -423,10 +423,11 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 ```bash
 .
 ├── README.md
+├── README.fr.md
 ├── docs/
 ├── db/
 ├── game/
-├── ludo_venv/
+├── ressources/
 └── requirements_venv.txt
 ```
 
@@ -434,14 +435,10 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 
 - `README.md` : Contient la documentation principale du projet, y compris les objectifs, instructions d'installation et exemples d'utilisation en anglais.
 - `README.fr.md`: Contient la documentation principale du projet, y compris les objectifs, instructions d'installation et exemples d'utilisation en français.
-- `project-presentation-slideshow-fr.pdf`: Diaporama de présentation du projet en français.
-- `project-report-fr.pdf`: Rapport complet du projet rédigé en français.
-- `project-assignment-fr.pdf`: Énoncé initial du projet en français.
 - `docs/` : Utilisé tout au long du semestre pour centraliser les recherches, notes, explications, choix d'équipe et toute trace écrite utile à communiquer.
 Contient également les fichiers de documentation complémentaires, tels que :
     - Des explications techniques sur le projet.
     - Des captures d'écran ou diagrammes pour illustrer les concepts clés.
-
 - `db/` : Ce dossier stocke les fichiers nécessaires à la gestion et à l’exploitation des données du projet. Il contient :
     - Les scripts pour initialiser la base de données, insérer des données, et les exporter au format CSV.
     - Les données exportées utilisées pour les analyses.
@@ -453,6 +450,11 @@ Contient également les fichiers de documentation complémentaires, tels que :
     - Les fichiers nécessaires pour lancer le jeu avec une interface graphique.
     - Des notebooks dédiés à l'apprentissage automatique, permettant d'entraîner et d'évaluer des agents.
     - Des tests en pytest pour garantir que la logique du jeu respecte les règles définies.
+- `ressources/` : Contient les documents liés au projet :
+    - `project-presentation-slideshow-fr.pdf`: Diaporama de présentation du projet en français.
+    - `project-report-fr.pdf`: Rapport complet du projet rédigé en français.
+    - `project-assignment-fr.pdf`: Énoncé initial du projet en français.
+
 - `requirements_venv.txt` : Une version spécifique des dépendances utilisée avec l’environnement virtuel.
 
 ### `game/`
@@ -594,7 +596,7 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
 Toutes les installations et fonctionnalités ont été testées sur Windows et Ubuntu. Sur macOS, tout a été vérifié, à l'exception de l'installation de PostgreSQL, qui n'est pas requise pour exécuter le jeu et effectuer les analyses.
 
 ## 📑 Documentation complète
-Pour une vue d’ensemble complète de la méthodologie, des objectifs pédagogiques et techniques, des choix d’implémentation, de l’analyse des résultats et des discussions détaillées, veuillez consulter le [rapport complet du projet (en français)](project-report-fr.pdf) disponible dans ce dépôt.
+Pour une vue d’ensemble complète de la méthodologie, des objectifs pédagogiques et techniques, des choix d’implémentation, de l’analyse des résultats et des discussions détaillées, veuillez consulter le [rapport complet du projet (en français)](./ressources/project-report-fr.pdf) disponible dans ce dépôt.
 
 ## 👷 Contributeurs
 - MARQUIS Zoé
