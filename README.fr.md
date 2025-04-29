@@ -427,7 +427,7 @@ Voici la structure des principaux dossiers et fichiers de ce projet, avec une de
 ├── docs/
 ├── db/
 ├── game/
-├── ressources/
+├── resources/
 └── requirements_venv.txt
 ```
 
@@ -450,7 +450,7 @@ Contient également les fichiers de documentation complémentaires, tels que :
     - Les fichiers nécessaires pour lancer le jeu avec une interface graphique.
     - Des notebooks dédiés à l'apprentissage automatique, permettant d'entraîner et d'évaluer des agents.
     - Des tests en pytest pour garantir que la logique du jeu respecte les règles définies.
-- `ressources/` : Contient les documents liés au projet :
+- `resources/` : Contient les documents liés au projet :
     - `project-presentation-slideshow-fr.pdf`: Diaporama de présentation du projet en français.
     - `project-report-fr.pdf`: Rapport complet du projet rédigé en français.
     - `project-assignment-fr.pdf`: Énoncé initial du projet en français.
@@ -596,7 +596,7 @@ Ce fichier contient plusieurs fonctions mains que nous avons utilisées selon no
 Toutes les installations et fonctionnalités ont été testées sur Windows et Ubuntu. Sur macOS, tout a été vérifié, à l'exception de l'installation de PostgreSQL, qui n'est pas requise pour exécuter le jeu et effectuer les analyses.
 
 ## 📑 Documentation complète
-Pour une vue d’ensemble complète de la méthodologie, des objectifs pédagogiques et techniques, des choix d’implémentation, de l’analyse des résultats et des discussions détaillées, veuillez consulter le [rapport complet du projet (en français)](./ressources/project-report-fr.pdf) disponible dans ce dépôt.
+Pour une vue d’ensemble complète de la méthodologie, des objectifs pédagogiques et techniques, des choix d’implémentation, de l’analyse des résultats et des discussions détaillées, veuillez consulter le [rapport complet du projet (en français)](./resources/project-report-fr.pdf) disponible dans ce dépôt.
 
 ## 👷 Contributeurs
 - MARQUIS Zoé
