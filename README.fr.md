@@ -4,7 +4,7 @@
 </div>
 
 # Développement d’agents autonomes et création de nouvelles règles pour jeux de plateau via l’apprentissage par renforcement
-[![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 ## Description du Projet 🎮🤖
 
